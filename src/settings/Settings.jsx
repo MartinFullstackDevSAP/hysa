@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { supabase } from '../supabaseClient';
 import CustomSelect from './CustomSelect';
 import '../css/settings.css';
 
@@ -49,6 +50,9 @@ const formatCurrency = (amount, currencySymbol) => {
 
 export default function Settings() {
   const [accounts, setAccounts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Form State
   const [bank, setBank] = useState('Air Bank');
   const [name, setName] = useState('');
   const [rate, setRate] = useState('');
@@ -56,6 +60,26 @@ export default function Settings() {
   const [cardPayments, setCardPayments] = useState('10');
   const [tax, setTax] = useState('15');
   const [currency, setCurrency] = useState('CZK');
+
+  // Načítanie účtov z databázy Supabase po načítaní komponentu
+  useEffect(() => {
+    fetchAccounts();
+  }, []);
+
+  const fetchAccounts = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from('accounts')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Chyba pri načítaní účtov:', error.message);
+    } else {
+      setAccounts(data || []);
+    }
+    setLoading(false);
+  };
 
   const handleInputChange = (setter) => (e) => {
     let value = e.target.value;
@@ -71,33 +95,53 @@ export default function Settings() {
     setter(unformatOnFocus(value));
   };
 
-  const handleAddAccount = (e) => {
+  // Pridanie nového účtu do Supabase
+  const handleAddAccount = async (e) => {
     e.preventDefault();
     if (!bank || !rate) return;
 
     const newAcc = {
-      id: Date.now().toString(),
       bank,
       name: name || 'Sporiaci účet',
       rate: parseFormattedNumber(rate),
       balance: parseFormattedNumber(balance),
-      cardPayments: Number(cardPayments),
+      card_payments: Number(cardPayments),
       tax: Number(tax),
       currency,
     };
 
-    setAccounts([...accounts, newAcc]);
-    setBank('Air Bank');
-    setName('');
-    setRate('');
-    setBalance('');
-    setCardPayments('10');
-    setTax('15');
-    setCurrency('CZK');
+    const { data, error } = await supabase
+      .from('accounts')
+      .insert([newAcc])
+      .select();
+
+    if (error) {
+      console.error('Chyba pri ukladaní účtu:', error.message);
+    } else if (data) {
+      setAccounts([data[0], ...accounts]);
+      // Reset formulára
+      setBank('Air Bank');
+      setName('');
+      setRate('');
+      setBalance('');
+      setCardPayments('10');
+      setTax('15');
+      setCurrency('CZK');
+    }
   };
 
-  const handleDeleteAccount = (id) => {
-    setAccounts(accounts.filter((acc) => acc.id !== id));
+  // Odstránenie účtu zo Supabase
+  const handleDeleteAccount = async (id) => {
+    const { error } = await supabase
+      .from('accounts')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Chyba pri mazaní účtu:', error.message);
+    } else {
+      setAccounts(accounts.filter((acc) => acc.id !== id));
+    }
   };
 
   return (
@@ -227,7 +271,11 @@ export default function Settings() {
           </span>
         </div>
 
-        {accounts.length === 0 ? (
+        {loading ? (
+          <div className="empty-table-container">
+            <p style={{ margin: 0, fontWeight: 500 }}>Načítavam účty z databázy...</p>
+          </div>
+        ) : accounts.length === 0 ? (
           <div className="empty-table-container">
             <p style={{ margin: 0, fontWeight: 500 }}>Zatiaľ neboli pridané žiadne sporiace účty.</p>
           </div>
@@ -246,15 +294,21 @@ export default function Settings() {
                 </div>
 
                 <div className="list-item-details">
-                  <span className="rate-badge">{acc.rate.toFixed(2)} % p.a.</span>
-                  <span className="info-badge">{acc.cardPayments}× kartou</span>
-                  <span className="info-badge">Daň {acc.tax} %</span>
+                  <span className="rate-badge">
+                    {Number(acc.rate).toFixed(2)} % p.a.
+                  </span>
+                  <span className="info-badge">
+                    {acc.card_payments ?? acc.cardPayments}× kartou
+                  </span>
+                  <span className="info-badge">
+                    Daň {acc.tax} %
+                  </span>
                 </div>
 
                 <div className="list-item-right">
                   <div className="balance-box">
                     <span className="balance-amount">
-                      {formatCurrency(acc.balance, acc.currency)}
+                      {formatCurrency(Number(acc.balance), acc.currency)}
                     </span>
                   </div>
                   <button
