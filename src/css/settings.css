@@ -203,7 +203,7 @@ body {
   color: transparent;
 }
 
-/* Hlavné tlačidlo */
+/* Hlavné tlačidlo - posunuté nižšie s oddelením */
 .btn-finova-primary {
   background: var(--accent-gradient);
   color: #ffffff;
@@ -215,6 +215,7 @@ body {
   cursor: pointer;
   height: 44px;
   width: 100%;
+  margin-top: 1rem;
   transition: transform 0.15s ease, opacity 0.2s ease, box-shadow 0.2s ease;
   display: flex;
   align-items: center;
@@ -239,7 +240,8 @@ body {
     grid-column: span 4;
     justify-self: start;
     width: auto;
-    min-width: 200px;
+    min-width: 220px;
+    margin-top: 0.75rem;
   }
 }
 
@@ -429,19 +431,35 @@ body {
   color: #047857;
   background-color: #ecfdf5;
   border: 1px solid #a7f3d0;
+  white-space: nowrap;
 }
 
-/* Neutrálny pill badge pre informácie */
+/* Výstražný/exspiračný pill badge */
+.expiry-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.6rem;
+  border-radius: 20px;
+  font-size: 0.825rem;
+  font-weight: 600;
+  color: var(--accent-red);
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  white-space: nowrap;
+}
+
+/* Neutrálny pill badge pre informácie (daň, podmienky) */
 .info-badge {
   display: inline-flex;
   align-items: center;
-  padding: 0.2rem 0.55rem;
-  border-radius: 6px;
-  font-size: 0.8rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 20px;
+  font-size: 0.825rem;
   font-weight: 500;
   color: var(--text-secondary);
   background-color: #f1f5f9;
   border: 1px solid #e2e8f0;
+  white-space: nowrap;
 }
 
 /* Odstránenie šípok z input type="number" */
@@ -498,21 +516,22 @@ input[type='number'] {
 .finova-list {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.85rem;
 }
 
-/* Samotný biely zaoblený riadok / karta s výraznejším obrysom */
+/* Opravený biely zaoblený riadok / karta s čistým flex layoutom */
 .finova-list-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 1.25rem;
   background-color: #ffffff;
   border: 1px solid var(--border-color);
   border-radius: 14px;
-  padding: 1rem 1.25rem;
+  padding: 1.1rem 1.35rem;
   transition: all 0.2s ease;
   box-shadow: 0 1px 3px rgba(15, 23, 42, 0.02);
+  flex-wrap: wrap;
 }
 
 .finova-list-item:hover {
@@ -521,10 +540,10 @@ input[type='number'] {
   box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.05);
 }
 
-/* Ikonka + Názvova časť (Fixná šírka na desktop, plná šírka na mobile) */
+/* Ikonka + Názvová časť */
 .list-item-main {
-  flex: 0 0 220px;
-  width: 220px;
+  flex: 0 0 240px;
+  width: 240px;
   min-width: 0;
   display: flex;
   align-items: center;
@@ -554,13 +573,15 @@ input[type='number'] {
   text-overflow: ellipsis;
 }
 
-/* Odznaky v strede (pružné) */
+/* Odznaky v strede - zoskupené vedľa seba v riadku */
 .list-item-details {
   display: flex;
   align-items: center;
+  justify-content: flex-start;
   gap: 0.5rem;
   flex: 1;
   flex-wrap: wrap;
+  min-width: 0;
 }
 
 /* Zostatok + Akcia napravo */
@@ -574,11 +595,12 @@ input[type='number'] {
 
 .balance-box {
   text-align: right;
+  min-width: 140px;
 }
 
 .balance-amount {
   font-weight: 700;
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   color: var(--text-primary);
   display: block;
   white-space: nowrap;
@@ -590,8 +612,8 @@ input[type='number'] {
   color: var(--text-secondary);
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -607,6 +629,16 @@ input[type='number'] {
 }
 
 /* Responzivita pre tablety a mobily */
+@media (max-width: 900px) {
+  .finova-list-item {
+    gap: 0.75rem;
+  }
+  .list-item-main {
+    flex: 0 0 200px;
+    width: 200px;
+  }
+}
+
 @media (max-width: 768px) {
   .finova-container {
     padding: 1rem;
@@ -620,20 +652,33 @@ input[type='number'] {
   .finova-form, .form-grid, .form-fields {
     gap: 0.75rem;
   }
-}
 
-@media (max-width: 640px) {
   .finova-list-item {
-    padding: 0.75rem 0.85rem;
-    gap: 0.6rem;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.85rem;
   }
 
   .list-item-main {
-    flex: 0 0 160px;
-    width: 160px;
-    gap: 0.6rem;
+    width: 100%;
+    flex: 1 1 100%;
   }
 
+  .list-item-right {
+    width: 100%;
+    justify-content: space-between;
+    margin-left: 0;
+    border-top: 1px solid #f1f5f9;
+    padding-top: 0.75rem;
+  }
+
+  .balance-box {
+    text-align: left;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 640px) {
   .bank-icon {
     width: 38px;
     height: 38px;
@@ -649,20 +694,16 @@ input[type='number'] {
   }
 
   .list-item-details {
-    gap: 0.35rem;
+    gap: 0.4rem;
   }
 
-  .rate-badge, .info-badge {
+  .rate-badge, .info-badge, .expiry-badge {
     font-size: 0.75rem;
-    padding: 0.15rem 0.45rem;
-  }
-
-  .list-item-right {
-    gap: 0.75rem;
+    padding: 0.2rem 0.5rem;
   }
 
   .balance-amount {
-    font-size: 0.95rem;
+    font-size: 1rem;
   }
 
   .btn-delete-icon {
@@ -674,4 +715,182 @@ input[type='number'] {
 .finova-input[type="date"]::-webkit-calendar-picker-indicator {
   display: none;
   -webkit-appearance: none;
+}
+
+/* Modálny overlay */
+.finova-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+/* Modálny box */
+.finova-modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+  overflow: hidden;
+  animation: modalFadeIn 0.2s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.finova-modal-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.finova-modal-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.btn-close-modal {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.btn-close-modal:hover {
+  background-color: #f1f5f9;
+  color: var(--text-primary);
+}
+
+.finova-modal-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.finova-modal-footer {
+  padding: 1rem 1.5rem;
+  background-color: #f8fafc;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.btn-finova-secondary {
+  background: #ffffff;
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 0.65rem 1.25rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  height: 40px;
+  transition: all 0.15s ease;
+}
+
+.btn-finova-secondary:hover {
+  background-color: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+.btn-finova-primary-sm {
+  background: var(--accent-gradient);
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 0.65rem 1.25rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  height: 40px;
+  box-shadow: 0 4px 12px rgba(224, 82, 160, 0.25);
+  transition: all 0.15s ease;
+}
+
+.btn-finova-primary-sm:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
+}
+
+/* Tlačidlo na úpravu vo forme ikony (vedľa zmazať) */
+.btn-edit-icon {
+  background: transparent;
+  border: 1px solid #cbd5e1;
+  color: #64748b;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.btn-edit-icon:hover {
+  background: #eff6ff;
+  color: #2563eb;
+  border-color: #2563eb;
+}
+
+@media (max-width: 640px) {
+  .btn-edit-icon {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+.modal-actions-container {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.modal-actions-container button {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 640px) {
+  .modal-actions-container {
+    flex-direction: column-reverse;
+  }
 }
