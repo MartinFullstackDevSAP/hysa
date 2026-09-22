@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '../supabaseClient';
 import CustomSelect from './CustomSelect';
 import '../css/settings.css';
 
-// Zoznam hlavných bánk a inštitúcií v ČR
+// Zoznam hlavných bánk a inštitúcií v ČR s prázdnou predvolenou voľbou
 const CZECH_BANKS = [
+  { value: '', label: '-- Vyberte banku --' },
   { value: 'Air Bank', label: 'Air Bank' },
   { value: 'Banka CREDITAS', label: 'Banka CREDITAS' },
   { value: 'Česká spořitelna', label: 'Česká spořitelna' },
@@ -14,12 +15,57 @@ const CZECH_BANKS = [
   { value: 'KB', label: 'Komerční banka (KB)' },
   { value: 'mBank', label: 'mBank' },
   { value: 'Moneta', label: 'MONETA Money Bank' },
+  { value: 'Partners Banka', label: 'Partners Banka' },
   { value: 'PPF Banka', label: 'PPF Banka' },
   { value: 'Raiffeisenbank', label: 'Raiffeisenbank' },
   { value: 'Trinity Bank', label: 'Trinity Bank' },
   { value: 'UniCredit', label: 'UniCredit Bank' },
   { value: 'Iná banka', label: 'Iná inštitúcia' },
 ];
+
+const ACCOUNT_TYPES = [
+  { value: 'Sporiaci účet', label: 'Sporiaci účet' },
+  { value: 'Termínovaný vklad', label: 'Termínovaný vklad' },
+  { value: 'Dlhopis', label: 'Dlhopis' },
+];
+
+const BANK_DOMAINS = {
+  "Air Bank": "airbank.cz",
+  "Banka CREDITAS": "creditas.cz",
+  "Česká spořitelna": "csas.cz",
+  "ČSOB": "csob.cz",
+  "Fio banka": "fio.cz",
+  "Komerční banka": "kb.cz",
+  "mBank": "mbank.cz",
+  "Moneta": "moneta.cz",
+  "Partners Banka": "partnersbanka.cz",
+  "PPF Banka": "ppfbanka.cz",
+  "Raiffeisenbank": "raiffeisen.cz",
+  "Trinity Bank": "trinitybank.cz",
+  "UniCredit Bank": "unicreditbank.cz",
+};
+
+export const getBankLogo = (bankName) => {
+  const domain = BANK_DOMAINS[bankName];
+  return domain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=128` : null;
+};
+
+export const BANK_LOGOS = {
+  "Air Bank": "/bank-icons/air.png",
+  "Banka CREDITAS": "/bank-icons/creditas.png",
+  "Česká spořitelna": "/bank-icons/csob.jpg",
+  "ČSOB": "/bank-icons/csob.jpg",
+  "Dlhopisy Republiky": "/bank-icons/dlhopisy.jpeg",
+  "Fio banka": "/bank-icons/fio.png",
+  "Komerční banka": "/bank-icons/kb.png",
+  "mBank": "/bank-icons/mbank.png",
+  "Moneta": "/bank-icons/moneta.png",
+  "Partners Banka": "/bank-icons/partners.jpg",
+  "PPF Banka": "/bank-icons/ppf.png",
+  "Raiffeisenbank": "/bank-icons/reif.png",
+  "Trinity Bank": "/bank-icons/trinity.png",
+  "UniCredit Bank": "/bank-icons/unicredit.png",
+};
 
 const formatOnBlur = (val) => {
   if (!val && val !== 0) return '';
@@ -48,20 +94,47 @@ const formatCurrency = (amount, currencySymbol) => {
   return `${formatted} ${currencySymbol}`;
 };
 
+const toSkDate = (isoDate) => {
+  if (!isoDate) return '';
+  const [year, month, day] = isoDate.split('-');
+  if (!year || !month || !day) return isoDate;
+  return `${day}.${month}.${year}`;
+};
+
+const toIsoDate = (skDate) => {
+  if (!skDate) return '';
+  const cleaned = skDate.replace(/[^\d.]/g, '');
+  const parts = cleaned.split('.');
+  if (parts.length === 3) {
+    const [day, month, year] = parts;
+    if (day && month && year) {
+      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    }
+  }
+  return '';
+};
+
 export default function Settings() {
   const [accounts, setAccounts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState('');
+
+  // State pre modal okná
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   // Form State
-  const [bank, setBank] = useState('Air Bank');
-  const [name, setName] = useState('');
+  const [bank, setBank] = useState('');
+  const [accountType, setAccountType] = useState('Sporiaci účet');
   const [rate, setRate] = useState('');
   const [balance, setBalance] = useState('');
-  const [cardPayments, setCardPayments] = useState('10');
+  const [cardPayments, setCardPayments] = useState('0');
   const [tax, setTax] = useState('15');
   const [currency, setCurrency] = useState('CZK');
+  const [expirationSk, setExpirationSk] = useState('');
 
-  // Načítanie účtov z databázy Supabase po načítaní komponentu
+  const hiddenDateRef = useRef(null);
+
   useEffect(() => {
     fetchAccounts();
   }, []);
@@ -85,6 +158,7 @@ export default function Settings() {
     let value = e.target.value;
     value = value.replace(/[^\d.,]/g, '');
     setter(value);
+    if (errorMsg) setErrorMsg('');
   };
 
   const handleBlur = (value, setter) => () => {
@@ -95,19 +169,30 @@ export default function Settings() {
     setter(unformatOnFocus(value));
   };
 
-  // Pridanie nového účtu do Supabase
   const handleAddAccount = async (e) => {
     e.preventDefault();
-    if (!bank || !rate) return;
+    setErrorMsg('');
+
+    if (!bank || bank.trim() === '') {
+      setErrorMsg('Vyberte banku / inštitúciu.');
+      return;
+    }
+    if (rate === '' || balance === '') {
+      setErrorMsg('Vyplňte úrok a zostatok.');
+      return;
+    }
+
+    const isoExpiration = toIsoDate(expirationSk);
 
     const newAcc = {
       bank,
-      name: name || 'Sporiaci účet',
+      name: accountType || 'Sporiaci účet',
       rate: parseFormattedNumber(rate),
       balance: parseFormattedNumber(balance),
       card_payments: Number(cardPayments),
       tax: Number(tax),
       currency,
+      expiration: isoExpiration || null,
     };
 
     const { data, error } = await supabase
@@ -117,56 +202,89 @@ export default function Settings() {
 
     if (error) {
       console.error('Chyba pri ukladaní účtu:', error.message);
+      setErrorMsg('Chyba pri ukladaní do databázy: ' + error.message);
     } else if (data) {
       setAccounts([data[0], ...accounts]);
-      // Reset formulára
-      setBank('Air Bank');
-      setName('');
+      setBank('');
+      setAccountType('Sporiaci účet');
       setRate('');
       setBalance('');
-      setCardPayments('10');
+      setCardPayments('0');
       setTax('15');
       setCurrency('CZK');
+      setExpirationSk('');
+      setShowSuccessModal(true);
     }
   };
 
-  // Odstránenie účtu zo Supabase
-  const handleDeleteAccount = async (id) => {
+  const confirmDeleteAccount = async () => {
+    if (!confirmDeleteId) return;
     const { error } = await supabase
       .from('accounts')
       .delete()
-      .eq('id', id);
+      .eq('id', confirmDeleteId);
 
     if (error) {
       console.error('Chyba pri mazaní účtu:', error.message);
     } else {
-      setAccounts(accounts.filter((acc) => acc.id !== id));
+      setAccounts(accounts.filter((acc) => acc.id !== confirmDeleteId));
+    }
+    setConfirmDeleteId(null);
+  };
+
+  const handleOpenDatePicker = () => {
+    if (hiddenDateRef.current) {
+      if (typeof hiddenDateRef.current.showPicker === 'function') {
+        const iso = toIsoDate(expirationSk);
+        if (iso) {
+          hiddenDateRef.current.value = iso;
+        } else {
+          hiddenDateRef.current.value = '';
+        }
+        hiddenDateRef.current.showPicker();
+      } else {
+        hiddenDateRef.current.click();
+      }
+    }
+  };
+
+  const handleHiddenDateChange = (e) => {
+    const val = e.target.value;
+    if (val) {
+      setExpirationSk(toSkDate(val));
+    } else {
+      setExpirationSk('');
     }
   };
 
   return (
     <div className="finova-container">
-      {/* Formulár na pridanie sporiaceho účtu */}
       <section className="finova-card">
-        <h2 className="card-title">✦ Pridať sporiaci účet</h2>
+        <h2 className="card-title">✦ Pridať účet</h2>
+        {errorMsg && (
+          <div style={{ color: '#dc2626', background: '#fee2e2', padding: '10px 14px', borderRadius: '8px', marginBottom: '16px', fontSize: '0.875rem', fontWeight: 500 }}>
+            {errorMsg}
+          </div>
+        )}
         <form onSubmit={handleAddAccount} className="finova-form">
           <div className="form-group">
             <label className="form-label">Banka / Inštitúcia *</label>
             <CustomSelect
               options={CZECH_BANKS}
               value={bank}
-              onChange={(val) => setBank(val)}
+              onChange={(val) => {
+                setBank(val);
+                if (errorMsg) setErrorMsg('');
+              }}
             />
           </div>
 
           <div className="form-group">
-            <label className="form-label">Názov účtu</label>
-            <input
-              type="text"
-              placeholder="napr. Rezerva"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="finova-input"
+            <label className="form-label">Typ účtu</label>
+            <CustomSelect
+              options={ACCOUNT_TYPES}
+              value={accountType}
+              onChange={(val) => setAccountType(val)}
             />
           </div>
 
@@ -175,22 +293,19 @@ export default function Settings() {
             <input
               type="text"
               inputMode="decimal"
-              placeholder="napr. 3,5"
               value={rate}
               onChange={handleInputChange(setRate)}
               onFocus={handleFocus(rate, setRate)}
               onBlur={handleBlur(rate, setRate)}
-              required
               className="finova-input"
             />
           </div>
 
           <div className="form-group">
-            <label className="form-label">Zostatok</label>
+            <label className="form-label">Zostatok *</label>
             <input
               type="text"
               inputMode="decimal"
-              placeholder="0,00"
               value={balance}
               onChange={handleInputChange(setBalance)}
               onFocus={handleFocus(balance, setBalance)}
@@ -203,6 +318,7 @@ export default function Settings() {
             <label className="form-label">Platby kartou</label>
             <CustomSelect
               options={[
+                { value: '0', label: '0' },
                 { value: '5', label: '5' },
                 { value: '10', label: '10' },
                 { value: '15', label: '15' },
@@ -239,6 +355,60 @@ export default function Settings() {
           </div>
 
           <div className="form-group">
+            <label className="form-label">Expirácia</label>
+            <div className="finova-input-wrapper" style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+              <input
+                type="text"
+                readOnly
+                placeholder=""
+                value={expirationSk}
+                onClick={handleOpenDatePicker}
+                className="finova-input"
+                style={{ paddingRight: '38px', width: '100%', cursor: 'pointer', caretColor: 'transparent' }}
+              />
+              <input
+                ref={hiddenDateRef}
+                type="date"
+                onChange={handleHiddenDateChange}
+                style={{ position: 'absolute', opacity: 0, pointerEvents: 'none', width: '1px', height: '1px' }}
+              />
+              <button
+                type="button"
+                onClick={handleOpenDatePicker}
+                title="Vybrať dátum"
+                style={{
+                  position: 'absolute',
+                  right: '8px',
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: 'var(--text-secondary, #475569)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '4px',
+                }}
+              >
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div className="form-group form-group-full">
             <button type="submit" className="btn-finova-primary">
               + Pridať účet
             </button>
@@ -246,7 +416,6 @@ export default function Settings() {
         </form>
       </section>
 
-      {/* Zoznam sporiacich účtov */}
       <section className="finova-card">
         <div className="card-header-flex">
           <h2 className="card-title" style={{ margin: 0 }}>
@@ -264,7 +433,7 @@ export default function Settings() {
               <path d="M3 5v14a2 2 0 0 0 2 2h16v-5" />
               <path d="M18 12a2 2 0 0 0 0 4h4v-4z" />
             </svg>
-            Zoznam sporiacich účtov
+            Zoznam účtov
           </h2>
           <span className="account-count-badge">
             {accounts.length} {accounts.length === 1 ? 'účet' : 'účty'}
@@ -277,66 +446,216 @@ export default function Settings() {
           </div>
         ) : accounts.length === 0 ? (
           <div className="empty-table-container">
-            <p style={{ margin: 0, fontWeight: 500 }}>Zatiaľ neboli pridané žiadne sporiace účty.</p>
+            <p style={{ margin: 0, fontWeight: 500 }}>Zatiaľ neboli pridané žiadne účty.</p>
           </div>
         ) : (
           <div className="finova-list">
-            {accounts.map((acc) => (
-              <div key={acc.id} className="finova-list-item">
-                <div className="list-item-main">
-                  <div className="bank-icon">
-                    {acc.bank.substring(0, 2).toUpperCase()}
-                  </div>
-                  <div className="bank-info">
-                    <span className="account-name">{acc.name}</span>
-                    <span className="bank-name">{acc.bank}</span>
-                  </div>
-                </div>
+            {accounts.map((acc) => {
+              const cardCount = Number(acc.card_payments ?? acc.cardPayments ?? 0);
+              const taxVal = Number(acc.tax ?? 0);
 
-                <div className="list-item-details">
-                  <span className="rate-badge">
-                    {Number(acc.rate).toFixed(2)} % p.a.
-                  </span>
-                  <span className="info-badge">
-                    {acc.card_payments ?? acc.cardPayments}× kartou
-                  </span>
-                  <span className="info-badge">
-                    Daň {acc.tax} %
-                  </span>
-                </div>
+              return (
+                <div key={acc.id} className="finova-list-item">
+                  <div className="list-item-main">
+                    <div className="bank-icon">
+                      {acc.bank && BANK_LOGOS[acc.bank] ? (
+                        <img
+                          src={BANK_LOGOS[acc.bank]}
+                          alt={acc.bank}
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                            e.target.parentElement.innerText = acc.bank ? acc.bank.substring(0, 2).toUpperCase() : '?';
+                          }}
+                        />
+                      ) : (
+                        acc.bank ? acc.bank.substring(0, 2).toUpperCase() : '?'
+                      )}
+                    </div>
+                    <div className="bank-info">
+                      <span className="account-name">{acc.name}</span>
+                      <span className="bank-name">{acc.bank || 'Neznáma banka'}</span>
+                    </div>
+                  </div>
 
-                <div className="list-item-right">
-                  <div className="balance-box">
-                    <span className="balance-amount">
-                      {formatCurrency(Number(acc.balance), acc.currency)}
+                  <div className="list-item-details">
+                    <span className="rate-badge">
+                      {Number(acc.rate).toFixed(2)} % p.a.
                     </span>
+
+                    {taxVal > 0 && (
+                      <span className="rate-badge" style={{ background: '#f1f5f9', color: '#475569', border: '1px solid #cbd5e1', fontWeight: 500 }}>
+                        Daň {taxVal} %
+                      </span>
+                    )}
+
+                    {cardCount > 0 && (
+                      <span className="rate-badge" style={{ background: '#f1f5f9', color: '#475569', border: '1px solid #cbd5e1', fontWeight: 500 }}>
+                        {cardCount}× kartou
+                      </span>
+                    )}
+
+                    {acc.expiration && (
+                      <span className="rate-badge" style={{ background: '#fee2e2', color: '#dc2626', border: '1px solid #dc2626', fontWeight: 600 }}>
+                        Expirácia: {toSkDate(acc.expiration)}
+                      </span>
+                    )}
                   </div>
-                  <button
-                    type="button"
-                    className="btn-delete-icon"
-                    onClick={() => handleDeleteAccount(acc.id)}
-                    title="Odstrániť účet"
-                  >
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
+
+                  <div className="list-item-right">
+                    <div className="balance-box">
+                      <span className="balance-amount">
+                        {formatCurrency(Number(acc.balance), acc.currency)}
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      className="btn-delete-icon"
+                      onClick={() => setConfirmDeleteId(acc.id)}
+                      title="Odstrániť účet"
                     >
-                      <polyline points="3 6 5 6 21 6"></polyline>
-                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                    </svg>
-                  </button>
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                      </svg>
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </section>
+
+      {/* Modálne okno - Potvrdenie odstránenia */}
+      {confirmDeleteId && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+            padding: '16px',
+            boxSizing: 'border-box',
+          }}
+        >
+          <div
+            style={{
+              background: '#fff',
+              padding: '24px',
+              borderRadius: '16px',
+              maxWidth: '380px',
+              width: '100%',
+              boxShadow: '0 10px 25px rgba(0,0,0,0.15)',
+              boxSizing: 'border-box',
+            }}
+          >
+            <h3 style={{ margin: '0 0 12px 0', fontSize: '1.15rem', color: '#0f172a' }}>
+              Potvrdenie odstránenia
+            </h3>
+            <p style={{ margin: '0 0 24px 0', color: '#475569', fontSize: '0.95rem', lineHeight: '1.5' }}>
+              Naozaj si želáte odstrániť tento účet?
+            </p>
+            <div
+              style={{
+                display: 'flex',
+                gap: '12px',
+                flexWrap: 'wrap',
+              }}
+            >
+              <button
+                type="button"
+                onClick={() => setConfirmDeleteId(null)}
+                className="btn-finova-primary"
+                style={{
+                  flex: 1,
+                  background: '#f1f5f9',
+                  color: '#0f172a',
+                  border: '1px solid #cbd5e1',
+                  boxShadow: 'none',
+                }}
+              >
+                Zrušiť
+              </button>
+              <button
+                type="button"
+                onClick={confirmDeleteAccount}
+                className="btn-finova-primary"
+                style={{
+                  flex: 1,
+                }}
+              >
+                Potvrdiť
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modálne okno - Úspešné pridanie */}
+      {showSuccessModal && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+            padding: '16px',
+            boxSizing: 'border-box',
+          }}
+        >
+          <div
+            style={{
+              background: '#fff',
+              padding: '24px',
+              borderRadius: '16px',
+              maxWidth: '380px',
+              width: '100%',
+              boxShadow: '0 10px 25px rgba(0,0,0,0.15)',
+              boxSizing: 'border-box',
+            }}
+          >
+            <h3 style={{ margin: '0 0 12px 0', fontSize: '1.15rem', color: '#0f172a' }}>
+              Účet pridaný
+            </h3>
+            <p style={{ margin: '0 0 24px 0', color: '#475569', fontSize: '0.95rem', lineHeight: '1.5' }}>
+              Účet bol úspešne pridaný do zoznamu.
+            </p>
+            <div
+              style={{
+                display: 'flex',
+                gap: '12px',
+                flexWrap: 'wrap',
+              }}
+            >
+              <button
+                type="button"
+                onClick={() => setShowSuccessModal(false)}
+                className="btn-finova-primary"
+                style={{
+                  flex: 1,
+                }}
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
