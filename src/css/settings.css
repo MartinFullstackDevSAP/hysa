@@ -1,0 +1,751 @@
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  /* Svetlé pozadie, aby pasovalo k tvojej téme */
+  background-color: #f8fafc; 
+}
+
+#root {
+  max-width: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Konštanty a svetlá téma (Finova Light Mode) */
+:root {
+  --bg-main: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-input: #f1f5f9;
+  --border-color: #e2e8f0;
+  --border-focus: #8b5cf6;
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --accent-purple: #7c3aed;
+  --accent-gradient: linear-gradient(135deg, #e052a0 0%, #f15e64 50%, #e14eca 100%);
+  --accent-green: #059669;
+  --accent-green-bg: #ecfdf5;
+  --accent-red: #dc2626;
+  --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+}
+
+/* Kontejner roztiahnutý na celú obrazovku */
+.finova-container {
+  padding: 2.5rem;
+  max-width: 100%;
+  margin: 0 auto;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: var(--text-primary);
+  background-color: var(--bg-main);
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* Header */
+.finova-header {
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.finova-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 0.4rem 0;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+.finova-subtitle {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* Karta so štatistikou (Stat Cards Grid) */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 1.25rem 1.5rem;
+  box-shadow: var(--shadow-card);
+}
+
+.stat-label {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.stat-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.stat-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 20px;
+  margin-top: 0.5rem;
+  font-weight: 600;
+}
+
+.stat-badge.green {
+  background: var(--accent-green-bg);
+  color: var(--accent-green);
+}
+
+/* Hlavné panely / Card Containers */
+.finova-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 1.75rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-card);
+  overflow: visible !important; /* Dôležité: povolí pretiecť dropdownu mimo kartu */
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Formulár - predvolene 1 stĺpec pre mobil */
+.finova-form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+  align-items: end;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+/* Hlavné tlačidlo - presná výška 44px ako pri inputoch */
+.btn-finova-primary {
+  background: var(--accent-gradient);
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 0 1.25rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  height: 44px;
+  width: 100%;
+  transition: transform 0.15s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(224, 82, 160, 0.25);
+  box-sizing: border-box;
+}
+
+.btn-finova-primary:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(224, 82, 160, 0.35);
+}
+
+/* Pre Desktop (od 1024px) - presne 4 stĺpce v rade */
+@media (min-width: 1024px) {
+  .finova-form {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.form-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+/* Základný štýl pre textové a číselné vstupy */
+.finova-input {
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  outline: none;
+  transition: all 0.2s ease;
+  cursor: text;
+  box-sizing: border-box;
+  height: 44px;
+  width: 100%;
+}
+
+.finova-input:focus {
+  background-color: #ffffff;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+}
+
+.finova-input:focus::placeholder {
+  color: transparent;
+}
+
+/* Základný štýl pre natívny select */
+.finova-select {
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 0.75rem 2.5rem 0.75rem 1rem;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  outline: none;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  box-sizing: border-box;
+  height: 44px;
+  width: 100%;
+
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+  background-repeat: no-repeat;
+  background-position: right 0.85rem center;
+  background-size: 1rem;
+}
+
+.finova-select:focus {
+  background-color: #ffffff;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+}
+
+/* Hlavné tlačidlo */
+.btn-finova-primary {
+  background: var(--accent-gradient);
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  height: 44px;
+  transition: transform 0.15s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(224, 82, 160, 0.25);
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.btn-finova-primary:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(224, 82, 160, 0.35);
+}
+
+/* Responzivita pre Desktop (od 1024px) */
+@media (min-width: 1024px) {
+  .finova-form {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .btn-finova-primary {
+    grid-column: span 4;
+    justify-self: start;
+    width: auto;
+    min-width: 200px;
+  }
+}
+
+/* Kontajner pre Custom Select */
+.custom-select-container {
+  position: relative;
+  width: 100%;
+}
+
+/* Hlavné tlačidlo dropdownu */
+.custom-select-trigger {
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  box-sizing: border-box;
+  height: 44px;
+  width: 100%; /* Zaručí 100 % šírku stĺpca */
+}
+
+/* Rozbalené menu s možnosťami */
+.custom-select-options {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  width: 100%;
+  min-width: 100%;
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  
+  /* Nastavenie skrolovania */
+  max-height: 220px;            /* Výška pre cca 5 položiek */
+  overflow-y: auto !important;  /* Vynútenie vertikálneho skrolovania */
+  touch-action: pan-y;          /* Podpora skrolovania na dotykových displejoch */
+  z-index: 999;                 /* Zabezpečí, že menu bude nad ostatnými prvkami */
+  
+  padding: 4px;
+  box-sizing: border-box;
+}
+
+
+/* Text položky, aby nepretiekol ani nedokrivil šírku */
+.custom-select-option {
+  padding: 0.65rem 1rem;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.select-arrow {
+  color: var(--text-secondary);
+  transition: transform 0.2s ease;
+}
+
+.select-arrow.rotated {
+  transform: rotate(180deg);
+}
+
+
+/* Úprava vizuálu scrollbaru pre čistý moderný vzhľad */
+.custom-select-options::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-select-options::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-select-options::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+.custom-select-options::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+.custom-select-option {
+  padding: 0.65rem 1rem;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.custom-select-option:hover {
+  background-color: var(--bg-input);
+  color: var(--accent-purple);
+}
+
+.custom-select-option.selected {
+  background-color: rgba(139, 92, 246, 0.1);
+  color: var(--accent-purple);
+  font-weight: 600;
+}
+
+/* Tabuľka */
+.table-responsive {
+  overflow-x: auto;
+}
+
+.finova-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  text-align: left;
+}
+
+.finova-table th {
+  padding: 1rem 1.25rem;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--border-color);
+  font-weight: 600;
+  background-color: #f8fafc;
+}
+
+.finova-table th:first-child {
+  border-top-left-radius: 10px;
+}
+
+.finova-table th:last-child {
+  border-top-right-radius: 10px;
+}
+
+.finova-table td {
+  padding: 1.1rem 1.25rem;
+  font-size: 0.95rem;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.finova-table tr:last-child td {
+  border-bottom: none;
+}
+
+.bank-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.bank-icon {
+  width: 48px;         /* Zväčšené z pôvodných 34px / 36px */
+  height: 48px;        /* Zväčšené z pôvodných 34px / 36px */
+  border-radius: 12px;  /* Mierne výraznejšie zaoblenie */
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  color: var(--accent-purple);
+  border: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.05rem;  /* Zväčšené písmo pre iniciály */
+  flex-shrink: 0;      /* Zabezpečí, že sa štvorček nescmrkne pri menšom displeji */
+}
+
+.rate-text {
+  color: var(--accent-green);
+  font-weight: 700;
+  background: var(--accent-green-bg);
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  display: inline-block;
+  border: 1px solid rgba(5, 150, 105, 0.15);
+}
+
+.btn-delete {
+  background: #ffffff;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.btn-delete:hover {
+  background: #fef2f2;
+  color: var(--accent-red);
+  border-color: #fecaca;
+}
+
+/* Odstránenie šípok z input type="number" */
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.empty-state-text {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  margin: 0;
+  padding: 1rem 0;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+/* Tabuľka - Finova Dashboard Style */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+}
+
+.finova-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  text-align: left;
+  background-color: #ffffff;
+}
+
+.finova-table th {
+  padding: 0.85rem 1.25rem;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background-color: #f8fafc;
+  border-bottom: 1px solid var(--border-color);
+  white-space: nowrap;
+}
+
+.finova-table td {
+  padding: 1rem 1.25rem;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color);
+  vertical-align: middle;
+  transition: background-color 0.15s ease;
+}
+
+.finova-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.finova-table tbody tr:hover td {
+  background-color: #f8fafc;
+}
+
+/* Bankový odznak s ikonkou / avatarom */
+.bank-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Sadzba / Úrok pill badge */
+.rate-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.6rem;
+  border-radius: 20px;
+  font-size: 0.825rem;
+  font-weight: 700;
+  color: #047857;
+  background-color: #ecfdf5;
+  border: 1px solid #a7f3d0;
+}
+
+/* Neutrálny pill badge pre informácie */
+.info-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background-color: var(--bg-input);
+}
+
+/* Červené tlačidlo na odstránenie */
+.btn-delete {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.btn-delete:hover {
+  background-color: #fef2f2;
+  color: var(--accent-red);
+  border-color: #fecaca;
+}
+
+/* Prázdny stav tabuľky */
+.empty-table-container {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--text-secondary);
+  background-color: var(--bg-main);
+  border-radius: 12px;
+  border: 1px dashed var(--border-color);
+}
+
+/* Hlavička sekcie s počtom */
+.card-header-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.account-count-badge {
+  background-color: var(--accent-green-bg);
+  color: var(--accent-green);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+}
+
+/* Kontejner pre zoznam */
+.finova-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Samotný sivý zaoblený riadok / karta */
+.finova-list-item {
+  background-color: #f8fafc; /* Jemný sivý podklad ako na 2. screenshote */
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap; /* Zabezpečí responzivitu pre mobily */
+  gap: 1rem;
+  transition: all 0.2s ease;
+}
+
+.finova-list-item:hover {
+  background-color: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+/* Ikonka + Názov */
+.list-item-main {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  min-width: 200px;
+}
+
+.bank-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.account-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.bank-name {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+/* Odznaky v strede */
+.list-item-details {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* Zostatok + Akcia napravo */
+.list-item-right {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-left: auto;
+}
+
+.balance-box {
+  text-align: right;
+}
+
+.balance-amount {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--text-primary);
+  display: block;
+}
+
+/* Tlačidlo na vymazanie vo forme ikony */
+.btn-delete-icon {
+  background: #ffffff;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-delete-icon:hover {
+  background-color: #fef2f2;
+  color: var(--accent-red);
+  border-color: #fecaca;
+}
+
+/* Responzivita pre mobilné zariadenia */
+@media (max-width: 640px) {
+  .finova-list-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .list-item-right {
+    width: 100%;
+    justify-content: space-between;
+    border-top: 1px solid var(--border-color);
+    padding-top: 0.75rem;
+    margin-top: 0.25rem;
+  }
+
+  .balance-box {
+    text-align: left;
+  }
+}
