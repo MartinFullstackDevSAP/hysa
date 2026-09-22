@@ -20,7 +20,7 @@ const CZECH_BANKS = [
   { value: 'Raiffeisenbank', label: 'Raiffeisenbank' },
   { value: 'Trinity Bank', label: 'Trinity Bank' },
   { value: 'UniCredit', label: 'UniCredit Bank' },
-  { value: 'VUB', label: 'VÚB' },
+  { value: 'VÚB', label: 'VÚB' },
   { value: 'Inbank', label: 'Inbank' },
   { value: 'Iná banka', label: 'Iná inštitúcia' },
 ];
@@ -45,7 +45,7 @@ const BANK_DOMAINS = {
   "Raiffeisenbank": "raiffeisen.cz",
   "Trinity Bank": "trinitybank.cz",
   "UniCredit Bank": "unicreditbank.cz",
-  "VUB": "vub.sk",
+  "VÚB": "vub.sk",
   "Inbank": "inbank.cz"
 };
 
@@ -69,8 +69,7 @@ export const BANK_LOGOS = {
   "Raiffeisenbank": "/bank-icons/reif.png",
   "Trinity Bank": "/bank-icons/trinity.png",
   "UniCredit Bank": "/bank-icons/unicredit.png",
-  "VUB": "/bank-icons/vub.png",
-  "VÚB": "/bank-icons/vub.png", 
+  "VÚB": "/bank-icons/vub.png",
   "Inbank": "/bank-icons/inbank.jpg", 
 };
 
