@@ -3,7 +3,7 @@ body {
   padding: 0;
   min-height: 100vh;
   /* Svetlé pozadie, aby pasovalo k tvojej téme */
-  background-color: #f8fafc; 
+  background-color: #f8fafc;
 }
 
 #root {
@@ -32,7 +32,8 @@ body {
 
 /* Kontejner roztiahnutý na celú obrazovku */
 .finova-container {
-  padding: 2.5rem;
+  padding: 12px 8px;
+  /* zmenšený padding hore/dole a vlavo/vpravo */
   max-width: 100%;
   margin: 0 auto;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
@@ -112,10 +113,13 @@ body {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 20px;
-  padding: 1.75rem;
+  padding: 16px 12px;
+  /* kompaktnejšie vnútorné odsadenie karty na mobile */
+  margin-bottom: 12px;
   margin-bottom: 2rem;
   box-shadow: var(--shadow-card);
-  overflow: visible !important; /* Dôležité: povolí pretiecť dropdownu mimo kartu */
+  overflow: visible !important;
+  /* Dôležité: povolí pretiecť dropdownu mimo kartu */
 }
 
 .card-title {
@@ -301,7 +305,8 @@ body {
   user-select: none;
   box-sizing: border-box;
   height: 44px;
-  width: 100%; /* Zaručí 100 % šírku stĺpca */
+  width: 100%;
+  /* Zaručí 100 % šírku stĺpca */
 }
 
 /* Rozbalené menu s možnosťami */
@@ -315,13 +320,17 @@ body {
   border: 1px solid var(--border-color);
   border-radius: 12px;
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
-  
+
   /* Nastavenie skrolovania */
-  max-height: 220px;            /* Výška pre cca 5 položiek */
-  overflow-y: auto !important;  /* Vynútenie vertikálneho skrolovania */
-  touch-action: pan-y;          /* Podpora skrolovania na dotykových displejoch */
-  z-index: 999;                 /* Zabezpečí, že menu bude nad ostatnými prvkami */
-  
+  max-height: 220px;
+  /* Výška pre cca 5 položiek */
+  overflow-y: auto !important;
+  /* Vynútenie vertikálneho skrolovania */
+  touch-action: pan-y;
+  /* Podpora skrolovania na dotykových displejoch */
+  z-index: 999;
+  /* Zabezpečí, že menu bude nad ostatnými prvkami */
+
   padding: 4px;
   box-sizing: border-box;
 }
@@ -439,9 +448,12 @@ body {
 }
 
 .bank-icon {
-  width: 48px;         /* Zväčšené z pôvodných 34px / 36px */
-  height: 48px;        /* Zväčšené z pôvodných 34px / 36px */
-  border-radius: 12px;  /* Mierne výraznejšie zaoblenie */
+  width: 48px;
+  /* Zväčšené z pôvodných 34px / 36px */
+  height: 48px;
+  /* Zväčšené z pôvodných 34px / 36px */
+  border-radius: 12px;
+  /* Mierne výraznejšie zaoblenie */
   background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
   color: var(--accent-purple);
   border: 1px solid var(--border-color);
@@ -449,8 +461,10 @@ body {
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 1.05rem;  /* Zväčšené písmo pre iniciály */
-  flex-shrink: 0;      /* Zabezpečí, že sa štvorček nescmrkne pri menšom displeji */
+  font-size: 1.05rem;
+  /* Zväčšené písmo pre iniciály */
+  flex-shrink: 0;
+  /* Zabezpečí, že sa štvorček nescmrkne pri menšom displeji */
 }
 
 .rate-text {
@@ -641,14 +655,16 @@ input[type='number'] {
 
 /* Samotný sivý zaoblený riadok / karta */
 .finova-list-item {
-  background-color: #f8fafc; /* Jemný sivý podklad ako na 2. screenshote */
+  background-color: #f8fafc;
+  /* Jemný sivý podklad ako na 2. screenshote */
   border: 1px solid var(--border-color);
   border-radius: 14px;
   padding: 1rem 1.25rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap; /* Zabezpečí responzivitu pre mobily */
+  flex-wrap: wrap;
+  /* Zabezpečí responzivitu pre mobily */
   gap: 1rem;
   transition: all 0.2s ease;
 }
@@ -747,5 +763,14 @@ input[type='number'] {
 
   .balance-box {
     text-align: left;
+  }
+}
+
+@media (max-width: 600px) {
+  .finova-container {
+    padding: 8px 4px;
+  }
+  .finova-card {
+    padding: 12px 10px;
   }
 }
