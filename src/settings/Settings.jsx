@@ -20,6 +20,8 @@ const CZECH_BANKS = [
   { value: 'Raiffeisenbank', label: 'Raiffeisenbank' },
   { value: 'Trinity Bank', label: 'Trinity Bank' },
   { value: 'UniCredit', label: 'UniCredit Bank' },
+  { value: 'VUB', label: 'VÚB' },
+  { value: 'Inbank', label: 'Inbank' },
   { value: 'Iná banka', label: 'Iná inštitúcia' },
 ];
 
@@ -43,6 +45,8 @@ const BANK_DOMAINS = {
   "Raiffeisenbank": "raiffeisen.cz",
   "Trinity Bank": "trinitybank.cz",
   "UniCredit Bank": "unicreditbank.cz",
+  "VUB": "vub.sk",
+  "Inbank": "inbank.cz"
 };
 
 export const getBankLogo = (bankName) => {
@@ -65,6 +69,9 @@ export const BANK_LOGOS = {
   "Raiffeisenbank": "/bank-icons/reif.png",
   "Trinity Bank": "/bank-icons/trinity.png",
   "UniCredit Bank": "/bank-icons/unicredit.png",
+  "VUB": "/bank-icons/vub.png",
+  "VÚB": "/bank-icons/vub.png", 
+  "Inbank": "/bank-icons/inbank.jpg", 
 };
 
 const formatOnBlur = (val) => {
@@ -506,13 +513,21 @@ export default function Settings() {
                 <div key={acc.id} className="finova-list-item">
                   <div className="list-item-main">
                     <div className="bank-icon">
-                      {acc.bank && BANK_LOGOS[acc.bank] ? (
+                      {acc.bank && (BANK_LOGOS[acc.bank] || getBankLogo(acc.bank)) ? (
                         <img
-                          src={BANK_LOGOS[acc.bank]}
+                          src={BANK_LOGOS[acc.bank] || getBankLogo(acc.bank)}
                           alt={acc.bank}
                           onError={(e) => {
-                            e.target.style.display = 'none';
-                            e.target.parentElement.innerText = acc.bank ? acc.bank.substring(0, 2).toUpperCase() : '?';
+                            // Ak zlyhá lokálny asset, skúsi Google favicon fallback skôr než text
+                            const fallback = getBankLogo(acc.bank);
+                            if (fallback && e.target.src !== fallback) {
+                              e.target.src = fallback;
+                            } else {
+                              e.target.style.display = 'none';
+                              if (e.target.parentElement) {
+                                e.target.parentElement.innerText = acc.bank ? acc.bank.substring(0, 2).toUpperCase() : '?';
+                              }
+                            }
                           }}
                         />
                       ) : (
