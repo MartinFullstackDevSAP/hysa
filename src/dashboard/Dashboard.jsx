@@ -47,7 +47,7 @@ const Dashboard = ({ currency = 'CZK' }) => {
     return (
         <div className="finova-dashboard">
             <div className="stats-grid" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                {/* Hlavná hero karta: Zostatok + Čistý úrok */}
+                {/* Hlavná karta: zostatok, mesačný výnos a čistý úrok */}
                 <div className="stat-card finova-hero-card">
                     <div className="hero-balance-section">
                         <div className="stat-label">Celkový zostatok</div>
@@ -55,6 +55,14 @@ const Dashboard = ({ currency = 'CZK' }) => {
                             {loading ? '...' : formatCurrencyInteger(totalBalance, currency)}
                         </div>
                     </div>
+                    <div className="hero-divider"></div>
+                    <div className="hero-yield-section">
+                        <div className="stat-label">Mesačný pasívny výnos (netto)</div>
+                        <div className="stat-value">
+                            {loading ? '...' : formatCurrencyInteger(monthlyYield, currency)}
+                        </div>
+                    </div>
+                    <div className="hero-divider"></div>
                     <div className="hero-rate-section">
                         <span
                             className="rate-badge"
@@ -76,23 +84,6 @@ const Dashboard = ({ currency = 'CZK' }) => {
                                 {loading ? '...' : `${weightedRateNet.toFixed(2)} %`}
                             </span>
                         </span>
-                    </div>
-                </div>
-
-                {/* Nová karta: Mesačný / Ročný pasívny výnos */}
-                <div className="stat-card finova-yield-card">
-                    <div className="yield-section">
-                        <div className="stat-label">Mesačný pasívny výnos (netto)</div>
-                        <div className="stat-value" style={{ fontSize: '1.5rem' }}>
-                            {loading ? '...' : formatCurrencyInteger(monthlyYield, currency)}
-                        </div>
-                    </div>
-                    <div className="yield-divider"></div>
-                    <div className="yield-section">
-                        <div className="stat-label">Ročný pasívny výnos (netto)</div>
-                        <div className="stat-value" style={{ fontSize: '1.5rem' }}>
-                            {loading ? '...' : formatCurrencyInteger(annualYield, currency)}
-                        </div>
                     </div>
                 </div>
             </div>

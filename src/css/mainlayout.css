@@ -186,7 +186,7 @@
   display: flex !important;
   flex-direction: row !important;
   align-items: center !important;
-  justify-content: space-between !important;
+  justify-content: flex-start !important;
   gap: 2rem !important;
   flex-wrap: nowrap !important;
   padding: 1.5rem 1.75rem !important;
@@ -195,11 +195,27 @@
 .hero-balance-section {
   display: flex;
   flex-direction: column;
+  flex: 1;
+}
+
+.hero-yield-section {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .hero-rate-section {
   display: flex;
   align-items: center;
+  justify-content: center;
+  flex: 1;
+  flex-shrink: 0;
+}
+
+.hero-divider {
+  width: 1px;
+  height: 48px;
+  background-color: var(--border-color, #e2d8f2);
   flex-shrink: 0;
 }
 
@@ -279,6 +295,16 @@
     flex-direction: column !important;
     align-items: center !important;
     text-align: center !important;
+  }
+
+  .hero-yield-section {
+    align-items: center !important;
+    text-align: center !important;
+  }
+
+  .hero-divider {
+    width: 100% !important;
+    height: 1px !important;
   }
 
   .finova-yield-card {
