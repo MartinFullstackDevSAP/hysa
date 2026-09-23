@@ -79,52 +79,6 @@ const Dashboard = ({ currency = 'CZK' }) => {
                         <div className="stat-value">
                             {loading ? '...' : formatCurrencyInteger(totalBalance, currency)}
                         </div>
-                        <section className="stat-card bank-distribution-card">
-                            <div className="bank-distribution-header">
-                                <div>
-                                    <h2 className="bank-distribution-title">Zostatok podľa banky</h2>
-                                    <p className="bank-distribution-subtitle">Rozdelenie tvojich úspor</p>
-                                </div>
-                                <span className="bank-distribution-total">
-                                    {loading ? '...' : formatCurrencyInteger(totalBalance, currency)}
-                                </span>
-                            </div>
-                            {loading ? (
-                                <div className="bank-distribution-empty">Načítavam dáta...</div>
-                            ) : bankBalances.length === 0 ? (
-                                <div className="bank-distribution-empty">Zatiaľ nemáš žiadne účty.</div>
-                            ) : (
-                                <div className="bank-distribution-content">
-                                    <div className="bank-donut" style={{ '--bank-donut-gradient': `conic-gradient(${chartGradient})` }}>
-                                        <div className="bank-donut-center">
-                                            <span>Spolu</span>
-                                            <strong>{formatCurrencyInteger(totalBalance, currency)}</strong>
-                                        </div>
-                                    </div>
-                                    <div className="bank-distribution-legend">
-                                        {bankBalances.map(({ bank, balance, color, percentage }) => (
-                                            <div className="bank-legend-item" key={bank}>
-                                                <span className="bank-legend-color" style={{ backgroundColor: color }} />
-                                                <span className="bank-legend-logo">
-                                                    <img
-                                                        src={BANK_LOGOS[bank] || getBankLogo(bank)}
-                                                        alt=""
-                                                        onError={(event) => {
-                                                            event.currentTarget.style.display = 'none';
-                                                        }}
-                                                    />
-                                                </span>
-                                                <span className="bank-legend-name">{bank}</span>
-                                                <span className="bank-legend-value">
-                                                    {formatCurrencyInteger(balance, currency)}
-                                                    <small>{percentage.toFixed(1)} %</small>
-                                                </span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-                        </section>
                     </div>
                     <div className="hero-divider"></div>
                     <div className="hero-yield-section">
@@ -157,6 +111,40 @@ const Dashboard = ({ currency = 'CZK' }) => {
                         </span>
                     </div>
                 </div>
+                <section className="stat-card bank-distribution-card">
+                    <h2 className="bank-distribution-title">Rozloženie účtov</h2>
+                    {loading ? (
+                        <div className="bank-distribution-empty">Načítavam dáta...</div>
+                    ) : bankBalances.length === 0 ? (
+                        <div className="bank-distribution-empty">Zatiaľ nemáš žiadne účty.</div>
+                    ) : (
+                        <div className="bank-distribution-content">
+                            <div className="bank-donut" style={{ '--bank-donut-gradient': `conic-gradient(${chartGradient})` }}>
+                                <div className="bank-donut-center" />
+                            </div>
+                            <div className="bank-distribution-legend">
+                                {bankBalances.map(({ bank, balance, color, percentage }) => (
+                                    <div className="bank-legend-item" key={bank}>
+                                        <span className="bank-legend-color" style={{ backgroundColor: color }} />
+                                        <span className="bank-legend-logo">
+                                            <img
+                                                src={BANK_LOGOS[bank] || getBankLogo(bank)}
+                                                alt=""
+                                                onError={(event) => {
+                                                    event.currentTarget.style.display = 'none';
+                                                }}
+                                            />
+                                        </span>
+                                        <span className="bank-legend-value">
+                                            {formatCurrencyInteger(balance, currency)}
+                                            <small>{percentage.toFixed(1)} %</small>
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </section>
             </div>
         </div>
     );
