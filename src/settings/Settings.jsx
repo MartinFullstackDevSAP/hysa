@@ -70,7 +70,7 @@ export const BANK_LOGOS = {
   "Trinity Bank": "/bank-icons/trinity.png",
   "UniCredit Bank": "/bank-icons/unicredit.png",
   "VÚB": "/bank-icons/vub.png",
-  "Inbank": "/bank-icons/inbank.jpg", 
+  "Inbank": "/bank-icons/inbank.jpg",
 };
 
 const formatOnBlur = (val) => {
@@ -430,30 +430,44 @@ export default function Settings() {
           <div className="form-group">
             <label className="form-label">Expirácia</label>
             <div className="finova-input-wrapper" style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+              {/* Vizuálny textový/formátovaný input (prekrýva sa, ale kliknutie smeruje na date picker alebo funguje duálne) */}
               <input
                 type="text"
                 readOnly
                 value={expirationSk}
-                onClick={handleOpenDatePicker}
+                placeholder="DD.MM.RRRR"
                 className="finova-input"
-                style={{ paddingRight: '38px', width: '100%', cursor: 'pointer', caretColor: 'transparent', boxSizing: 'border-box' }}
+                style={{ paddingRight: '38px', width: '100%', boxSizing: 'border-box' }}
               />
+
+              {/* Skutočný interaktívny date input umiestnený cez celú plochu s nulovou opacitou, ale reálnymi eventmi */}
               <input
                 ref={hiddenDateRef}
                 type="date"
+                value={toIsoDate(expirationSk)}
                 onChange={(e) => setExpirationSk(toSkDate(e.target.value))}
-                style={{ position: 'absolute', opacity: 0, pointerEvents: 'none', width: '1px', height: '1px' }}
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  opacity: 0,
+                  width: '100%',
+                  height: '100%',
+                  cursor: 'pointer',
+                  boxSizing: 'border-box',
+                }}
+                title="Vybrať dátum"
               />
+
+              {/* Ikonka len ako vizuálny doplnok, lebo celý wrapper/date picker je clickable */}
               <button
                 type="button"
-                onClick={handleOpenDatePicker}
-                title="Vybrať dátum"
+                tabIndex={-1}
                 style={{
                   position: 'absolute',
                   right: '8px',
                   background: 'transparent',
                   border: 'none',
-                  cursor: 'pointer',
+                  pointerEvents: 'none', // kliknutie prepadne na date input pod ním
                   color: 'var(--text-secondary, #475569)',
                   display: 'flex',
                   alignItems: 'center',
