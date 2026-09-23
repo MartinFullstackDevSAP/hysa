@@ -5,9 +5,17 @@ import '../css/mainlayout.css';
 
 const CHART_COLORS = ['#8b5cf6', '#ec4899', '#06b6d4', '#f59e0b', '#10b981', '#6366f1'];
 
+const getCurrentMonthStart = () => {
+    const today = new Date();
+    return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-01`;
+};
+
 const Dashboard = ({ currency = 'CZK' }) => {
     const [accounts, setAccounts] = useState([]);
+    const [paymentProgress, setPaymentProgress] = useState({});
     const [loading, setLoading] = useState(true);
+    const [paymentLoading, setPaymentLoading] = useState(true);
+    const [paymentError, setPaymentError] = useState('');
 
     useEffect(() => {
         fetchAccounts();
@@ -15,15 +23,87 @@ const Dashboard = ({ currency = 'CZK' }) => {
 
     const fetchAccounts = async () => {
         setLoading(true);
-        const { data, error } = await supabase
-            .from('accounts')
-            .select('*')
-            .order('created_at', { ascending: false });
+        setPaymentLoading(true);
+        const [{ data, error }, { data: progressData, error: progressError }] = await Promise.all([
+            supabase
+                .from('accounts')
+                .select('*')
+                .order('created_at', { ascending: false }),
+            supabase
+                .from('card_payment_progress')
+                .select('account_id, payments_made')
+                .eq('month_start', getCurrentMonthStart()),
+        ]);
 
         if (!error) {
             setAccounts(data || []);
         }
+        if (progressError) {
+            console.error('Chyba pri načítaní platieb kartou:', progressError.message);
+            setPaymentError('Platby kartou sa nepodarilo načítať.');
+        } else {
+            setPaymentProgress((progressData || []).reduce((progress, item) => ({
+                ...progress,
+                [item.account_id]: Number(item.payments_made) || 0,
+            }), {}));
+        }
         setLoading(false);
+        setPaymentLoading(false);
+    };
+
+    const savePaymentProgress = async (accountId, requiredPayments, change) => {
+        setPaymentError('');
+        const currentPayments = Number(paymentProgress[accountId] || 0);
+        const nextPayments = Math.max(0, Math.min(requiredPayments, currentPayments + change));
+        const { data, error } = await supabase
+            .from('card_payment_progress')
+            .upsert({
+                account_id: accountId,
+                month_start: getCurrentMonthStart(),
+                payments_made: nextPayments,
+            }, { onConflict: 'account_id,month_start' })
+            .select('account_id, payments_made')
+            .single();
+
+        if (error) {
+            console.error('Chyba pri ukladaní platieb kartou:', error.message);
+            setPaymentError('Platby kartou sa nepodarilo uložiť.');
+            return;
+        }
+
+        setPaymentProgress((current) => ({
+            ...current,
+            [data.account_id]: Number(data.payments_made) || 0,
+        }));
+    };
+
+    const resetAllPaymentProgress = async () => {
+        const cardAccounts = accounts.filter((account) => Number(account.card_payments) > 0);
+        if (cardAccounts.length === 0) return;
+
+        setPaymentError('');
+        const { data, error } = await supabase
+            .from('card_payment_progress')
+            .upsert(cardAccounts.map((account) => ({
+                account_id: account.id,
+                month_start: getCurrentMonthStart(),
+                payments_made: 0,
+            })), { onConflict: 'account_id,month_start' })
+            .select('account_id, payments_made');
+
+        if (error) {
+            console.error('Chyba pri resete platieb kartou:', error.message);
+            setPaymentError('Platby kartou sa nepodarilo resetovať.');
+            return;
+        }
+
+        setPaymentProgress((current) => ({
+            ...current,
+            ...(data || []).reduce((progress, item) => ({
+                ...progress,
+                [item.account_id]: Number(item.payments_made) || 0,
+            }), {}),
+        }));
     };
 
     const totalBalance = accounts.reduce((acc, curr) => acc + (Number(curr.balance) || 0), 0);
@@ -60,6 +140,11 @@ const Dashboard = ({ currency = 'CZK' }) => {
             return `${color} ${start}% ${chartOffset}%`;
         }).join(', ')
         : '#34234d 0% 100%';
+    const cardPaymentAccounts = accounts.filter((account) => Number(account.card_payments) > 0);
+    const totalRequiredPayments = cardPaymentAccounts.reduce((sum, account) => sum + Number(account.card_payments), 0);
+    const totalMadePayments = cardPaymentAccounts.reduce((sum, account) => (
+        sum + Math.min(Number(paymentProgress[account.id] || 0), Number(account.card_payments))
+    ), 0);
 
     const formatCurrencyInteger = (amount, currencySymbol = 'CZK') => {
         const formatted = Math.round(amount || 0).toLocaleString('cs-CZ', {
@@ -149,6 +234,73 @@ const Dashboard = ({ currency = 'CZK' }) => {
                                     </div>
                                 ))}
                             </div>
+                        </div>
+                    )}
+                </section>
+                <section className="stat-card card-payment-card">
+                    <div className="card-payment-header">
+                        <div>
+                            <h2 className="bank-distribution-title">Platby kartou</h2>
+                            <p className="card-payment-summary">
+                                {paymentLoading
+                                    ? 'Načítavam progress...'
+                                    : `${totalMadePayments} z ${totalRequiredPayments} platieb vykonaných`}
+                            </p>
+                        </div>
+                        <button
+                            type="button"
+                            className="card-payment-reset-all"
+                            onClick={resetAllPaymentProgress}
+                            disabled={cardPaymentAccounts.length === 0 || paymentLoading}
+                        >
+                            Reset všetkých
+                        </button>
+                    </div>
+                    {paymentError && <div className="settings-error" role="alert">{paymentError}</div>}
+                    {cardPaymentAccounts.length === 0 ? (
+                        <div className="bank-distribution-empty">
+                            Zatiaľ nemáš nastavené žiadne platby kartou.
+                        </div>
+                    ) : (
+                        <div className="card-payment-list">
+                            {cardPaymentAccounts.map((account) => {
+                                const required = Number(account.card_payments);
+                                const made = Math.min(Number(paymentProgress[account.id] || 0), required);
+                                const percentage = required > 0 ? (made / required) * 100 : 0;
+
+                                return (
+                                    <div className="card-payment-row" key={account.id}>
+                                        <div className="card-payment-account">
+                                            <span className="card-payment-account-name">{account.name}</span>
+                                            <span className="card-payment-account-bank">{account.bank || 'Neznáma banka'}</span>
+                                        </div>
+                                        <div className="card-payment-progress-track" aria-label={`Progress ${made} z ${required}`}>
+                                            <span style={{ width: `${percentage}%` }} />
+                                        </div>
+                                        <strong className="card-payment-count">{made}/{required}</strong>
+                                        <div className="card-payment-actions">
+                                            <button
+                                                type="button"
+                                                className="payment-step-button"
+                                                onClick={() => savePaymentProgress(account.id, required, -1)}
+                                                disabled={made === 0 || paymentLoading}
+                                                aria-label={`Odpočítať platbu pre ${account.name}`}
+                                            >
+                                                −
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="payment-step-button"
+                                                onClick={() => savePaymentProgress(account.id, required, 1)}
+                                                disabled={made >= required || paymentLoading}
+                                                aria-label={`Pridať platbu pre ${account.name}`}
+                                            >
+                                                +
+                                            </button>
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
                     )}
                 </section>

@@ -81,17 +81,10 @@ const toIsoDate = (skDate) => {
   return '';
 };
 
-const getCurrentMonthStart = () => {
-  const today = new Date();
-  return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-01`;
-};
-
 export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onGlobalSettingsChange }) {
   const [accounts, setAccounts] = useState([]);
-  const [paymentProgress, setPaymentProgress] = useState({});
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
-  const [paymentError, setPaymentError] = useState('');
   const [globalSettingsForm, setGlobalSettingsForm] = useState(globalSettings);
   const [globalSettingsSaving, setGlobalSettingsSaving] = useState(false);
   const [globalSettingsError, setGlobalSettingsError] = useState('');
@@ -133,82 +126,17 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
 
   const fetchAccounts = async () => {
     setLoading(true);
-    const [{ data, error }, { data: progressData, error: progressError }] = await Promise.all([
-      supabase
+    const { data, error } = await supabase
       .from('accounts')
       .select('*')
-      .order('created_at', { ascending: false }),
-      supabase
-        .from('card_payment_progress')
-        .select('account_id, payments_made')
-        .eq('month_start', getCurrentMonthStart()),
-    ]);
+      .order('created_at', { ascending: false });
 
     if (error) {
       console.error('Chyba pri načítaní účtov:', error.message);
     } else {
       setAccounts(data || []);
     }
-    if (progressError) {
-      console.error('Chyba pri načítaní platieb kartou:', progressError.message);
-      setPaymentError('Platby kartou sa nepodarilo načítať.');
-    } else {
-      setPaymentProgress((progressData || []).reduce((progress, item) => ({
-        ...progress,
-        [item.account_id]: item.payments_made,
-      }), {}));
-    }
     setLoading(false);
-  };
-
-  const changeCardPaymentProgress = async (accountId, requiredPayments, change) => {
-    setPaymentError('');
-    const currentPayments = Number(paymentProgress[accountId] || 0);
-    const nextPayments = Math.max(0, Math.min(requiredPayments, currentPayments + change));
-    const { data, error } = await supabase
-      .from('card_payment_progress')
-      .upsert({
-        account_id: accountId,
-        month_start: getCurrentMonthStart(),
-        payments_made: nextPayments,
-      }, { onConflict: 'account_id,month_start' })
-      .select('account_id, payments_made')
-      .single();
-
-    if (error) {
-      console.error('Chyba pri ukladaní platieb kartou:', error.message);
-      setPaymentError('Platby kartou sa nepodarilo uložiť.');
-      return;
-    }
-
-    setPaymentProgress((current) => ({
-      ...current,
-      [data.account_id]: data.payments_made,
-    }));
-  };
-
-  const resetCardPaymentProgress = async (accountId) => {
-    setPaymentError('');
-    const { data, error } = await supabase
-      .from('card_payment_progress')
-      .upsert({
-        account_id: accountId,
-        month_start: getCurrentMonthStart(),
-        payments_made: 0,
-      }, { onConflict: 'account_id,month_start' })
-      .select('account_id, payments_made')
-      .single();
-
-    if (error) {
-      console.error('Chyba pri resete platieb kartou:', error.message);
-      setPaymentError('Platby kartou sa nepodarilo resetovať.');
-      return;
-    }
-
-    setPaymentProgress((current) => ({
-      ...current,
-      [data.account_id]: data.payments_made,
-    }));
   };
 
   const handleSaveGlobalSettings = async (e) => {
@@ -446,11 +374,6 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
         {globalSettingsError && (
           <div className="settings-error" role="alert">
             {globalSettingsError}
-          </div>
-        )}
-        {paymentError && (
-          <div className="settings-error" role="alert">
-            {paymentError}
           </div>
         )}
         <form onSubmit={handleSaveGlobalSettings} className="finova-form global-settings-form">
@@ -728,45 +651,6 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
                       <span className="rate-badge" style={{ background: '#f1f5f9', color: '#475569', border: '1px solid #cbd5e1', fontWeight: 500 }}>
                         {cardCount}× kartou
                       </span>
-                    )}
-
-                    {cardCount > 0 && (
-                      <div className="card-payment-progress">
-                        <span className="card-payment-label">Platby</span>
-                        <strong>
-                          {Math.max(cardCount - Number(paymentProgress[acc.id] || 0), 0)} zostáva
-                        </strong>
-                        <div className="card-payment-actions">
-                          <button
-                            type="button"
-                            className="payment-step-button"
-                            onClick={() => changeCardPaymentProgress(acc.id, cardCount, -1)}
-                            disabled={!paymentProgress[acc.id]}
-                            aria-label="Odpočítať platbu"
-                          >
-                            −
-                          </button>
-                          <span className="payment-count">
-                            {Number(paymentProgress[acc.id] || 0)}/{cardCount}
-                          </span>
-                          <button
-                            type="button"
-                            className="payment-step-button"
-                            onClick={() => changeCardPaymentProgress(acc.id, cardCount, 1)}
-                            disabled={Number(paymentProgress[acc.id] || 0) >= cardCount}
-                            aria-label="Pridať platbu"
-                          >
-                            +
-                          </button>
-                          <button
-                            type="button"
-                            className="payment-reset-button"
-                            onClick={() => resetCardPaymentProgress(acc.id)}
-                          >
-                            Reset
-                          </button>
-                        </div>
-                      </div>
                     )}
 
                     {acc.expiration && (

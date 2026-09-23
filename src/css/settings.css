@@ -502,63 +502,6 @@ body {
   white-space: nowrap;
 }
 
-.card-payment-progress {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  color: var(--text-secondary);
-  font-size: 0.75rem;
-}
-
-.card-payment-progress strong {
-  color: var(--text-primary);
-}
-
-.card-payment-actions {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-
-.payment-step-button,
-.payment-reset-button {
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  background: var(--bg-card);
-  color: var(--text-primary);
-  cursor: pointer;
-  font-weight: 700;
-}
-
-.payment-step-button {
-  width: 24px;
-  height: 24px;
-  padding: 0;
-  line-height: 1;
-}
-
-.payment-step-button:hover:not(:disabled),
-.payment-reset-button:hover {
-  border-color: var(--accent-purple);
-  color: var(--accent-purple);
-}
-
-.payment-step-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.45;
-}
-
-.payment-reset-button {
-  padding: 0.25rem 0.45rem;
-  font-size: 0.7rem;
-}
-
-.payment-count {
-  min-width: 2.5rem;
-  color: var(--text-primary);
-  text-align: center;
-}
 
 /* Odstránenie šípok z input type="number" */
 input[type='number']::-webkit-outer-spin-button,
