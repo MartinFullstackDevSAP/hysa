@@ -2,7 +2,7 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
-  background-color: #f8fafc;
+  background-color: var(--bg-main);
 }
 
 #root {
@@ -12,22 +12,22 @@ body {
   padding: 0;
 }
 
-/* Konštanty a svetlá téma (Finova High-Contrast Light Mode) */
+/* Konštanty a svetlá fialová téma */
 :root {
-  --bg-main: #f8fafc;
+  --bg-main: #f7f5ff;
   --bg-card: #ffffff;
-  --bg-input: #ffffff;
-  --border-color: #cbd5e1;
-  --border-focus: #db2777;
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
+  --bg-input: #fcfaff;
+  --border-color: #e2d9f2;
+  --border-focus: #8b5cf6;
+  --text-primary: #26183f;
+  --text-secondary: #655b7d;
   --accent-purple: #7c3aed;
-  --accent-pink: #db2777;
-  --accent-gradient: linear-gradient(135deg, #e052a0 0%, #f15e64 50%, #e14eca 100%);
+  --accent-pink: #a855f7;
+  --accent-gradient: linear-gradient(135deg, #7c3aed 0%, #a855f7 52%, #ec4899 100%);
   --accent-green: #059669;
   --accent-green-bg: #ecfdf5;
   --accent-red: #dc2626;
-  --shadow-card: 0 10px 15px -3px rgba(15, 23, 42, 0.05), 0 4px 6px -4px rgba(15, 23, 42, 0.03);
+  --shadow-card: 0 10px 25px -8px rgba(76, 29, 149, 0.16), 0 4px 10px -5px rgba(76, 29, 149, 0.08);
 }
 
 /* Kontejner roztiahnutý na celú obrazovku */
@@ -194,9 +194,9 @@ body {
 }
 
 .finova-input:focus, .finova-select:focus, input:focus, select:focus {
-  background-color: #ffffff !important;
+  background-color: var(--bg-card) !important;
   border-color: var(--border-focus) !important;
-  box-shadow: 0 0 0 3px rgba(219, 39, 119, 0.12) !important;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.16) !important;
 }
 
 .finova-input:focus::placeholder {
@@ -965,4 +965,41 @@ input[type='number'] {
   .modal-actions-container {
     flex-direction: column-reverse;
   }
+}
+
+/* Jemné levanduľové povrchy pre tabuľky, zoznamy a modálne okná. */
+.finova-list-item,
+.finova-table,
+.empty-table-container,
+.custom-select-options {
+  background-color: var(--bg-card);
+}
+
+.finova-list-item:hover,
+.finova-table tbody tr:hover td,
+.custom-select-option:hover,
+.btn-close-modal:hover,
+.btn-finova-secondary:hover {
+  background-color: #f5f1ff;
+}
+
+.finova-table th,
+.finova-modal-footer {
+  background-color: #faf8ff;
+}
+
+.bank-icon {
+  background: #f5f1ff;
+  border-color: var(--border-color);
+  color: var(--text-secondary);
+}
+
+.info-badge {
+  background-color: #f1edfb;
+  border-color: #e2d9f2;
+}
+
+.btn-delete-icon,
+.btn-finova-secondary {
+  background: var(--bg-card);
 }

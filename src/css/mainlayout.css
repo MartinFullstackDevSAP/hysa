@@ -2,7 +2,7 @@
 .finova-app-shell {
   display: flex;
   min-height: 100vh;
-  background-color: var(--bg-main, #f8fafc);
+  background-color: var(--bg-main, #f7f5ff);
   box-sizing: border-box;
   position: relative;
   flex-direction: column;
@@ -22,7 +22,7 @@
   display: none;
   width: 260px;
   background-color: var(--bg-card, #ffffff);
-  border-right: 1px solid var(--border-color, #e2e8f0);
+  border-right: 1px solid var(--border-color, #e2d9f2);
   padding: 2rem 1.25rem;
   box-sizing: border-box;
   flex-direction: column;
@@ -44,7 +44,7 @@
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  background: var(--accent-gradient, linear-gradient(135deg, #db2777 0%, #f472b6 100%));
+  background: var(--accent-gradient, linear-gradient(135deg, #7c3aed 0%, #ec4899 100%));
   color: #fff;
   font-weight: 700;
   font-size: 1.2rem;
@@ -57,7 +57,7 @@
 .sidebar-brand-title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--text-primary, #0f172a);
+  color: var(--text-primary, #26183f);
   letter-spacing: -0.02em;
 }
 
@@ -76,7 +76,7 @@
   border-radius: 12px;
   border: none;
   background: transparent;
-  color: var(--text-secondary, #64748b);
+  color: var(--text-secondary, #655b7d);
   font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
@@ -86,13 +86,13 @@
 }
 
 .sidebar-nav-item:hover {
-  background-color: #f1f5f9;
-  color: var(--text-primary, #0f172a);
+  background-color: #f0ebff;
+  color: var(--text-primary, #26183f);
 }
 
 .sidebar-nav-item.active {
-  background-color: rgba(219, 39, 119, 0.08);
-  color: var(--accent-pink, #db2777);
+  background-color: rgba(124, 58, 237, 0.1);
+  color: var(--accent-pink, #a855f7);
 }
 
 .sidebar-footer {
@@ -114,7 +114,7 @@
   left: 0;
   right: 0;
   background: var(--bg-card, #ffffff);
-  border-top: 1px solid var(--border-color, #e2e8f0);
+  border-top: 1px solid var(--border-color, #e2d9f2);
   padding: 0.5rem 1rem;
   justify-content: space-around;
   align-items: center;
@@ -129,7 +129,7 @@
   gap: 0.25rem;
   background: transparent;
   border: none;
-  color: var(--text-secondary, #64748b);
+  color: var(--text-secondary, #655b7d);
   font-size: 0.7rem;
   font-weight: 600;
   cursor: pointer;
@@ -140,7 +140,7 @@
 
 .mobile-nav-item:hover,
 .mobile-nav-item.active {
-  color: var(--accent-pink, #db2777);
+  color: var(--accent-pink, #a855f7);
 }
 
 /* Dashboard & Hero Card */
@@ -156,7 +156,7 @@
 
 .stat-card {
   background: var(--bg-card, #ffffff);
-  border: 1px solid var(--border-color, #e2e8f0);
+  border: 1px solid var(--border-color, #e2d9f2);
   border-radius: 16px;
   padding: 1.5rem 1.75rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
@@ -166,7 +166,7 @@
 .stat-label {
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--text-secondary, #64748b);
+  color: var(--text-secondary, #655b7d);
   margin-bottom: 0.35rem;
 }
 
