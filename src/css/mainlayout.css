@@ -498,6 +498,88 @@
   line-height: 1;
 }
 
+.dashboard-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.dashboard-confirm-modal {
+  width: min(100%, 420px);
+  padding: 1.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
+  color: var(--text-primary);
+}
+
+.dashboard-confirm-modal h3 {
+  margin: 0 0 0.75rem;
+  font-size: 1.15rem;
+}
+
+.dashboard-confirm-modal p {
+  margin: 0 0 1.5rem;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.dashboard-confirm-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.dashboard-confirm-button {
+  flex: 1;
+  height: 44px;
+  border: none;
+  border-radius: 10px;
+  background: var(--accent-gradient);
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(224, 82, 160, 0.25);
+  transition: transform 0.15s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dashboard-confirm-button:hover:not(:disabled) {
+  opacity: 0.95;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(224, 82, 160, 0.35);
+}
+
+.dashboard-confirm-button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.dashboard-confirm-cancel {
+  background: #f1f5f9;
+  color: var(--text-primary);
+  box-shadow: none;
+}
+
+.dashboard-confirm-cancel:hover:not(:disabled) {
+  background: #e2e8f0;
+  box-shadow: none;
+}
+
+:root[data-theme='dark'] .dashboard-confirm-cancel {
+  background: #27183a;
+}
+
+:root[data-theme='dark'] .dashboard-confirm-cancel:hover:not(:disabled) {
+  background: #34234d;
+}
+
 /* MEDIA QUERY PRE DESKTOP (>= 1024px) */
 @media (min-width: 1024px) {
   .finova-app-shell {
@@ -628,8 +710,9 @@
   }
 
   .card-payment-actions {
-    grid-column: 1 / -1;
+    grid-column: 2;
     grid-row: 3;
+    justify-content: flex-end;
   }
 
   .yield-section {

@@ -16,6 +16,7 @@ const Dashboard = ({ currency = 'CZK' }) => {
     const [loading, setLoading] = useState(true);
     const [paymentLoading, setPaymentLoading] = useState(true);
     const [paymentError, setPaymentError] = useState('');
+    const [showResetConfirmation, setShowResetConfirmation] = useState(false);
 
     useEffect(() => {
         fetchAccounts();
@@ -79,7 +80,10 @@ const Dashboard = ({ currency = 'CZK' }) => {
 
     const resetAllPaymentProgress = async () => {
         const cardAccounts = accounts.filter((account) => Number(account.card_payments) > 0);
-        if (cardAccounts.length === 0) return;
+        if (cardAccounts.length === 0) {
+            setShowResetConfirmation(false);
+            return;
+        }
 
         setPaymentError('');
         const { data, error } = await supabase
@@ -104,6 +108,7 @@ const Dashboard = ({ currency = 'CZK' }) => {
                 [item.account_id]: Number(item.payments_made) || 0,
             }), {}),
         }));
+        setShowResetConfirmation(false);
     };
 
     const totalBalance = accounts.reduce((acc, curr) => acc + (Number(curr.balance) || 0), 0);
@@ -211,7 +216,7 @@ const Dashboard = ({ currency = 'CZK' }) => {
                         <button
                             type="button"
                             className="card-payment-reset-all"
-                            onClick={resetAllPaymentProgress}
+                            onClick={() => setShowResetConfirmation(true)}
                             disabled={cardPaymentAccounts.length === 0 || paymentLoading}
                         >
                             Reset všetkých
@@ -312,6 +317,31 @@ const Dashboard = ({ currency = 'CZK' }) => {
                     )}
                 </section>
             </div>
+            {showResetConfirmation && (
+                <div className="dashboard-modal-overlay" role="presentation">
+                    <div className="dashboard-confirm-modal" role="dialog" aria-modal="true" aria-labelledby="reset-payments-title">
+                        <h3 id="reset-payments-title">Potvrdenie resetu</h3>
+                        <p>Naozaj si želáte resetovať všetky platby kartou?</p>
+                        <div className="dashboard-confirm-actions">
+                            <button
+                                type="button"
+                                className="dashboard-confirm-button dashboard-confirm-cancel"
+                                onClick={() => setShowResetConfirmation(false)}
+                            >
+                                Zrušiť
+                            </button>
+                            <button
+                                type="button"
+                                className="dashboard-confirm-button"
+                                onClick={resetAllPaymentProgress}
+                                disabled={paymentLoading}
+                            >
+                                Potvrdiť
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
