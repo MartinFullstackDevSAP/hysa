@@ -120,7 +120,10 @@ const Dashboard = ({ currency = 'CZK' }) => {
                     ) : (
                         <div className="bank-distribution-content">
                             <div className="bank-donut" style={{ '--bank-donut-gradient': `conic-gradient(${chartGradient})` }}>
-                                <div className="bank-donut-center" />
+                                <div className="bank-donut-center">
+                                    <span>Účty</span>
+                                    <strong>{accounts.length}</strong>
+                                </div>
                             </div>
                             <div className="bank-distribution-legend">
                                 {bankBalances.map(({ bank, balance, color, percentage }) => (

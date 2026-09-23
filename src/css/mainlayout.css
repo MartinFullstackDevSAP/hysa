@@ -243,6 +243,8 @@
 }
 
 .bank-distribution-card {
+  align-self: flex-start;
+  width: 33.333%;
   padding: 1.5rem 1.75rem;
 }
 
@@ -255,7 +257,8 @@
 .bank-distribution-content {
   display: flex;
   align-items: center;
-  gap: 2rem;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .bank-donut {
@@ -278,6 +281,16 @@
   border-radius: 50%;
   background: var(--bg-card, #ffffff);
   text-align: center;
+}
+
+.bank-donut-center span {
+  color: var(--text-secondary, #655b7d);
+  font-size: 0.75rem;
+}
+
+.bank-donut-center strong {
+  color: var(--text-primary, #26183f);
+  font-size: 1.25rem;
 }
 
 .bank-distribution-legend {
@@ -421,6 +434,10 @@
     width: 170px;
     height: 170px;
     flex-basis: 170px;
+  }
+
+  .bank-distribution-card {
+    width: 100%;
   }
 
   .yield-section {
