@@ -69,6 +69,11 @@ const Dashboard = ({ currency = 'CZK' }) => {
         return `${formatted} ${currencySymbol}`;
     };
 
+    const formatAmountInteger = (amount) => Math.round(amount || 0).toLocaleString('cs-CZ', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+    });
+
     return (
         <div className="finova-dashboard">
             <div className="stats-grid" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -138,7 +143,7 @@ const Dashboard = ({ currency = 'CZK' }) => {
                                             />
                                         </span>
                                         <span className="bank-legend-value">
-                                            {formatCurrencyInteger(balance, currency)}
+                                            {formatAmountInteger(balance)}
                                             <small>{percentage.toFixed(1)} %</small>
                                         </span>
                                     </div>
