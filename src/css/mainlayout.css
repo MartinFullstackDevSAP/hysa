@@ -316,6 +316,7 @@
   width: 8px;
   height: 32px;
   border-radius: 999px;
+  transform: translateY(-7px);
 }
 
 .bank-legend-logo {
