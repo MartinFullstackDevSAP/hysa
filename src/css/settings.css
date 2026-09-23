@@ -658,10 +658,10 @@ input[type='number'] {
 
 /* Tlačidlo na vymazanie vo forme ikony */
 .btn-delete-icon {
-  background: #ffffff;
+  background: transparent;
   color: var(--text-secondary);
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: 12px;
   width: 40px;
   height: 40px;
   display: flex;
@@ -1051,10 +1051,13 @@ input[type='number'] {
 :root[data-theme='dark'] .finova-table,
 :root[data-theme='dark'] .empty-table-container,
 :root[data-theme='dark'] .custom-select-options,
-:root[data-theme='dark'] .btn-delete-icon,
 :root[data-theme='dark'] .btn-finova-secondary,
 :root[data-theme='dark'] .finova-modal {
   background-color: var(--bg-card);
+}
+
+:root[data-theme='dark'] .btn-delete-icon {
+  background-color: transparent;
 }
 
 :root[data-theme='dark'] .finova-list-item:hover,

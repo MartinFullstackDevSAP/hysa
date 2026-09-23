@@ -621,7 +621,12 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
             Zoznam účtov
           </h2>
           <span className="rate-badge">
-            {accounts.length} {accounts.length === 1 ? 'účet' : 'účty'}
+            {accounts.length}{' '}
+            {accounts.length === 1
+              ? 'účet'
+              : accounts.length >= 2 && accounts.length <= 4
+                ? 'účty'
+                : 'účtov'}
           </span>
         </div>
 
@@ -703,7 +708,7 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
                     <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                       <button
                         type="button"
-                        className="btn-delete-icon"
+                        className="btn-edit-icon btn-delete-icon"
                         onClick={() => setConfirmDeleteId(acc.id)}
                         title="Odstrániť účet"
                       >

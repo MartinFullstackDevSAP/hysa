@@ -4,8 +4,7 @@ import {
   House,
   Wallet, 
   TrendingUp, 
-  Settings as SettingsIcon, 
-  Plus 
+  Settings as SettingsIcon
 } from 'lucide-react';
 
 const MainLayout = ({ activeTab, setActiveTab, children }) => {
@@ -49,12 +48,6 @@ const MainLayout = ({ activeTab, setActiveTab, children }) => {
           })}
         </nav>
 
-        <div className="sidebar-footer">
-          <button className="btn-finova-primary sidebar-action-btn">
-            <Plus size={18} />
-            <span>Nová transakcia</span>
-          </button>
-        </div>
       </aside>
 
       {/* Spodná fixačná lišta pre Mobil / Tablet (< 1024px) */}
