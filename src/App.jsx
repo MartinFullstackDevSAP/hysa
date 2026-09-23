@@ -21,7 +21,7 @@ function App() {
     const fetchGlobalSettings = async () => {
       const { data, error } = await supabase
         .from('global_settings')
-        .select('dark_mode, dashhoard_currency')
+        .select('dark_mode, dashboard_currency')
         .limit(1)
         .maybeSingle();
 
@@ -33,7 +33,7 @@ function App() {
       if (data) {
         setGlobalSettings({
           dark_mode: Boolean(data.dark_mode),
-          dashhoard_currency: data.dashhoard_currency || DEFAULT_GLOBAL_SETTINGS.dashhoard_currency,
+          dashboard_currency: data.dashboard_currency || DEFAULT_GLOBAL_SETTINGS.dashboard_currency,
         });
       }
     };
@@ -47,7 +47,7 @@ function App() {
 
   return (
     <MainLayout activeTab={activeTab} setActiveTab={setActiveTab}>
-      {activeTab === 'dashboard' && <Dashboard accounts={accounts} currency={globalSettings.dashhoard_currency} />}
+      {activeTab === 'dashboard' && <Dashboard accounts={accounts} currency={globalSettings.dashboard_currency} />}
       {activeTab === 'accounts' && (
         <div className="finova-card">
           <h1 className="finova-title">Účty</h1>

@@ -186,7 +186,7 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
 
     const payload = {
       dark_mode: Boolean(globalSettingsForm.dark_mode),
-      dashhoard_currency: globalSettingsForm.dashhoard_currency,
+      dashboard_currency: globalSettingsForm.dashboard_currency,
     };
 
     const { data: existingSettings, error: fetchError } = await supabase
@@ -212,7 +212,7 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
       } else {
         updateQuery = updateQuery
           .eq('dark_mode', existingRow.dark_mode)
-          .eq('dashhoard_currency', existingRow.dashhoard_currency);
+          .eq('dashboard_currency', existingRow.dashboard_currency);
       }
 
       const result = await updateQuery.select().maybeSingle();
@@ -232,7 +232,7 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
     } else {
       const savedSettings = {
         dark_mode: Boolean(data.dark_mode),
-        dashhoard_currency: data.dashhoard_currency || DEFAULT_GLOBAL_SETTINGS.dashhoard_currency,
+        dashboard_currency: data.dashboard_currency || DEFAULT_GLOBAL_SETTINGS.dashboard_currency,
       };
       setGlobalSettingsForm(savedSettings);
       onGlobalSettingsChange?.(savedSettings);
@@ -434,8 +434,8 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
                 { value: 'EUR', label: 'EUR (€)' },
                 { value: 'USD', label: 'USD ($)' },
               ]}
-              value={globalSettingsForm.dashhoard_currency}
-              onChange={(value) => setGlobalSettingsForm((current) => ({ ...current, dashhoard_currency: value }))}
+              value={globalSettingsForm.dashboard_currency}
+              onChange={(value) => setGlobalSettingsForm((current) => ({ ...current, dashboard_currency: value }))}
             />
           </div>
           <div className="form-group form-group-full">
