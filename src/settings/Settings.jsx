@@ -550,9 +550,9 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
               {/* Vizuálny textový/formátovaný input (prekrýva sa, ale kliknutie smeruje na date picker alebo funguje duálne) */}
               <input
                 type="text"
-                readOnly
                 value={expirationSk}
                 placeholder="DD.MM.RRRR"
+                onChange={(e) => setExpirationSk(e.target.value)}
                 className="finova-input"
                 style={{ paddingRight: '38px', width: '100%', boxSizing: 'border-box' }}
               />
@@ -565,11 +565,13 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
                 onChange={(e) => setExpirationSk(toSkDate(e.target.value))}
                 style={{
                   position: 'absolute',
-                  inset: 0,
+                  right: '8px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
                   opacity: 0,
-                  width: '100%',
-                  height: '100%',
-                  cursor: 'pointer',
+                  pointerEvents: 'none',
+                  width: '1px',
+                  height: '1px',
                   boxSizing: 'border-box',
                 }}
                 title="Vybrať dátum"
@@ -578,7 +580,7 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
               {/* Ikonka len ako vizuálny doplnok, lebo celý wrapper/date picker je clickable */}
               <button
                 type="button"
-                tabIndex={-1}
+                onClick={handleOpenDatePicker}
                 style={{
                   position: 'absolute',
                   right: '8px',
@@ -847,11 +849,11 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
                     <div className="finova-input-wrapper" style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                       <input
                         type="text"
-                        readOnly
                         value={editExpirationSk}
-                        onClick={handleOpenEditDatePicker}
+                        onChange={(e) => setEditExpirationSk(e.target.value)}
+                        placeholder="DD.MM.RRRR"
                         className="finova-input"
-                        style={{ paddingRight: '38px', width: '100%', cursor: 'pointer', caretColor: 'transparent', boxSizing: 'border-box' }}
+                        style={{ paddingRight: '38px', width: '100%', boxSizing: 'border-box' }}
                       />
                       <input
                         ref={editHiddenDateRef}

@@ -673,9 +673,9 @@ input[type='number'] {
 }
 
 .btn-delete-icon:hover {
-  background-color: #fef2f2;
-  color: var(--accent-red);
-  border-color: #fecaca;
+  background-color: #dc2626;
+  color: #ffffff;
+  border-color: #dc2626;
 }
 
 /* DESKTOP (od 1024px) – Grid layout pre položku zoznamu s jednotnou šírkou ľavého stĺpca */
@@ -977,6 +977,18 @@ input[type='number'] {
   border-color: #2563eb;
 }
 
+.btn-edit-icon.btn-delete-icon:hover {
+  background: #dc2626;
+  color: #ffffff;
+  border-color: #dc2626;
+}
+
+.btn-edit-icon:not(.btn-delete-icon):hover {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+}
+
 @media (max-width: 640px) {
   .btn-edit-icon {
     width: 32px;
@@ -1076,4 +1088,15 @@ input[type='number'] {
 
 :root[data-theme='dark'] .bank-icon {
   border-color: var(--border-color);
+}
+
+.finova-input::placeholder {
+  color: var(--text-secondary);
+  opacity: 1;
+}
+
+:root[data-theme='dark'] .finova-input::placeholder,
+:root[data-theme='dark'] input::placeholder {
+  color: #ffffff;
+  opacity: 1;
 }
