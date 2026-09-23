@@ -538,8 +538,8 @@
     padding: 2.5rem;
   }
 
-  .dashboard-stats-grid {
-    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  .finova-dashboard .dashboard-stats-grid {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) !important;
   }
 
   .dashboard-stats-grid .card-payment-card {
