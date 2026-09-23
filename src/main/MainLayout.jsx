@@ -28,7 +28,7 @@ const MainLayout = ({ activeTab, setActiveTab, children }) => {
       <aside className="finova-desktop-sidebar">
         <div className="sidebar-brand">
           <div className="sidebar-logo-icon">F</div>
-          <span className="sidebar-brand-title">finova</span>
+          <span className="sidebar-brand-title">F.I.R.E</span>
         </div>
 
         <nav className="sidebar-nav">

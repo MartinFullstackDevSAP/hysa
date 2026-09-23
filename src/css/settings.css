@@ -1077,6 +1077,12 @@ input[type='number'] {
   color: #ffffff;
 }
 
+:root[data-theme='dark'] .btn-edit-icon.btn-delete-icon:hover {
+  background-color: #dc2626;
+  color: #ffffff;
+  border-color: #dc2626;
+}
+
 :root[data-theme='dark'] .finova-list-item:hover,
 :root[data-theme='dark'] .finova-table tbody tr:hover td,
 :root[data-theme='dark'] .custom-select-option:hover,
