@@ -161,7 +161,7 @@ const Dashboard = ({ currency = 'CZK' }) => {
 
     return (
         <div className="finova-dashboard">
-            <div className="stats-grid" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div className="stats-grid dashboard-stats-grid">
                 {/* Hlavná karta: zostatok, mesačný výnos a čistý úrok */}
                 <div className="stat-card finova-hero-card">
                     <div className="hero-balance-section">
