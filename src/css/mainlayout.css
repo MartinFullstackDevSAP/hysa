@@ -90,6 +90,11 @@
   color: var(--text-primary, #26183f);
 }
 
+:root[data-theme='dark'] .sidebar-nav-item:hover {
+  background-color: #2b1b42;
+  color: #f5f3ff;
+}
+
 .sidebar-nav-item.active {
   background-color: rgba(124, 58, 237, 0.1);
   color: var(--accent-pink, #a855f7);

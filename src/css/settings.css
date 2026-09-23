@@ -160,6 +160,14 @@ body {
   gap: 0.65rem;
 }
 
+.global-settings-title {
+  align-items: center;
+}
+
+:root[data-theme='dark'] .account-list-icon {
+  color: #ffffff;
+}
+
 .icon-badge {
   display: flex;
   align-items: center;

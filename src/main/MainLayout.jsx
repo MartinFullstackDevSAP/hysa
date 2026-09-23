@@ -1,7 +1,7 @@
 import React from 'react';
 import '../css/mainlayout.css';
 import { 
-  LayoutDashboard, 
+  House,
   Wallet, 
   TrendingUp, 
   Settings as SettingsIcon, 
@@ -10,7 +10,7 @@ import {
 
 const MainLayout = ({ activeTab, setActiveTab, children }) => {
   const navItems = [
-    { id: 'dashboard', label: 'Prehľad', icon: LayoutDashboard },
+    { id: 'dashboard', label: 'Prehľad', icon: House },
     { id: 'accounts', label: 'Účty', icon: Wallet },
     { id: 'investments', label: 'Investície', icon: TrendingUp },
     { id: 'settings', label: 'Nastavenia', icon: SettingsIcon },

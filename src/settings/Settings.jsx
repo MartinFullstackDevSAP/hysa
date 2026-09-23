@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { SlidersHorizontal } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 import CustomSelect from './CustomSelect';
 import { DEFAULT_GLOBAL_SETTINGS } from '../globalSettings';
@@ -405,8 +406,10 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
       <section className="finova-card">
         <div className="card-header-flex">
           <div>
-            <h2 className="card-title" style={{ margin: 0 }}>Globálne nastavenia</h2>
-            <p className="finova-subtitle">Nastavenia platné pre celý dashboard</p>
+            <h2 className="card-title global-settings-title" style={{ margin: 0 }}>
+              <SlidersHorizontal size={22} aria-hidden="true" />
+              Globálne nastavenia
+            </h2>
           </div>
         </div>
         {globalSettingsError && (
@@ -440,7 +443,7 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
           </div>
           <div className="form-group form-group-full">
             <button type="submit" className="btn-finova-primary" disabled={globalSettingsSaving}>
-              {globalSettingsSaving ? 'Ukladám...' : 'Uložiť globálne nastavenia'}
+              {globalSettingsSaving ? 'Ukladám...' : 'Uložiť'}
             </button>
           </div>
         </form>
@@ -610,7 +613,7 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
       <section className="finova-card">
         <div className="card-header-flex">
           <h2 className="card-title" style={{ margin: 0 }}>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0f172a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg className="account-list-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4" />
               <path d="M3 5v14a2 2 0 0 0 2 2h16v-5" />
               <path d="M18 12a2 2 0 0 0 0 4h4v-4z" />
