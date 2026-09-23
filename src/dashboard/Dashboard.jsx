@@ -146,18 +146,15 @@ const Dashboard = ({ currency = 'CZK' }) => {
         sum + Math.min(Number(paymentProgress[account.id] || 0), Number(account.card_payments))
     ), 0);
 
+    const formatIntegerWithDots = (amount) => Math.round(amount || 0)
+        .toString()
+        .replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
     const formatCurrencyInteger = (amount, currencySymbol = 'CZK') => {
-        const formatted = Math.round(amount || 0).toLocaleString('cs-CZ', {
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0,
-        });
-        return `${formatted} ${currencySymbol}`;
+        return `${formatIntegerWithDots(amount)} ${currencySymbol}`;
     };
 
-    const formatAmountInteger = (amount) => Math.round(amount || 0).toLocaleString('cs-CZ', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-    });
+    const formatAmountInteger = (amount) => formatIntegerWithDots(amount);
 
     return (
         <div className="finova-dashboard">
@@ -208,7 +205,7 @@ const Dashboard = ({ currency = 'CZK' }) => {
                             <p className="card-payment-summary">
                                 {paymentLoading
                                     ? 'Načítavam progress...'
-                                    : `${totalMadePayments} z ${totalRequiredPayments} platieb vykonaných`}
+                                    : `${formatIntegerWithDots(totalMadePayments)} z ${formatIntegerWithDots(totalRequiredPayments)} platieb vykonaných`}
                             </p>
                         </div>
                         <button
@@ -249,7 +246,9 @@ const Dashboard = ({ currency = 'CZK' }) => {
                                         <div className="card-payment-progress-track" aria-label={`Progress ${made} z ${required}`}>
                                             <span style={{ width: `${percentage}%` }} />
                                         </div>
-                                        <strong className="card-payment-count">{made}/{required}</strong>
+                                        <strong className="card-payment-count">
+                                            {formatIntegerWithDots(made)}/{formatIntegerWithDots(required)}
+                                        </strong>
                                         <div className="card-payment-actions">
                                             <button
                                                 type="button"

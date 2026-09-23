@@ -386,42 +386,28 @@
 
 .card-payment-reset-all,
 .payment-step-button {
-  border: 1px solid var(--border-color, #e2d9f2);
-  border-radius: 8px;
-  background: var(--bg-card, #ffffff);
-  color: var(--text-primary, #26183f);
+  background: var(--accent-gradient);
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
   cursor: pointer;
   font-weight: 600;
+  box-shadow: 0 4px 12px rgba(224, 82, 160, 0.25);
+  transition: transform 0.15s ease, opacity 0.2s ease, box-shadow 0.2s ease;
 }
 
 .card-payment-reset-all {
-  background: #ffffff;
-  border-radius: 10px;
   padding: 0.65rem 1.25rem;
   font-size: 0.9rem;
   height: 40px;
   white-space: nowrap;
-  transition: all 0.15s ease;
-}
-
-.card-payment-reset-all:hover:not(:disabled) {
-  background-color: #f1f5f9;
-  border-color: #94a3b8;
-}
-
-:root[data-theme='dark'] .card-payment-reset-all {
-  background: var(--bg-card);
-}
-
-:root[data-theme='dark'] .card-payment-reset-all:hover:not(:disabled) {
-  background-color: #27183a;
-  border-color: var(--border-focus);
 }
 
 .card-payment-reset-all:hover:not(:disabled),
 .payment-step-button:hover:not(:disabled) {
-  border-color: var(--accent-purple, #7c3aed);
-  color: var(--accent-purple, #7c3aed);
+  opacity: 0.95;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(224, 82, 160, 0.35);
 }
 
 .card-payment-reset-all:disabled,
