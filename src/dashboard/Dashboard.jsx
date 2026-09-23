@@ -201,42 +201,6 @@ const Dashboard = ({ currency = 'CZK' }) => {
                         </span>
                     </div>
                 </div>
-                <section className="stat-card bank-distribution-card">
-                    <h2 className="bank-distribution-title">Rozloženie účtov</h2>
-                    {loading ? (
-                        <div className="bank-distribution-empty">Načítavam dáta...</div>
-                    ) : bankBalances.length === 0 ? (
-                        <div className="bank-distribution-empty">Zatiaľ nemáš žiadne účty.</div>
-                    ) : (
-                        <div className="bank-distribution-content">
-                            <div className="bank-donut" style={{ '--bank-donut-gradient': `conic-gradient(${chartGradient})` }}>
-                                <div className="bank-donut-center">
-                                    <strong>{accounts.length} účtov</strong>
-                                </div>
-                            </div>
-                            <div className="bank-distribution-legend">
-                                {bankBalances.map(({ bank, balance, color, percentage }) => (
-                                    <div className="bank-legend-item" key={bank}>
-                                        <span className="bank-legend-color" style={{ backgroundColor: color }} />
-                                        <span className="bank-legend-logo">
-                                            <img
-                                                src={BANK_LOGOS[bank] || getBankLogo(bank)}
-                                                alt=""
-                                                onError={(event) => {
-                                                    event.currentTarget.style.display = 'none';
-                                                }}
-                                            />
-                                        </span>
-                                        <span className="bank-legend-value">
-                                            {formatAmountInteger(balance)}
-                                            <small>{percentage.toFixed(1)} %</small>
-                                        </span>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-                </section>
                 <section className="stat-card card-payment-card">
                     <div className="card-payment-header">
                         <div>
@@ -271,7 +235,15 @@ const Dashboard = ({ currency = 'CZK' }) => {
                                 return (
                                     <div className="card-payment-row" key={account.id}>
                                         <div className="card-payment-account">
-                                            <span className="card-payment-account-name">{account.name}</span>
+                                            <span className="card-payment-bank-logo">
+                                                <img
+                                                    src={BANK_LOGOS[account.bank] || getBankLogo(account.bank)}
+                                                    alt=""
+                                                    onError={(event) => {
+                                                        event.currentTarget.style.display = 'none';
+                                                    }}
+                                                />
+                                            </span>
                                             <span className="card-payment-account-bank">{account.bank || 'Neznáma banka'}</span>
                                         </div>
                                         <div className="card-payment-progress-track" aria-label={`Progress ${made} z ${required}`}>
@@ -301,6 +273,42 @@ const Dashboard = ({ currency = 'CZK' }) => {
                                     </div>
                                 );
                             })}
+                        </div>
+                    )}
+                </section>
+                <section className="stat-card bank-distribution-card">
+                    <h2 className="bank-distribution-title">Rozloženie účtov</h2>
+                    {loading ? (
+                        <div className="bank-distribution-empty">Načítavam dáta...</div>
+                    ) : bankBalances.length === 0 ? (
+                        <div className="bank-distribution-empty">Zatiaľ nemáš žiadne účty.</div>
+                    ) : (
+                        <div className="bank-distribution-content">
+                            <div className="bank-donut" style={{ '--bank-donut-gradient': `conic-gradient(${chartGradient})` }}>
+                                <div className="bank-donut-center">
+                                    <strong>{accounts.length} účtov</strong>
+                                </div>
+                            </div>
+                            <div className="bank-distribution-legend">
+                                {bankBalances.map(({ bank, balance, color, percentage }) => (
+                                    <div className="bank-legend-item" key={bank}>
+                                        <span className="bank-legend-color" style={{ backgroundColor: color }} />
+                                        <span className="bank-legend-logo">
+                                            <img
+                                                src={BANK_LOGOS[bank] || getBankLogo(bank)}
+                                                alt=""
+                                                onError={(event) => {
+                                                    event.currentTarget.style.display = 'none';
+                                                }}
+                                            />
+                                        </span>
+                                        <span className="bank-legend-value">
+                                            {formatAmountInteger(balance)}
+                                            <small>{percentage.toFixed(1)} %</small>
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     )}
                 </section>
