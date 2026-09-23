@@ -1,11 +1,37 @@
-import Settings from './settings/Settings.jsx'
+import React, { useState } from 'react';
+import MainLayout from './main/MainLayout';
+import Dashboard from './dashboard/Dashboard';
+import Settings from './settings/Settings';
+import './index.css';
 
 function App() {
+  const [activeTab, setActiveTab] = useState('dashboard');
+  
+  // Ukážkové dáta pre HYSA účty (neskôr ich môžeš nahradiť načítaním zo Supabase)
+  const [accounts] = useState([
+    { bank: 'VÚB', accountName: 'Flexi účet', balance: 15000, rate: 3.0 },
+    { bank: 'Tatra banka', accountName: 'Sporenie', balance: 25000, rate: 2.5 },
+    { bank: 'J&T Banka', accountName: 'Termínovaný vklad', balance: 50000, rate: 4.1 },
+  ]);
+
   return (
-    <div style={{ backgroundColor: '#121218', minHeight: '100vh' }}>
-      <Settings />
-    </div>
-  )
+    <MainLayout activeTab={activeTab} setActiveTab={setActiveTab}>
+      {activeTab === 'dashboard' && <Dashboard accounts={accounts} />}
+      {activeTab === 'accounts' && (
+        <div className="finova-card">
+          <h1 className="finova-title">Účty</h1>
+          <p className="finova-subtitle">Správa všetkých bankových a úsporných kont</p>
+        </div>
+      )}
+      {activeTab === 'investments' && (
+        <div className="finova-card">
+          <h1 className="finova-title">Investície</h1>
+          <p className="finova-subtitle">ETF, dlhopisy a portfólio</p>
+        </div>
+      )}
+      {activeTab === 'settings' && <Settings />}
+    </MainLayout>
+  );
 }
 
-export default App
+export default App;

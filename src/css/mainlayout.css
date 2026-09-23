@@ -1,0 +1,286 @@
+/* Shell pre aplikáciu s rozdelením na ľavý sidebar + obsah */
+.finova-app-shell {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--bg-main, #f8fafc);
+  box-sizing: border-box;
+  position: relative;
+  flex-direction: column;
+}
+
+/* Hlavná oblasť s obsahom */
+.finova-main-content {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  padding-bottom: 80px; 
+  box-sizing: border-box;
+}
+
+/* Ľavý bočný panel – predvolene skrytý na mobile, zobrazený vľavo na desktope */
+.finova-desktop-sidebar {
+  display: none;
+  width: 260px;
+  background-color: var(--bg-card, #ffffff);
+  border-right: 1px solid var(--border-color, #e2e8f0);
+  padding: 2rem 1.25rem;
+  box-sizing: border-box;
+  flex-direction: column;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  z-index: 1000;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 0.75rem 2rem 0.75rem;
+}
+
+.sidebar-logo-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--accent-gradient, linear-gradient(135deg, #db2777 0%, #f472b6 100%));
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(224, 82, 160, 0.25);
+}
+
+.sidebar-brand-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary, #0f172a);
+  letter-spacing: -0.02em;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.sidebar-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary, #64748b);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  width: 100%;
+}
+
+.sidebar-nav-item:hover {
+  background-color: #f1f5f9;
+  color: var(--text-primary, #0f172a);
+}
+
+.sidebar-nav-item.active {
+  background-color: rgba(219, 39, 119, 0.08);
+  color: var(--accent-pink, #db2777);
+}
+
+.sidebar-footer {
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color, #e2e8f0);
+}
+
+.sidebar-action-btn {
+  margin-top: 0 !important;
+  width: 100% !important;
+  justify-content: center;
+}
+
+/* Spodná fixačná lišta pre mobil / tablet */
+.finova-mobile-bottom-bar {
+  display: flex;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--bg-card, #ffffff);
+  border-top: 1px solid var(--border-color, #e2e8f0);
+  padding: 0.5rem 1rem;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 1500;
+  box-shadow: 0 -4px 12px rgba(15, 23, 42, 0.04);
+}
+
+.mobile-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary, #64748b);
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.4rem 0.75rem;
+  border-radius: 10px;
+  transition: color 0.15s ease;
+}
+
+.mobile-nav-item:hover,
+.mobile-nav-item.active {
+  color: var(--accent-pink, #db2777);
+}
+
+/* Dashboard & Hero Card */
+.finova-dashboard {
+  padding: 1.5rem;
+  box-sizing: border-box;
+}
+
+.stats-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.stat-card {
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 16px;
+  padding: 1.5rem 1.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-secondary, #64748b);
+  margin-bottom: 0.35rem;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary, #0f172a);
+  letter-spacing: -0.02em;
+}
+
+.finova-hero-card {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 2rem !important;
+  flex-wrap: nowrap !important;
+  padding: 1.5rem 1.75rem !important;
+}
+
+.hero-balance-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-rate-section {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* MEDIA QUERY PRE DESKTOP (>= 1024px) */
+@media (min-width: 1024px) {
+  .finova-app-shell {
+    flex-direction: row;
+  }
+
+  .finova-main-content {
+    padding-bottom: 0;
+    order: 2;
+  }
+
+  .finova-desktop-sidebar {
+    display: flex;
+    order: 1;
+  }
+
+  .finova-mobile-bottom-bar {
+    display: none;
+  }
+
+  .finova-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .finova-hero-card {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    gap: 1rem !important;
+    padding: 1.25rem !important;
+  }
+
+  .hero-balance-section {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+  }
+}
+
+.finova-yield-card {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: wrap !important;
+  gap: 1.5rem !important;
+  padding: 1.25rem 1.75rem !important;
+}
+
+.yield-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.yield-divider {
+  width: 1px;
+  height: 48px;
+  background-color: var(--border-color, #e2e8f0);
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .finova-yield-card {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    gap: 1.25rem !important;
+    padding: 1.25rem !important;
+  }
+
+  .yield-section {
+    align-items: center !important;
+    text-align: center !important;
+  }
+
+  .yield-divider {
+    width: 100% !important;
+    height: 1px !important;
+  }
+}
