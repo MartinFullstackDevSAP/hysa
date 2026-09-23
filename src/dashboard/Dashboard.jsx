@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../supabaseClient';
+import { BANK_LOGOS, getBankLogo } from '../bankLogos';
 import '../css/mainlayout.css';
+
+const CHART_COLORS = ['#8b5cf6', '#ec4899', '#06b6d4', '#f59e0b', '#10b981', '#6366f1'];
 
 const Dashboard = ({ currency = 'CZK' }) => {
     const [accounts, setAccounts] = useState([]);
@@ -33,8 +36,30 @@ const Dashboard = ({ currency = 'CZK' }) => {
     }, 0);
 
     const weightedRateNet = totalBalance > 0 ? (netYieldSum / totalBalance) * 100 : 0;
-    const annualYield = netYieldSum;
-    const monthlyYield = annualYield / 12;
+    const monthlyYield = netYieldSum / 12;
+
+    const balancesByBank = accounts.reduce((banks, account) => {
+        const bank = account.bank || 'Neznáma banka';
+        const balance = Number(account.balance) || 0;
+        banks[bank] = (banks[bank] || 0) + balance;
+        return banks;
+    }, {});
+    const bankBalances = Object.entries(balancesByBank)
+        .sort(([, firstBalance], [, secondBalance]) => secondBalance - firstBalance)
+        .map(([bank, balance], index) => ({
+            bank,
+            balance,
+            color: CHART_COLORS[index % CHART_COLORS.length],
+            percentage: totalBalance > 0 ? (balance / totalBalance) * 100 : 0,
+        }));
+    let chartOffset = 0;
+    const chartGradient = bankBalances.length > 0
+        ? bankBalances.map(({ color, percentage }) => {
+            const start = chartOffset;
+            chartOffset += percentage;
+            return `${color} ${start}% ${chartOffset}%`;
+        }).join(', ')
+        : '#34234d 0% 100%';
 
     const formatCurrencyInteger = (amount, currencySymbol = 'CZK') => {
         const formatted = Math.round(amount || 0).toLocaleString('cs-CZ', {
@@ -54,6 +79,52 @@ const Dashboard = ({ currency = 'CZK' }) => {
                         <div className="stat-value">
                             {loading ? '...' : formatCurrencyInteger(totalBalance, currency)}
                         </div>
+                        <section className="stat-card bank-distribution-card">
+                            <div className="bank-distribution-header">
+                                <div>
+                                    <h2 className="bank-distribution-title">Zostatok podľa banky</h2>
+                                    <p className="bank-distribution-subtitle">Rozdelenie tvojich úspor</p>
+                                </div>
+                                <span className="bank-distribution-total">
+                                    {loading ? '...' : formatCurrencyInteger(totalBalance, currency)}
+                                </span>
+                            </div>
+                            {loading ? (
+                                <div className="bank-distribution-empty">Načítavam dáta...</div>
+                            ) : bankBalances.length === 0 ? (
+                                <div className="bank-distribution-empty">Zatiaľ nemáš žiadne účty.</div>
+                            ) : (
+                                <div className="bank-distribution-content">
+                                    <div className="bank-donut" style={{ '--bank-donut-gradient': `conic-gradient(${chartGradient})` }}>
+                                        <div className="bank-donut-center">
+                                            <span>Spolu</span>
+                                            <strong>{formatCurrencyInteger(totalBalance, currency)}</strong>
+                                        </div>
+                                    </div>
+                                    <div className="bank-distribution-legend">
+                                        {bankBalances.map(({ bank, balance, color, percentage }) => (
+                                            <div className="bank-legend-item" key={bank}>
+                                                <span className="bank-legend-color" style={{ backgroundColor: color }} />
+                                                <span className="bank-legend-logo">
+                                                    <img
+                                                        src={BANK_LOGOS[bank] || getBankLogo(bank)}
+                                                        alt=""
+                                                        onError={(event) => {
+                                                            event.currentTarget.style.display = 'none';
+                                                        }}
+                                                    />
+                                                </span>
+                                                <span className="bank-legend-name">{bank}</span>
+                                                <span className="bank-legend-value">
+                                                    {formatCurrencyInteger(balance, currency)}
+                                                    <small>{percentage.toFixed(1)} %</small>
+                                                </span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </section>
                     </div>
                     <div className="hero-divider"></div>
                     <div className="hero-yield-section">
