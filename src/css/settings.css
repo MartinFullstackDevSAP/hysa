@@ -419,8 +419,9 @@ body {
 .bank-icon img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* alebo contain, ak má ikona biele pozadie/okraje */
+  object-fit: cover;
 }
+
 /* Sadzba / Úrok pill badge */
 .rate-badge {
   display: inline-flex;
@@ -693,7 +694,7 @@ input[type='number'] {
 
 @media (max-width: 768px) {
   .finova-container {
-    padding: 1rem;
+    padding: 1rem 0.75rem;
   }
 
   .finova-card, .form-container, .card-block {
@@ -731,6 +732,10 @@ input[type='number'] {
 }
 
 @media (max-width: 640px) {
+  .finova-container {
+    padding: 1rem 0.75rem;
+  }
+
   .bank-icon {
     width: 38px;
     height: 38px;
@@ -775,7 +780,7 @@ input[type='number'] {
 /* Skrytie predvolenej natívnej ikonky kalendára v niektorých prehliadačoch, ak chceme vlastnú */
 .finova-input[type="date"]::-webkit-calendar-picker-indicator {
   cursor: pointer;
-  filter: invert(0.4); /* jemné prispôsobenie farby ikony, ak treba */
+  filter: invert(0.4);
   opacity: 0.7;
   transition: opacity 0.2s ease;
 }
