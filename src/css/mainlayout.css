@@ -140,12 +140,33 @@
   cursor: pointer;
   padding: 0.4rem 0.75rem;
   border-radius: 10px;
-  transition: color 0.15s ease;
+  position: relative;
+  transition: color 0.15s ease, background-color 0.15s ease;
 }
 
 .mobile-nav-item:hover,
 .mobile-nav-item.active {
   color: var(--accent-pink, #a855f7);
+}
+
+.mobile-nav-item.active {
+  background-color: rgba(124, 58, 237, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(168, 85, 247, 0.2);
+}
+
+.mobile-nav-item.active::before {
+  position: absolute;
+  top: -0.5rem;
+  left: 20%;
+  right: 20%;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--accent-gradient);
+  content: '';
+}
+
+:root[data-theme='dark'] .mobile-nav-item.active {
+  background-color: rgba(192, 132, 252, 0.16);
 }
 
 /* Dashboard & Hero Card */
@@ -384,7 +405,6 @@
   font-size: 0.85rem;
 }
 
-.card-payment-reset-all,
 .payment-step-button {
   background: var(--accent-gradient);
   color: #ffffff;
@@ -396,21 +416,12 @@
   transition: transform 0.15s ease, opacity 0.2s ease, box-shadow 0.2s ease;
 }
 
-.card-payment-reset-all {
-  padding: 0.65rem 1.25rem;
-  font-size: 0.9rem;
-  height: 40px;
-  white-space: nowrap;
-}
-
-.card-payment-reset-all:hover:not(:disabled),
 .payment-step-button:hover:not(:disabled) {
   opacity: 0.95;
   transform: translateY(-1px);
   box-shadow: 0 6px 16px rgba(224, 82, 160, 0.35);
 }
 
-.card-payment-reset-all:disabled,
 .payment-step-button:disabled {
   cursor: not-allowed;
   opacity: 0.5;
@@ -496,88 +507,6 @@
   padding: 0;
   font-size: 1.25rem;
   line-height: 1;
-}
-
-.dashboard-modal-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 2000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-  background: rgba(0, 0, 0, 0.5);
-}
-
-.dashboard-confirm-modal {
-  width: min(100%, 420px);
-  padding: 1.5rem;
-  border: 1px solid var(--border-color);
-  border-radius: 20px;
-  background: var(--bg-card);
-  box-shadow: var(--shadow-card);
-  color: var(--text-primary);
-}
-
-.dashboard-confirm-modal h3 {
-  margin: 0 0 0.75rem;
-  font-size: 1.15rem;
-}
-
-.dashboard-confirm-modal p {
-  margin: 0 0 1.5rem;
-  color: var(--text-secondary);
-  font-size: 0.95rem;
-  line-height: 1.5;
-}
-
-.dashboard-confirm-actions {
-  display: flex;
-  gap: 0.75rem;
-}
-
-.dashboard-confirm-button {
-  flex: 1;
-  height: 44px;
-  border: none;
-  border-radius: 10px;
-  background: var(--accent-gradient);
-  color: #ffffff;
-  cursor: pointer;
-  font-size: 0.95rem;
-  font-weight: 600;
-  box-shadow: 0 4px 12px rgba(224, 82, 160, 0.25);
-  transition: transform 0.15s ease, opacity 0.2s ease, box-shadow 0.2s ease;
-}
-
-.dashboard-confirm-button:hover:not(:disabled) {
-  opacity: 0.95;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(224, 82, 160, 0.35);
-}
-
-.dashboard-confirm-button:disabled {
-  cursor: wait;
-  opacity: 0.7;
-}
-
-.dashboard-confirm-cancel {
-  background: #f1f5f9;
-  color: var(--text-primary);
-  box-shadow: none;
-}
-
-.dashboard-confirm-cancel:hover:not(:disabled) {
-  background: #e2e8f0;
-  box-shadow: none;
-}
-
-:root[data-theme='dark'] .dashboard-confirm-cancel {
-  background: #27183a;
-}
-
-:root[data-theme='dark'] .dashboard-confirm-cancel:hover:not(:disabled) {
-  background: #34234d;
 }
 
 /* MEDIA QUERY PRE DESKTOP (>= 1024px) */
@@ -688,10 +617,6 @@
 
   .card-payment-header {
     flex-direction: column;
-  }
-
-  .card-payment-reset-all {
-    width: 100%;
   }
 
   .card-payment-row {

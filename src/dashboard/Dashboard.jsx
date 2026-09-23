@@ -16,7 +16,6 @@ const Dashboard = ({ currency = 'CZK' }) => {
     const [loading, setLoading] = useState(true);
     const [paymentLoading, setPaymentLoading] = useState(true);
     const [paymentError, setPaymentError] = useState('');
-    const [showResetConfirmation, setShowResetConfirmation] = useState(false);
 
     useEffect(() => {
         fetchAccounts();
@@ -76,39 +75,6 @@ const Dashboard = ({ currency = 'CZK' }) => {
             ...current,
             [data.account_id]: Number(data.payments_made) || 0,
         }));
-    };
-
-    const resetAllPaymentProgress = async () => {
-        const cardAccounts = accounts.filter((account) => Number(account.card_payments) > 0);
-        if (cardAccounts.length === 0) {
-            setShowResetConfirmation(false);
-            return;
-        }
-
-        setPaymentError('');
-        const { data, error } = await supabase
-            .from('card_payment_progress')
-            .upsert(cardAccounts.map((account) => ({
-                account_id: account.id,
-                month_start: getCurrentMonthStart(),
-                payments_made: 0,
-            })), { onConflict: 'account_id,month_start' })
-            .select('account_id, payments_made');
-
-        if (error) {
-            console.error('Chyba pri resete platieb kartou:', error.message);
-            setPaymentError('Platby kartou sa nepodarilo resetovať.');
-            return;
-        }
-
-        setPaymentProgress((current) => ({
-            ...current,
-            ...(data || []).reduce((progress, item) => ({
-                ...progress,
-                [item.account_id]: Number(item.payments_made) || 0,
-            }), {}),
-        }));
-        setShowResetConfirmation(false);
     };
 
     const totalBalance = accounts.reduce((acc, curr) => acc + (Number(curr.balance) || 0), 0);
@@ -213,14 +179,6 @@ const Dashboard = ({ currency = 'CZK' }) => {
                                     : `${formatIntegerWithDots(totalMadePayments)} z ${formatIntegerWithDots(totalRequiredPayments)} platieb vykonaných`}
                             </p>
                         </div>
-                        <button
-                            type="button"
-                            className="card-payment-reset-all"
-                            onClick={() => setShowResetConfirmation(true)}
-                            disabled={cardPaymentAccounts.length === 0 || paymentLoading}
-                        >
-                            Reset všetkých
-                        </button>
                     </div>
                     {paymentError && <div className="settings-error" role="alert">{paymentError}</div>}
                     {cardPaymentAccounts.length === 0 ? (
@@ -317,31 +275,6 @@ const Dashboard = ({ currency = 'CZK' }) => {
                     )}
                 </section>
             </div>
-            {showResetConfirmation && (
-                <div className="dashboard-modal-overlay" role="presentation">
-                    <div className="dashboard-confirm-modal" role="dialog" aria-modal="true" aria-labelledby="reset-payments-title">
-                        <h3 id="reset-payments-title">Potvrdenie resetu</h3>
-                        <p>Naozaj si želáte resetovať všetky platby kartou?</p>
-                        <div className="dashboard-confirm-actions">
-                            <button
-                                type="button"
-                                className="dashboard-confirm-button dashboard-confirm-cancel"
-                                onClick={() => setShowResetConfirmation(false)}
-                            >
-                                Zrušiť
-                            </button>
-                            <button
-                                type="button"
-                                className="dashboard-confirm-button"
-                                onClick={resetAllPaymentProgress}
-                                disabled={paymentLoading}
-                            >
-                                Potvrdiť
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };
