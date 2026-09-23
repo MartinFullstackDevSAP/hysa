@@ -313,7 +313,7 @@
 .bank-legend-color {
   position: absolute;
   top: 0;
-  left: calc(50% - 25px);
+  left: calc(50% - 31px);
   width: 8px;
   height: 32px;
   border-radius: 999px;
