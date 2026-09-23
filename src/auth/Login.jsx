@@ -35,7 +35,6 @@ export default function Login() {
           <span>F.I.R.E</span>
         </div>
         <h1>Prihlásenie</h1>
-        <p className="auth-subtitle">Prihláste sa do svojho dashboardu.</p>
         <form onSubmit={handleSubmit} className="auth-form">
           <label className="auth-label" htmlFor="login-email">Email</label>
           <input
