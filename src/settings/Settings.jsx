@@ -586,7 +586,7 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
                   right: '8px',
                   background: 'transparent',
                   border: 'none',
-                  pointerEvents: 'none', // kliknutie prepadne na date input pod ním
+                  cursor: 'pointer',
                   color: 'var(--text-secondary, #475569)',
                   display: 'flex',
                   alignItems: 'center',
