@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { CreditCard } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 import { BANK_LOGOS, getBankLogo } from '../bankLogos';
 import '../css/mainlayout.css';
@@ -172,7 +173,10 @@ const Dashboard = ({ currency = 'CZK' }) => {
                 <section className="stat-card card-payment-card">
                     <div className="card-payment-header">
                         <div>
-                            <h2 className="bank-distribution-title">Platby kartou</h2>
+                            <h2 className="bank-distribution-title card-payment-title">
+                                <CreditCard size={20} aria-hidden="true" />
+                                <span>Platby kartou</span>
+                            </h2>
                             <p className="card-payment-summary">
                                 {paymentLoading
                                     ? 'Načítavam progress...'

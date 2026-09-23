@@ -409,6 +409,17 @@
   font-size: 0.85rem;
 }
 
+.card-payment-title {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.card-payment-title svg {
+  color: var(--accent-pink, #a855f7);
+  flex-shrink: 0;
+}
+
 .payment-step-button {
   background: var(--accent-gradient);
   color: #ffffff;
