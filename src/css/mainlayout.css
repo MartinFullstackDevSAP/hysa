@@ -198,6 +198,29 @@
   flex-shrink: 0;
 }
 
+.finova-yield-card {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: wrap !important;
+  gap: 1.5rem !important;
+  padding: 1.25rem 1.75rem !important;
+}
+
+.yield-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.yield-divider {
+  width: 1px;
+  height: 48px;
+  background-color: var(--border-color, #e2e8f0);
+  flex-shrink: 0;
+}
+
 /* MEDIA QUERY PRE DESKTOP (>= 1024px) */
 @media (min-width: 1024px) {
   .finova-app-shell {
@@ -225,7 +248,19 @@
   }
 }
 
+/* MEDIA QUERY PRE TABLET / MOBIL (<= 768px) */
+@media (max-width: 768px) {
+  .finova-main-content {
+    padding-bottom: 74px;
+  }
+}
+
+/* MEDIA QUERY PRE MOBIL (<= 640px) */
 @media (max-width: 640px) {
+  .finova-dashboard {
+    padding: 1rem 0.75rem; /* Zodpovedá marginom v settings */
+  }
+
   .finova-hero-card {
     flex-direction: column !important;
     align-items: center !important;
@@ -240,32 +275,7 @@
     align-items: center !important;
     text-align: center !important;
   }
-}
 
-.finova-yield-card {
-  display: flex !important;
-  flex-direction: row !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  flex-wrap: wrap !important;
-  gap: 1.5rem !important;
-  padding: 1.25rem 1.75rem !important;
-}
-
-.yield-section {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.yield-divider {
-  width: 1px;
-  height: 48px;
-  background-color: var(--border-color, #e2e8f0);
-  flex-shrink: 0;
-}
-
-@media (max-width: 640px) {
   .finova-yield-card {
     flex-direction: column !important;
     align-items: center !important;
