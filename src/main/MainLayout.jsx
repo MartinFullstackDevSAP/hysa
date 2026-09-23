@@ -4,10 +4,11 @@ import {
   House,
   Wallet, 
   TrendingUp, 
-  Settings as SettingsIcon
+  Settings as SettingsIcon,
+  LogOut
 } from 'lucide-react';
 
-const MainLayout = ({ activeTab, setActiveTab, children }) => {
+const MainLayout = ({ activeTab, setActiveTab, onSignOut, children }) => {
   const navItems = [
     { id: 'dashboard', label: 'Prehľad', icon: House },
     { id: 'accounts', label: 'Účty', icon: Wallet },
@@ -47,6 +48,10 @@ const MainLayout = ({ activeTab, setActiveTab, children }) => {
             );
           })}
         </nav>
+        <button type="button" className="sidebar-nav-item sidebar-logout" onClick={onSignOut}>
+          <LogOut size={20} />
+          <span>Odhlásiť sa</span>
+        </button>
 
       </aside>
 
