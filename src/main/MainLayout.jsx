@@ -71,7 +71,7 @@ const MainLayout = ({ activeTab, setActiveTab, onSignOut, children }) => {
         })}
         <button type="button" className="mobile-nav-item mobile-logout" onClick={onSignOut}>
           <LogOut size={20} />
-          <span>Odhlásiť sa</span>
+          <span>Odhlásiť</span>
         </button>
       </nav>
     </div>
