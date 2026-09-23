@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import MainLayout from './main/MainLayout';
 import Dashboard from './dashboard/Dashboard';
 import Settings from './settings/Settings';
+import { supabase } from './supabaseClient';
+import { DEFAULT_GLOBAL_SETTINGS } from './globalSettings';
 import './index.css';
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [globalSettings, setGlobalSettings] = useState(DEFAULT_GLOBAL_SETTINGS);
   
   // Ukážkové dáta pre HYSA účty (neskôr ich môžeš nahradiť načítaním zo Supabase)
   const [accounts] = useState([
@@ -14,9 +17,37 @@ function App() {
     { bank: 'J&T Banka', accountName: 'Termínovaný vklad', balance: 50000, rate: 4.1 },
   ]);
 
+  useEffect(() => {
+    const fetchGlobalSettings = async () => {
+      const { data, error } = await supabase
+        .from('global_settings')
+        .select('dark_mode, dashhoard_currency')
+        .limit(1)
+        .maybeSingle();
+
+      if (error) {
+        console.error('Chyba pri načítaní globálnych nastavení:', error.message);
+        return;
+      }
+
+      if (data) {
+        setGlobalSettings({
+          dark_mode: Boolean(data.dark_mode),
+          dashhoard_currency: data.dashhoard_currency || DEFAULT_GLOBAL_SETTINGS.dashhoard_currency,
+        });
+      }
+    };
+
+    fetchGlobalSettings();
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = globalSettings.dark_mode ? 'dark' : 'light';
+  }, [globalSettings.dark_mode]);
+
   return (
     <MainLayout activeTab={activeTab} setActiveTab={setActiveTab}>
-      {activeTab === 'dashboard' && <Dashboard accounts={accounts} />}
+      {activeTab === 'dashboard' && <Dashboard accounts={accounts} currency={globalSettings.dashhoard_currency} />}
       {activeTab === 'accounts' && (
         <div className="finova-card">
           <h1 className="finova-title">Účty</h1>
@@ -29,7 +60,12 @@ function App() {
           <p className="finova-subtitle">ETF, dlhopisy a portfólio</p>
         </div>
       )}
-      {activeTab === 'settings' && <Settings />}
+      {activeTab === 'settings' && (
+        <Settings
+          globalSettings={globalSettings}
+          onGlobalSettingsChange={setGlobalSettings}
+        />
+      )}
     </MainLayout>
   );
 }

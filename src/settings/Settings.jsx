@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '../supabaseClient';
 import CustomSelect from './CustomSelect';
+import { DEFAULT_GLOBAL_SETTINGS } from '../globalSettings';
 import '../css/settings.css';
 
 // Zoznam hlavných bánk a inštitúcií v ČR s prázdnou predvolenou voľbou
@@ -120,10 +121,13 @@ const toIsoDate = (skDate) => {
   return '';
 };
 
-export default function Settings() {
+export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onGlobalSettingsChange }) {
   const [accounts, setAccounts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
+  const [globalSettingsForm, setGlobalSettingsForm] = useState(globalSettings);
+  const [globalSettingsSaving, setGlobalSettingsSaving] = useState(false);
+  const [globalSettingsError, setGlobalSettingsError] = useState('');
 
   // State pre modal okná
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
@@ -156,6 +160,10 @@ export default function Settings() {
     fetchAccounts();
   }, []);
 
+  useEffect(() => {
+    setGlobalSettingsForm(globalSettings);
+  }, [globalSettings]);
+
   const fetchAccounts = async () => {
     setLoading(true);
     const { data, error } = await supabase
@@ -169,6 +177,68 @@ export default function Settings() {
       setAccounts(data || []);
     }
     setLoading(false);
+  };
+
+  const handleSaveGlobalSettings = async (e) => {
+    e.preventDefault();
+    setGlobalSettingsSaving(true);
+    setGlobalSettingsError('');
+
+    const payload = {
+      dark_mode: Boolean(globalSettingsForm.dark_mode),
+      dashhoard_currency: globalSettingsForm.dashhoard_currency,
+    };
+
+    const { data: existingSettings, error: fetchError } = await supabase
+      .from('global_settings')
+      .select('*')
+      .limit(1);
+
+    if (fetchError) {
+      console.error('Chyba pri načítaní globálnych nastavení:', fetchError.message);
+      setGlobalSettingsError('Globálne nastavenia sa nepodarilo načítať.');
+      setGlobalSettingsSaving(false);
+      return;
+    }
+
+    const existingRow = existingSettings?.[0];
+    let data;
+    let error;
+
+    if (existingRow) {
+      let updateQuery = supabase.from('global_settings').update(payload);
+      if (existingRow.id) {
+        updateQuery = updateQuery.eq('id', existingRow.id);
+      } else {
+        updateQuery = updateQuery
+          .eq('dark_mode', existingRow.dark_mode)
+          .eq('dashhoard_currency', existingRow.dashhoard_currency);
+      }
+
+      const result = await updateQuery.select().maybeSingle();
+      data = result.data;
+      error = result.error;
+    }
+
+    if (!data && !error) {
+      const result = await supabase.from('global_settings').insert(payload).select().single();
+      data = result.data;
+      error = result.error;
+    }
+
+    if (error) {
+      console.error('Chyba pri ukladaní globálnych nastavení:', error.message);
+      setGlobalSettingsError('Globálne nastavenia sa nepodarilo uložiť.');
+    } else {
+      const savedSettings = {
+        dark_mode: Boolean(data.dark_mode),
+        dashhoard_currency: data.dashhoard_currency || DEFAULT_GLOBAL_SETTINGS.dashhoard_currency,
+      };
+      setGlobalSettingsForm(savedSettings);
+      onGlobalSettingsChange?.(savedSettings);
+    }
+
+    setGlobalSettingsSaving(false);
   };
 
   const handleInputChange = (setter) => (e) => {
@@ -332,6 +402,50 @@ export default function Settings() {
 
   return (
     <div className="finova-container">
+      <section className="finova-card">
+        <div className="card-header-flex">
+          <div>
+            <h2 className="card-title" style={{ margin: 0 }}>Globálne nastavenia</h2>
+            <p className="finova-subtitle">Nastavenia platné pre celý dashboard</p>
+          </div>
+        </div>
+        {globalSettingsError && (
+          <div className="settings-error" role="alert">
+            {globalSettingsError}
+          </div>
+        )}
+        <form onSubmit={handleSaveGlobalSettings} className="finova-form global-settings-form">
+          <div className="form-group">
+            <label className="form-label">Režim zobrazenia</label>
+            <CustomSelect
+              options={[
+                { value: 'light', label: 'Svetlý režim' },
+                { value: 'dark', label: 'Tmavý režim' },
+              ]}
+              value={globalSettingsForm.dark_mode ? 'dark' : 'light'}
+              onChange={(value) => setGlobalSettingsForm((current) => ({ ...current, dark_mode: value === 'dark' }))}
+            />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Dashboard mena</label>
+            <CustomSelect
+              options={[
+                { value: 'CZK', label: 'CZK (Kč)' },
+                { value: 'EUR', label: 'EUR (€)' },
+                { value: 'USD', label: 'USD ($)' },
+              ]}
+              value={globalSettingsForm.dashhoard_currency}
+              onChange={(value) => setGlobalSettingsForm((current) => ({ ...current, dashhoard_currency: value }))}
+            />
+          </div>
+          <div className="form-group form-group-full">
+            <button type="submit" className="btn-finova-primary" disabled={globalSettingsSaving}>
+              {globalSettingsSaving ? 'Ukladám...' : 'Uložiť globálne nastavenia'}
+            </button>
+          </div>
+        </form>
+      </section>
+
       <section className="finova-card">
         <h2 className="card-title">✦ Pridať účet</h2>
         {errorMsg && (

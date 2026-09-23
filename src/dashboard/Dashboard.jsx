@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '../supabaseClient';
 import '../css/mainlayout.css';
 
-const Dashboard = () => {
+const Dashboard = ({ currency = 'CZK' }) => {
     const [accounts, setAccounts] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -44,8 +44,6 @@ const Dashboard = () => {
         return `${formatted} ${currencySymbol}`;
     };
 
-    const currencySymbol = accounts[0]?.currency || 'CZK';
-
     return (
         <div className="finova-dashboard">
             <div className="stats-grid" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -54,7 +52,7 @@ const Dashboard = () => {
                     <div className="hero-balance-section">
                         <div className="stat-label">Celkový zostatok</div>
                         <div className="stat-value">
-                            {loading ? '...' : formatCurrencyInteger(totalBalance, currencySymbol)}
+                            {loading ? '...' : formatCurrencyInteger(totalBalance, currency)}
                         </div>
                     </div>
                     <div className="hero-rate-section">
@@ -86,14 +84,14 @@ const Dashboard = () => {
                     <div className="yield-section">
                         <div className="stat-label">Mesačný pasívny výnos (netto)</div>
                         <div className="stat-value" style={{ fontSize: '1.5rem' }}>
-                            {loading ? '...' : formatCurrencyInteger(monthlyYield, currencySymbol)}
+                            {loading ? '...' : formatCurrencyInteger(monthlyYield, currency)}
                         </div>
                     </div>
                     <div className="yield-divider"></div>
                     <div className="yield-section">
                         <div className="stat-label">Ročný pasívny výnos (netto)</div>
                         <div className="stat-value" style={{ fontSize: '1.5rem' }}>
-                            {loading ? '...' : formatCurrencyInteger(annualYield, currencySymbol)}
+                            {loading ? '...' : formatCurrencyInteger(annualYield, currency)}
                         </div>
                     </div>
                 </div>

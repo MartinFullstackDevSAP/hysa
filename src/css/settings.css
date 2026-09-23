@@ -30,6 +30,20 @@ body {
   --shadow-card: 0 10px 25px -8px rgba(76, 29, 149, 0.16), 0 4px 10px -5px rgba(76, 29, 149, 0.08);
 }
 
+:root[data-theme='dark'] {
+  --bg-main: #120d1f;
+  --bg-card: #1b1229;
+  --bg-input: #211531;
+  --border-color: #34234d;
+  --border-focus: #c084fc;
+  --text-primary: #f5f3ff;
+  --text-secondary: #c4b5d9;
+  --accent-purple: #c084fc;
+  --accent-pink: #d8b4fe;
+  --accent-gradient: linear-gradient(135deg, #7c3aed 0%, #a855f7 52%, #ec4899 100%);
+  --shadow-card: 0 10px 25px -8px rgba(0, 0, 0, 0.35), 0 4px 10px -5px rgba(0, 0, 0, 0.2);
+}
+
 /* Kontejner roztiahnutý na celú obrazovku */
 .finova-container {
   padding: 2rem;
@@ -106,6 +120,22 @@ body {
 .stat-badge.green {
   background: var(--accent-green-bg);
   color: var(--accent-green);
+}
+
+.settings-error {
+  color: var(--accent-red);
+  background: rgba(220, 38, 38, 0.1);
+  border: 1px solid rgba(220, 38, 38, 0.25);
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.btn-finova-primary:disabled {
+  cursor: wait;
+  opacity: 0.7;
 }
 
 /* Hlavné panely / Card Containers */
@@ -1002,4 +1032,37 @@ input[type='number'] {
 .btn-delete-icon,
 .btn-finova-secondary {
   background: var(--bg-card);
+}
+
+:root[data-theme='dark'] body,
+:root[data-theme='dark'] .finova-container {
+  background-color: var(--bg-main);
+}
+
+:root[data-theme='dark'] .finova-list-item,
+:root[data-theme='dark'] .finova-table,
+:root[data-theme='dark'] .empty-table-container,
+:root[data-theme='dark'] .custom-select-options,
+:root[data-theme='dark'] .btn-delete-icon,
+:root[data-theme='dark'] .btn-finova-secondary,
+:root[data-theme='dark'] .finova-modal {
+  background-color: var(--bg-card);
+}
+
+:root[data-theme='dark'] .finova-list-item:hover,
+:root[data-theme='dark'] .finova-table tbody tr:hover td,
+:root[data-theme='dark'] .custom-select-option:hover,
+:root[data-theme='dark'] .btn-close-modal:hover,
+:root[data-theme='dark'] .btn-finova-secondary:hover {
+  background-color: #27183a;
+}
+
+:root[data-theme='dark'] .finova-table th,
+:root[data-theme='dark'] .finova-modal-footer,
+:root[data-theme='dark'] .bank-icon {
+  background-color: #211531;
+}
+
+:root[data-theme='dark'] .bank-icon {
+  border-color: var(--border-color);
 }
