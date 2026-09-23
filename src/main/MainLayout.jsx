@@ -2,7 +2,6 @@ import React from 'react';
 import '../css/mainlayout.css';
 import { 
   House,
-  Wallet, 
   TrendingUp, 
   Settings as SettingsIcon,
   LogOut
@@ -11,7 +10,6 @@ import {
 const MainLayout = ({ activeTab, setActiveTab, onSignOut, children }) => {
   const navItems = [
     { id: 'dashboard', label: 'Prehľad', icon: House },
-    { id: 'accounts', label: 'Účty', icon: Wallet },
     { id: 'investments', label: 'Investície', icon: TrendingUp },
     { id: 'settings', label: 'Nastavenia', icon: SettingsIcon },
   ];
@@ -71,6 +69,10 @@ const MainLayout = ({ activeTab, setActiveTab, onSignOut, children }) => {
             </button>
           );
         })}
+        <button type="button" className="mobile-nav-item mobile-logout" onClick={onSignOut}>
+          <LogOut size={20} />
+          <span>Odhlásiť sa</span>
+        </button>
       </nav>
     </div>
   );

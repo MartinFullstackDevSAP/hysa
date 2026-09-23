@@ -169,6 +169,14 @@
   content: '';
 }
 
+.mobile-logout {
+  color: var(--text-secondary, #655b7d);
+}
+
+.mobile-logout:hover {
+  color: var(--accent-red, #dc2626);
+}
+
 :root[data-theme='dark'] .mobile-nav-item.active {
   background-color: rgba(192, 132, 252, 0.16);
 }
