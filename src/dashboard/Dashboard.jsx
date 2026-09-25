@@ -118,15 +118,13 @@ const Dashboard = ({ currency = 'CZK' }) => {
         sum + Math.min(Number(paymentProgress[account.id] || 0), Number(account.card_payments))
     ), 0);
 
-    const formatIntegerWithDots = (amount) => Math.round(amount || 0)
-        .toString()
-        .replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    const formatInteger = (amount) => Math.round(amount || 0).toString();
 
     const formatCurrencyInteger = (amount, currencySymbol = 'CZK') => {
-        return `${formatIntegerWithDots(amount)} ${currencySymbol}`;
+        return `${formatInteger(amount)} ${currencySymbol}`;
     };
 
-    const formatAmountInteger = (amount) => formatIntegerWithDots(amount);
+    const formatAmountInteger = (amount) => formatInteger(amount);
 
     return (
         <div className="finova-dashboard">
@@ -180,7 +178,7 @@ const Dashboard = ({ currency = 'CZK' }) => {
                             <p className="card-payment-summary">
                                 {paymentLoading
                                     ? 'Načítavam progress...'
-                                    : `${formatIntegerWithDots(totalMadePayments)} z ${formatIntegerWithDots(totalRequiredPayments)} platieb vykonaných`}
+                                    : `${formatInteger(totalMadePayments)} z ${formatInteger(totalRequiredPayments)} platieb vykonaných`}
                             </p>
                         </div>
                     </div>
@@ -214,7 +212,7 @@ const Dashboard = ({ currency = 'CZK' }) => {
                                             <span style={{ width: `${percentage}%` }} />
                                         </div>
                                         <strong className="card-payment-count">
-                                            {formatIntegerWithDots(made)}/{formatIntegerWithDots(required)}
+                                            {formatInteger(made)}/{formatInteger(required)}
                                         </strong>
                                         <div className="card-payment-actions">
                                             <button
