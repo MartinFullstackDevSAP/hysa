@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { CreditCard } from 'lucide-react';
+import { CalendarClock, CreditCard } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 import { BANK_LOGOS, getBankLogo } from '../bankLogos';
 import '../css/mainlayout.css';
@@ -9,6 +9,13 @@ const CHART_COLORS = ['#8b5cf6', '#ec4899', '#06b6d4', '#f59e0b', '#10b981', '#6
 const getCurrentMonthStart = () => {
     const today = new Date();
     return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-01`;
+};
+
+const formatExpirationDate = (expiration) => {
+    if (!expiration) return 'Expirácia neuvedená';
+    const [year, month, day] = expiration.split('-');
+    if (!year || !month || !day) return expiration;
+    return `${day}.${month}.${year}`;
 };
 
 const Dashboard = ({ currency = 'CZK' }) => {
@@ -113,18 +120,24 @@ const Dashboard = ({ currency = 'CZK' }) => {
         }).join(', ')
         : '#34234d 0% 100%';
     const cardPaymentAccounts = accounts.filter((account) => Number(account.card_payments) > 0);
+    const fixedTermAccounts = accounts
+        .filter((account) => account.name === 'Termínovaný vklad')
+        .sort((firstAccount, secondAccount) => (firstAccount.expiration || '9999-12-31')
+            .localeCompare(secondAccount.expiration || '9999-12-31'));
     const totalRequiredPayments = cardPaymentAccounts.reduce((sum, account) => sum + Number(account.card_payments), 0);
     const totalMadePayments = cardPaymentAccounts.reduce((sum, account) => (
         sum + Math.min(Number(paymentProgress[account.id] || 0), Number(account.card_payments))
     ), 0);
 
-    const formatInteger = (amount) => Math.round(amount || 0).toString();
+    const formatIntegerWithSpaces = (amount) => Math.round(amount || 0)
+        .toString()
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 
     const formatCurrencyInteger = (amount, currencySymbol = 'CZK') => {
-        return `${formatInteger(amount)} ${currencySymbol}`;
+        return `${formatIntegerWithSpaces(amount)} ${currencySymbol}`;
     };
 
-    const formatAmountInteger = (amount) => formatInteger(amount);
+    const formatAmountInteger = (amount) => formatIntegerWithSpaces(amount);
 
     return (
         <div className="finova-dashboard">
@@ -178,7 +191,7 @@ const Dashboard = ({ currency = 'CZK' }) => {
                             <p className="card-payment-summary">
                                 {paymentLoading
                                     ? 'Načítavam progress...'
-                                    : `${formatInteger(totalMadePayments)} z ${formatInteger(totalRequiredPayments)} platieb vykonaných`}
+                                    : `${formatIntegerWithSpaces(totalMadePayments)} z ${formatIntegerWithSpaces(totalRequiredPayments)} platieb vykonaných`}
                             </p>
                         </div>
                     </div>
@@ -212,7 +225,7 @@ const Dashboard = ({ currency = 'CZK' }) => {
                                             <span style={{ width: `${percentage}%` }} />
                                         </div>
                                         <strong className="card-payment-count">
-                                            {formatInteger(made)}/{formatInteger(required)}
+                                            {formatIntegerWithSpaces(made)}/{formatIntegerWithSpaces(required)}
                                         </strong>
                                         <div className="card-payment-actions">
                                             <button
@@ -273,6 +286,44 @@ const Dashboard = ({ currency = 'CZK' }) => {
                                     </div>
                                 ))}
                             </div>
+                        </div>
+                    )}
+                </section>
+                <section className="stat-card fixed-term-card">
+                    <h2 className="bank-distribution-title card-payment-title">
+                        <CalendarClock size={20} aria-hidden="true" />
+                        <span>Termínované vklady</span>
+                    </h2>
+                    {loading ? (
+                        <div className="bank-distribution-empty">Načítavam dáta...</div>
+                    ) : fixedTermAccounts.length === 0 ? (
+                        <div className="bank-distribution-empty">Zatiaľ nemáš žiadne termínované vklady.</div>
+                    ) : (
+                        <div className="fixed-term-list">
+                            {fixedTermAccounts.map((account) => (
+                                <div className="fixed-term-row" key={account.id}>
+                                    <div className="card-payment-account">
+                                        <span className="card-payment-bank-logo">
+                                            <img
+                                                src={BANK_LOGOS[account.bank] || getBankLogo(account.bank)}
+                                                alt=""
+                                                onError={(event) => {
+                                                    event.currentTarget.style.display = 'none';
+                                                }}
+                                            />
+                                        </span>
+                                        <span className="card-payment-account-bank">
+                                            {account.bank || 'Neznáma banka'}
+                                        </span>
+                                    </div>
+                                    <span className="fixed-term-balance">
+                                        {formatCurrencyInteger(account.balance, account.currency || currency)}
+                                    </span>
+                                    <span className="fixed-term-expiration">
+                                        {formatExpirationDate(account.expiration)}
+                                    </span>
+                                </div>
+                            ))}
                         </div>
                     )}
                 </section>

@@ -404,6 +404,42 @@
   width: 100%;
 }
 
+.fixed-term-card {
+  grid-column: 1 / -1;
+}
+
+.fixed-term-card .card-payment-title svg {
+  color: var(--accent-pink, #a855f7);
+  flex-shrink: 0;
+}
+
+.fixed-term-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.fixed-term-row {
+  display: grid;
+  grid-template-columns: minmax(150px, 1fr) minmax(140px, auto) minmax(150px, auto);
+  align-items: center;
+  gap: 1rem;
+  padding: 0.85rem 0;
+  border-top: 1px solid var(--border-color, #e2d9f2);
+}
+
+.fixed-term-balance,
+.fixed-term-expiration {
+  color: var(--text-primary, #26183f);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: right;
+}
+
+.fixed-term-expiration {
+  color: var(--text-secondary, #655b7d);
+}
+
 .card-payment-header {
   display: flex;
   align-items: flex-start;
@@ -572,6 +608,11 @@
     grid-row: 2;
     width: auto;
   }
+
+  .dashboard-stats-grid .fixed-term-card {
+    grid-column: 1 / -1;
+    grid-row: 3;
+  }
 }
 
 /* MEDIA QUERY PRE TABLET / MOBIL (<= 768px) */
@@ -645,6 +686,21 @@
   .card-payment-row {
     grid-template-columns: minmax(0, 1fr) auto;
     gap: 0.65rem;
+  }
+
+  .fixed-term-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.65rem;
+  }
+
+  .fixed-term-balance,
+  .fixed-term-expiration {
+    text-align: right;
+  }
+
+  .fixed-term-expiration {
+    grid-column: 1 / -1;
+    text-align: left;
   }
 
   .card-payment-progress-track {
