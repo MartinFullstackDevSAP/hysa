@@ -85,16 +85,12 @@
 }
 
 .sidebar-logo-icon {
+  display: block;
   width: 36px;
   height: 36px;
+  flex: 0 0 36px;
+  object-fit: cover;
   border-radius: 10px;
-  background: var(--accent-gradient, linear-gradient(135deg, #7c3aed 0%, #ec4899 100%));
-  color: #fff;
-  font-weight: 700;
-  font-size: 1.2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   box-shadow: 0 4px 12px rgba(224, 82, 160, 0.25);
 }
 
