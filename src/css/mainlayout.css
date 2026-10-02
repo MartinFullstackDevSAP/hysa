@@ -551,7 +551,7 @@
   font-weight: 500;
 }
 
-.account-expiry-badge {
+.finova-list .rate-badge.account-expiry-badge {
   background: #fee2e2;
   color: #dc2626;
   border-color: #dc2626;

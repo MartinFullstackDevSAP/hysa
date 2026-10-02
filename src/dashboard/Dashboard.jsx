@@ -256,7 +256,7 @@ const Dashboard = ({ currency = 'CZK', navigationKey = 0, onLoadingChange }) => 
                             <CalendarClock size={20} aria-hidden="true" />
                             <span>Termínované vklady</span>
                         </h2>
-                        <span className="rate-badge fixed-term-count">
+                        <span className="card-payment-month fixed-term-count">
                             {fixedTermAccounts.length}{' '}
                             {fixedTermAccounts.length === 1
                                 ? 'vklad'
