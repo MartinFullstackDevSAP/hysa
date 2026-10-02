@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { CalendarClock, CreditCard } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 import { BANK_LOGOS, getBankLogo } from '../bankLogos';
@@ -22,7 +22,7 @@ const formatExpirationDate = (expiration) => {
     return `${day}.${month}.${year}`;
 };
 
-const Dashboard = ({ currency = 'CZK' }) => {
+const Dashboard = ({ currency = 'CZK', navigationKey = 0, onLoadingChange }) => {
     const [accounts, setAccounts] = useState([]);
     const [paymentProgress, setPaymentProgress] = useState({});
     const [loading, setLoading] = useState(true);
@@ -30,13 +30,10 @@ const Dashboard = ({ currency = 'CZK' }) => {
     const [paymentError, setPaymentError] = useState('');
     const [accountError, setAccountError] = useState('');
 
-    useEffect(() => {
-        fetchAccounts();
-    }, []);
-
-    const fetchAccounts = async () => {
+    const fetchAccounts = useCallback(async () => {
         setLoading(true);
         setPaymentLoading(true);
+        onLoadingChange?.(true, navigationKey);
         const [{ data, error }, { data: progressData, error: progressError }] = await Promise.all([
             supabase
                 .from('accounts')
@@ -66,7 +63,19 @@ const Dashboard = ({ currency = 'CZK' }) => {
         }
         setLoading(false);
         setPaymentLoading(false);
-    };
+        onLoadingChange?.(false, navigationKey);
+    }, [navigationKey, onLoadingChange]);
+
+    useEffect(() => {
+        let active = true;
+        Promise.resolve().then(() => {
+            if (active) fetchAccounts();
+        });
+
+        return () => {
+            active = false;
+        };
+    }, [fetchAccounts]);
 
     const savePaymentProgress = async (accountId, requiredPayments, change) => {
         setPaymentError('');

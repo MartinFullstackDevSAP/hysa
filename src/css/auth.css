@@ -1,10 +1,26 @@
 .auth-loading {
   display: grid;
   min-height: 100vh;
+  min-height: 100dvh;
   place-items: center;
-  background: var(--bg-main);
-  color: var(--text-primary);
-  font-size: 0.95rem;
+  gap: 1rem;
+  align-content: center;
+  background:
+    radial-gradient(ellipse at 50% 42%, rgba(124, 58, 237, 0.2), transparent 42%),
+    #120d1f;
+  color: #c4b5d9;
+}
+
+.auth-loading .busy-spinner {
+  width: 46px;
+  height: 46px;
+  border-width: 4px;
+}
+
+.auth-loading-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
 }
 
 .auth-page {

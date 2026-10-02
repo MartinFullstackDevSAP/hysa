@@ -7,7 +7,7 @@ import {
   LogOut
 } from 'lucide-react';
 
-const MainLayout = ({ activeTab, setActiveTab, onSignOut, children }) => {
+const MainLayout = ({ activeTab, onTabSelect, onSignOut, isLoading, children }) => {
   const [confirmingSignOut, setConfirmingSignOut] = useState(false);
 
   const navItems = [
@@ -19,10 +19,18 @@ const MainLayout = ({ activeTab, setActiveTab, onSignOut, children }) => {
   return (
     <div className="finova-app-shell">
       {/* Hlavný obsahový kontajner */}
-      <main className="finova-main-content">
+      <main className="finova-main-content" aria-busy={isLoading}>
         <div className="finova-container">
           {children}
         </div>
+        {isLoading && (
+          <div className="page-loading-overlay" role="status" aria-live="polite">
+            <div className="page-loading-indicator">
+              <span className="busy-spinner" aria-hidden="true" />
+              <span>Načítavam obsah</span>
+            </div>
+          </div>
+        )}
       </main>
 
       {/* Pravý bočný panel pre Desktop (>= 1024px) */}
@@ -39,8 +47,10 @@ const MainLayout = ({ activeTab, setActiveTab, onSignOut, children }) => {
             return (
               <button
                 key={item.id}
-                onClick={() => setActiveTab(item.id)}
+                type="button"
+                onClick={() => onTabSelect(item.id)}
                 className={`sidebar-nav-item ${isActive ? 'active' : ''}`}
+                aria-current={isActive ? 'page' : undefined}
               >
                 <Icon size={20} />
                 <span>{item.label}</span>
@@ -63,8 +73,10 @@ const MainLayout = ({ activeTab, setActiveTab, onSignOut, children }) => {
           return (
             <button
               key={item.id}
-              onClick={() => setActiveTab(item.id)}
+              type="button"
+              onClick={() => onTabSelect(item.id)}
               className={`mobile-nav-item ${isActive ? 'active' : ''}`}
+              aria-current={isActive ? 'page' : undefined}
             >
               <Icon size={20} />
               <span>{item.label}</span>
