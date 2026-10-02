@@ -4,8 +4,6 @@ import { supabase } from '../supabaseClient';
 import { BANK_LOGOS, getBankLogo } from '../bankLogos';
 import '../css/mainlayout.css';
 
-const CHART_COLORS = ['#8b5cf6', '#ec4899', '#06b6d4', '#f59e0b', '#10b981', '#6366f1'];
-
 const getCurrentMonthStart = () => {
     const today = new Date();
     return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-01`;
@@ -97,28 +95,6 @@ const Dashboard = ({ currency = 'CZK' }) => {
     const weightedRateNet = totalBalance > 0 ? (netYieldSum / totalBalance) * 100 : 0;
     const monthlyYield = netYieldSum / 12;
 
-    const balancesByBank = accounts.reduce((banks, account) => {
-        const bank = account.bank || 'Neznáma banka';
-        const balance = Number(account.balance) || 0;
-        banks[bank] = (banks[bank] || 0) + balance;
-        return banks;
-    }, {});
-    const bankBalances = Object.entries(balancesByBank)
-        .sort(([, firstBalance], [, secondBalance]) => secondBalance - firstBalance)
-        .map(([bank, balance], index) => ({
-            bank,
-            balance,
-            color: CHART_COLORS[index % CHART_COLORS.length],
-            percentage: totalBalance > 0 ? (balance / totalBalance) * 100 : 0,
-        }));
-    let chartOffset = 0;
-    const chartGradient = bankBalances.length > 0
-        ? bankBalances.map(({ color, percentage }) => {
-            const start = chartOffset;
-            chartOffset += percentage;
-            return `${color} ${start}% ${chartOffset}%`;
-        }).join(', ')
-        : '#34234d 0% 100%';
     const cardPaymentAccounts = accounts.filter((account) => Number(account.card_payments) > 0);
     const fixedTermAccounts = accounts
         .filter((account) => account.name === 'Termínovaný vklad')
@@ -136,8 +112,6 @@ const Dashboard = ({ currency = 'CZK' }) => {
     const formatCurrencyInteger = (amount, currencySymbol = 'CZK') => {
         return `${formatIntegerWithSpaces(amount)} ${currencySymbol}`;
     };
-
-    const formatAmountInteger = (amount) => formatIntegerWithSpaces(amount);
 
     return (
         <div className="finova-dashboard">
@@ -250,42 +224,6 @@ const Dashboard = ({ currency = 'CZK' }) => {
                                     </div>
                                 );
                             })}
-                        </div>
-                    )}
-                </section>
-                <section className="stat-card bank-distribution-card">
-                    <h2 className="bank-distribution-title">Rozloženie účtov</h2>
-                    {loading ? (
-                        <div className="bank-distribution-empty">Načítavam dáta...</div>
-                    ) : bankBalances.length === 0 ? (
-                        <div className="bank-distribution-empty">Zatiaľ nemáš žiadne účty.</div>
-                    ) : (
-                        <div className="bank-distribution-content">
-                            <div className="bank-donut" style={{ '--bank-donut-gradient': `conic-gradient(${chartGradient})` }}>
-                                <div className="bank-donut-center">
-                                    <strong>{accounts.length} účtov</strong>
-                                </div>
-                            </div>
-                            <div className="bank-distribution-legend">
-                                {bankBalances.map(({ bank, balance, color, percentage }) => (
-                                    <div className="bank-legend-item" key={bank}>
-                                        <span className="bank-legend-color" style={{ backgroundColor: color }} />
-                                        <span className="bank-legend-logo">
-                                            <img
-                                                src={BANK_LOGOS[bank] || getBankLogo(bank)}
-                                                alt=""
-                                                onError={(event) => {
-                                                    event.currentTarget.style.display = 'none';
-                                                }}
-                                            />
-                                        </span>
-                                        <span className="bank-legend-value">
-                                            {formatAmountInteger(balance)}
-                                            <small>{percentage.toFixed(1)} %</small>
-                                        </span>
-                                    </div>
-                                ))}
-                            </div>
                         </div>
                     )}
                 </section>
