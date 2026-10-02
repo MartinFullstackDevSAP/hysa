@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { CalendarClock, CreditCard } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 import { BANK_LOGOS, getBankLogo } from '../bankLogos';
+import AccountList from './AccountList';
 import '../css/mainlayout.css';
 
 const getCurrentMonthStart = () => {
@@ -27,6 +28,7 @@ const Dashboard = ({ currency = 'CZK' }) => {
     const [loading, setLoading] = useState(true);
     const [paymentLoading, setPaymentLoading] = useState(true);
     const [paymentError, setPaymentError] = useState('');
+    const [accountError, setAccountError] = useState('');
 
     useEffect(() => {
         fetchAccounts();
@@ -46,8 +48,12 @@ const Dashboard = ({ currency = 'CZK' }) => {
                 .eq('month_start', getCurrentMonthStart()),
         ]);
 
-        if (!error) {
+        if (error) {
+            console.error('Chyba pri načítaní účtov:', error.message);
+            setAccountError('Účty sa nepodarilo načítať.');
+        } else {
             setAccounts(data || []);
+            setAccountError('');
         }
         if (progressError) {
             console.error('Chyba pri načítaní platieb kartou:', progressError.message);
@@ -265,6 +271,9 @@ const Dashboard = ({ currency = 'CZK' }) => {
                                     <span className="fixed-term-balance">
                                         {formatCurrencyInteger(account.balance, account.currency || currency)}
                                     </span>
+                                    <span className="rate-badge fixed-term-rate">
+                                        {Number(account.rate).toFixed(2)} % p.a.
+                                    </span>
                                     <span className={`fixed-term-expiration${account.expiration ? ' has-expiration' : ''}`}>
                                         {account.expiration
                                             ? `Expirácia: ${formatExpirationDate(account.expiration)}`
@@ -275,6 +284,10 @@ const Dashboard = ({ currency = 'CZK' }) => {
                         </div>
                     )}
                 </section>
+                <div className="accounts-list-wrapper">
+                    {accountError && <div className="settings-error" role="alert">{accountError}</div>}
+                    <AccountList accounts={accounts} loading={loading} onAccountsChange={setAccounts} />
+                </div>
             </div>
         </div>
     );

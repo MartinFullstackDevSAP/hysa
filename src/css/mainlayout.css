@@ -2,6 +2,8 @@
 .finova-app-shell {
   display: flex;
   min-height: 100vh;
+  width: 100%;
+  min-width: 0;
   background-color: var(--bg-main, #f7f5ff);
   box-sizing: border-box;
   position: relative;
@@ -116,15 +118,17 @@
   display: flex;
   position: fixed;
   bottom: 0;
-  left: 0;
-  right: 0;
+  inset-inline: 0;
+  width: auto;
   background: var(--bg-card, #ffffff);
   border-top: 1px solid var(--border-color, #e2d9f2);
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 1rem calc(0.5rem + env(safe-area-inset-bottom, 0px));
   justify-content: space-around;
   align-items: center;
   z-index: 1500;
   box-shadow: 0 -4px 12px rgba(15, 23, 42, 0.04);
+  box-sizing: border-box;
+  transform: translateZ(0);
 }
 
 .mobile-nav-item {
@@ -421,7 +425,7 @@
 
 .fixed-term-row {
   display: grid;
-  grid-template-columns: minmax(150px, 1fr) minmax(140px, auto) minmax(150px, auto);
+  grid-template-columns: minmax(0, 1fr) auto auto;
   align-items: center;
   gap: 1rem;
   padding: 0.85rem 0;
@@ -429,6 +433,7 @@
 }
 
 .fixed-term-balance,
+.fixed-term-rate,
 .fixed-term-expiration {
   color: var(--text-primary, #26183f);
   font-size: 0.85rem;
@@ -437,7 +442,47 @@
 }
 
 .fixed-term-expiration {
+  grid-column: 1 / -1;
+  justify-self: end;
   color: var(--text-secondary, #655b7d);
+}
+
+.accounts-list-wrapper {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+
+.accounts-list-card {
+  width: 100%;
+}
+
+.accounts-list-title {
+  margin-bottom: 0;
+}
+
+.account-neutral-badge {
+  background: #f1f5f9;
+  color: #475569;
+  border-color: #cbd5e1;
+  font-weight: 500;
+}
+
+.account-expiry-badge {
+  background: #fee2e2;
+  color: #dc2626;
+  border-color: #dc2626;
+  font-weight: 600;
+}
+
+.account-list-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.account-edit-modal {
+  max-height: min(90vh, 720px);
+  overflow-y: auto;
 }
 
 .fixed-term-expiration.has-expiration {
@@ -644,26 +689,21 @@
   }
 
   .dashboard-stats-grid .fixed-term-row {
-    grid-template-columns: minmax(0, 1fr) auto;
-  }
-
-  .dashboard-stats-grid .fixed-term-expiration {
-    grid-column: 1 / -1;
-    justify-self: end;
+    grid-template-columns: minmax(0, 1fr) auto auto;
   }
 }
 
 /* MEDIA QUERY PRE TABLET / MOBIL (<= 768px) */
 @media (max-width: 768px) {
   .finova-main-content {
-    padding-bottom: 74px;
+    padding-bottom: calc(74px + env(safe-area-inset-bottom, 0px));
   }
 }
 
 /* MEDIA QUERY PRE MOBIL (<= 640px) */
 @media (max-width: 640px) {
   .finova-dashboard {
-    padding: 1rem 0.75rem; /* Zodpovedá marginom v settings */
+    padding: 0.5rem 0.375rem;
   }
 
   .finova-hero-card {
@@ -732,14 +772,43 @@
   }
 
   .fixed-term-balance,
+  .fixed-term-rate,
   .fixed-term-expiration {
     text-align: right;
+  }
+
+  .fixed-term-rate {
+    grid-column: 2;
   }
 
   .fixed-term-expiration {
     grid-column: 1 / -1;
     text-align: left;
     justify-self: start;
+  }
+
+  .finova-list-item {
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .list-item-main,
+  .list-item-details,
+  .list-item-right {
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .list-item-details {
+    flex: 1 1 100%;
+  }
+
+  .list-item-right {
+    flex-wrap: wrap;
+  }
+
+  .account-list-actions {
+    flex-shrink: 0;
   }
 
   .card-payment-progress-track {

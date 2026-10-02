@@ -831,10 +831,10 @@ input[type='number'] {
 /* Modálny overlay */
 .finova-modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  inset: 0;
+  width: auto;
+  min-height: 100vh;
+  min-height: 100dvh;
   background-color: rgba(15, 23, 42, 0.5);
   backdrop-filter: blur(4px);
   display: flex;

@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState } from 'react';
 import '../css/mainlayout.css';
 import { 
   House,
@@ -8,6 +8,8 @@ import {
 } from 'lucide-react';
 
 const MainLayout = ({ activeTab, setActiveTab, onSignOut, children }) => {
+  const [confirmingSignOut, setConfirmingSignOut] = useState(false);
+
   const navItems = [
     { id: 'dashboard', label: 'Prehľad', icon: House },
     { id: 'investments', label: 'Investície', icon: TrendingUp },
@@ -46,7 +48,7 @@ const MainLayout = ({ activeTab, setActiveTab, onSignOut, children }) => {
             );
           })}
         </nav>
-        <button type="button" className="sidebar-nav-item sidebar-logout" onClick={onSignOut}>
+        <button type="button" className="sidebar-nav-item sidebar-logout" onClick={() => setConfirmingSignOut(true)}>
           <LogOut size={20} />
           <span>Odhlásiť sa</span>
         </button>
@@ -69,11 +71,42 @@ const MainLayout = ({ activeTab, setActiveTab, onSignOut, children }) => {
             </button>
           );
         })}
-        <button type="button" className="mobile-nav-item mobile-logout" onClick={onSignOut}>
+        <button type="button" className="mobile-nav-item mobile-logout" onClick={() => setConfirmingSignOut(true)}>
           <LogOut size={20} />
           <span>Odhlásiť</span>
         </button>
       </nav>
+      {confirmingSignOut && (
+        <div className="finova-modal-overlay" role="presentation">
+          <section className="finova-modal" role="dialog" aria-modal="true" aria-labelledby="sign-out-title">
+            <div className="finova-modal-header">
+              <h2 className="finova-modal-title" id="sign-out-title">Odhlásiť sa?</h2>
+            </div>
+            <div className="finova-modal-body">
+              <p>Naozaj sa chcete odhlásiť zo svojho účtu?</p>
+            </div>
+            <div className="finova-modal-footer">
+              <button
+                type="button"
+                className="btn-finova-secondary"
+                onClick={() => setConfirmingSignOut(false)}
+              >
+                Zostať prihlásený
+              </button>
+              <button
+                type="button"
+                className="btn-finova-primary-sm"
+                onClick={() => {
+                  setConfirmingSignOut(false);
+                  onSignOut();
+                }}
+              >
+                Odhlásiť sa
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
     </div>
   );
 };
