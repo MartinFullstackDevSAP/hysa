@@ -440,6 +440,19 @@
   color: var(--text-secondary, #655b7d);
 }
 
+.fixed-term-expiration.has-expiration {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.6rem;
+  border: 1px solid #dc2626;
+  border-radius: 20px;
+  background-color: #fee2e2;
+  color: #dc2626;
+  font-size: 0.825rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
 .card-payment-header {
   display: flex;
   align-items: flex-start;
@@ -447,10 +460,30 @@
   gap: 1rem;
 }
 
+.card-payment-heading {
+  min-width: 0;
+}
+
+.card-payment-header .card-payment-title {
+  margin-bottom: 0.5rem;
+}
+
 .card-payment-summary {
-  margin: -1rem 0 1.25rem;
+  margin: 0 0 1.25rem;
   color: var(--text-secondary, #655b7d);
   font-size: 0.85rem;
+}
+
+.card-payment-month {
+  flex-shrink: 0;
+  padding: 0.3rem 0.65rem;
+  border: 1px solid var(--border-color, #e2d9f2);
+  border-radius: 9999px;
+  color: var(--text-secondary, #655b7d);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  white-space: nowrap;
 }
 
 .card-payment-title {
@@ -595,23 +628,28 @@
   }
 
   .finova-dashboard .dashboard-stats-grid {
-    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
 
   .dashboard-stats-grid .card-payment-card {
     grid-column: 1;
-    width: auto;
-  }
-
-  .dashboard-stats-grid .bank-distribution-card {
-    grid-column: 2;
     grid-row: 2;
     width: auto;
   }
 
   .dashboard-stats-grid .fixed-term-card {
+    grid-column: 2;
+    grid-row: 2;
+    width: auto;
+  }
+
+  .dashboard-stats-grid .fixed-term-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .dashboard-stats-grid .fixed-term-expiration {
     grid-column: 1 / -1;
-    grid-row: 3;
+    justify-self: end;
   }
 }
 
@@ -680,7 +718,7 @@
   }
 
   .card-payment-header {
-    flex-direction: column;
+    align-items: flex-start;
   }
 
   .card-payment-row {
@@ -701,6 +739,7 @@
   .fixed-term-expiration {
     grid-column: 1 / -1;
     text-align: left;
+    justify-self: start;
   }
 
   .card-payment-progress-track {

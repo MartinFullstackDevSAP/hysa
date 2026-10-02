@@ -9,6 +9,11 @@ const getCurrentMonthStart = () => {
     return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-01`;
 };
 
+const getCurrentMonthLabel = () => new Intl.DateTimeFormat('sk-SK', {
+    month: 'long',
+    year: 'numeric',
+}).format(new Date());
+
 const formatExpirationDate = (expiration) => {
     if (!expiration) return 'Expirácia neuvedená';
     const [year, month, day] = expiration.split('-');
@@ -157,7 +162,7 @@ const Dashboard = ({ currency = 'CZK' }) => {
                 </div>
                 <section className="stat-card card-payment-card">
                     <div className="card-payment-header">
-                        <div>
+                        <div className="card-payment-heading">
                             <h2 className="bank-distribution-title card-payment-title">
                                 <CreditCard size={20} aria-hidden="true" />
                                 <span>Platby kartou</span>
@@ -168,6 +173,9 @@ const Dashboard = ({ currency = 'CZK' }) => {
                                     : `${formatIntegerWithSpaces(totalMadePayments)} z ${formatIntegerWithSpaces(totalRequiredPayments)} platieb vykonaných`}
                             </p>
                         </div>
+                        <time className="card-payment-month" dateTime={getCurrentMonthStart()}>
+                            {getCurrentMonthLabel()}
+                        </time>
                     </div>
                     {paymentError && <div className="settings-error" role="alert">{paymentError}</div>}
                     {cardPaymentAccounts.length === 0 ? (
@@ -257,8 +265,10 @@ const Dashboard = ({ currency = 'CZK' }) => {
                                     <span className="fixed-term-balance">
                                         {formatCurrencyInteger(account.balance, account.currency || currency)}
                                     </span>
-                                    <span className="fixed-term-expiration">
-                                        {formatExpirationDate(account.expiration)}
+                                    <span className={`fixed-term-expiration${account.expiration ? ' has-expiration' : ''}`}>
+                                        {account.expiration
+                                            ? `Expirácia: ${formatExpirationDate(account.expiration)}`
+                                            : formatExpirationDate(account.expiration)}
                                     </span>
                                 </div>
                             ))}
