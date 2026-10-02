@@ -153,23 +153,9 @@ const Dashboard = ({ currency = 'CZK', navigationKey = 0, onLoadingChange }) => 
                     </div>
                     <div className="hero-divider"></div>
                     <div className="hero-rate-section">
-                        <span
-                            className="rate-badge"
-                            style={{
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: '0.5rem',
-                                fontSize: '0.9rem',
-                                padding: '0.45rem 1rem',
-                                borderRadius: '9999px',
-                                whiteSpace: 'nowrap',
-                                backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                                color: '#059669',
-                                border: '1px solid rgba(16, 185, 129, 0.2)'
-                            }}
-                        >
+                        <span className="dashboard-badge dashboard-badge-success hero-net-interest-badge">
                             <span>Čistý úrok p.a.</span>
-                            <span style={{ fontWeight: 700 }}>
+                            <span className="hero-net-interest-value">
                                 {loading ? '...' : `${weightedRateNet.toFixed(2)} %`}
                             </span>
                         </span>
@@ -188,7 +174,7 @@ const Dashboard = ({ currency = 'CZK', navigationKey = 0, onLoadingChange }) => 
                                     : `${formatIntegerWithSpaces(totalMadePayments)} z ${formatIntegerWithSpaces(totalRequiredPayments)} platieb vykonaných`}
                             </p>
                         </div>
-                        <time className="card-payment-month" dateTime={getCurrentMonthStart()}>
+                        <time className="dashboard-badge dashboard-badge-success" dateTime={getCurrentMonthStart()}>
                             {getCurrentMonthLabel()}
                         </time>
                     </div>
@@ -256,7 +242,7 @@ const Dashboard = ({ currency = 'CZK', navigationKey = 0, onLoadingChange }) => 
                             <CalendarClock size={20} aria-hidden="true" />
                             <span>Termínované vklady</span>
                         </h2>
-                        <span className="card-payment-month fixed-term-count">
+                        <span className="dashboard-badge dashboard-badge-success fixed-term-count">
                             {fixedTermAccounts.length}{' '}
                             {fixedTermAccounts.length === 1
                                 ? 'vklad'
@@ -288,10 +274,10 @@ const Dashboard = ({ currency = 'CZK', navigationKey = 0, onLoadingChange }) => 
                                                 {account.bank || 'Neznáma banka'}
                                             </span>
                                             <div className="fixed-term-account-meta">
-                                                <span className="rate-badge fixed-term-rate">
+                                                <span className="dashboard-badge dashboard-badge-success fixed-term-rate">
                                                     {Number(account.rate).toFixed(2)} % p.a.
                                                 </span>
-                                                <span className={`fixed-term-expiration${account.expiration ? ' has-expiration' : ''}`}>
+                                                <span className="dashboard-badge dashboard-badge-danger fixed-term-expiration">
                                                     {account.expiration
                                                         ? `Expirácia: ${formatExpirationDate(account.expiration)}`
                                                         : formatExpirationDate(account.expiration)}

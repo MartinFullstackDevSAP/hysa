@@ -5,8 +5,7 @@ import { BANK_LOGOS, getBankLogo } from '../bankLogos';
 
 const formatCurrency = (amount, currency) => (
     `${Number(amount || 0).toLocaleString('cs-CZ', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
+        maximumFractionDigits: 0,
     })} ${currency || 'CZK'}`
 );
 
@@ -105,7 +104,7 @@ const AccountList = ({ accounts, loading, onAccountsChange }) => {
                         <Landmark size={20} aria-hidden="true" />
                         <span>Zoznam účtov</span>
                     </h2>
-                    <span className="card-payment-month">
+                    <span className="dashboard-badge dashboard-badge-success">
                         {accounts.length}{' '}
                         {accounts.length === 1 ? 'účet' : accounts.length >= 2 && accounts.length <= 4 ? 'účty' : 'účtov'}
                     </span>
@@ -143,15 +142,17 @@ const AccountList = ({ accounts, loading, onAccountsChange }) => {
                                         </div>
                                     </div>
                                     <div className="list-item-details">
-                                        <span className="rate-badge">{Number(account.rate).toFixed(2)} % p.a.</span>
+                                        <span className="dashboard-badge dashboard-badge-success">
+                                            {Number(account.rate).toFixed(2)} % p.a.
+                                        </span>
                                         {tax > 0 && (
-                                            <span className="rate-badge account-neutral-badge">Daň {tax} %</span>
+                                            <span className="dashboard-badge dashboard-badge-success">Daň {tax} %</span>
                                         )}
                                         {cardCount > 0 && (
-                                            <span className="rate-badge account-neutral-badge">{cardCount}× kartou</span>
+                                            <span className="dashboard-badge dashboard-badge-success">{cardCount}× kartou</span>
                                         )}
                                         {account.expiration && (
-                                            <span className="rate-badge account-expiry-badge">
+                                            <span className="dashboard-badge dashboard-badge-danger">
                                                 Expirácia: {new Date(`${account.expiration}T00:00:00`).toLocaleDateString('sk-SK')}
                                             </span>
                                         )}
