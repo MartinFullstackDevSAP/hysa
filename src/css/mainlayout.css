@@ -798,6 +798,35 @@
 
 }
 
+/* Na mobile a tablete scrolluje obsah, nie celá stránka s navigáciou. */
+@media (max-width: 1023px) {
+  body:has(.finova-app-shell) {
+    height: 100vh;
+    height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  #root:has(.finova-app-shell) {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .finova-app-shell {
+    height: 100vh;
+    height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .finova-main-content {
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
 /* MEDIA QUERY PRE TABLET / MOBIL (<= 768px) */
 @media (max-width: 768px) {
   .finova-main-content {
