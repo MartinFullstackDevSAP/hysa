@@ -242,10 +242,20 @@ const Dashboard = ({ currency = 'CZK' }) => {
                     )}
                 </section>
                 <section className="stat-card fixed-term-card">
-                    <h2 className="bank-distribution-title card-payment-title">
-                        <CalendarClock size={20} aria-hidden="true" />
-                        <span>Termínované vklady</span>
-                    </h2>
+                    <div className="fixed-term-header">
+                        <h2 className="bank-distribution-title card-payment-title">
+                            <CalendarClock size={20} aria-hidden="true" />
+                            <span>Termínované vklady</span>
+                        </h2>
+                        <span className="rate-badge fixed-term-count">
+                            {fixedTermAccounts.length}{' '}
+                            {fixedTermAccounts.length === 1
+                                ? 'vklad'
+                                : fixedTermAccounts.length >= 2 && fixedTermAccounts.length <= 4
+                                    ? 'vklady'
+                                    : 'vkladov'}
+                        </span>
+                    </div>
                     {loading ? (
                         <div className="bank-distribution-empty">Načítavam dáta...</div>
                     ) : fixedTermAccounts.length === 0 ? (
@@ -254,7 +264,7 @@ const Dashboard = ({ currency = 'CZK' }) => {
                         <div className="fixed-term-list">
                             {fixedTermAccounts.map((account) => (
                                 <div className="fixed-term-row" key={account.id}>
-                                    <div className="card-payment-account">
+                                    <div className="fixed-term-account">
                                         <span className="card-payment-bank-logo">
                                             <img
                                                 src={BANK_LOGOS[account.bank] || getBankLogo(account.bank)}
@@ -264,20 +274,24 @@ const Dashboard = ({ currency = 'CZK' }) => {
                                                 }}
                                             />
                                         </span>
-                                        <span className="card-payment-account-bank">
-                                            {account.bank || 'Neznáma banka'}
-                                        </span>
+                                        <div className="fixed-term-account-info">
+                                            <span className="card-payment-account-bank">
+                                                {account.bank || 'Neznáma banka'}
+                                            </span>
+                                            <div className="fixed-term-account-meta">
+                                                <span className="rate-badge fixed-term-rate">
+                                                    {Number(account.rate).toFixed(2)} % p.a.
+                                                </span>
+                                                <span className={`fixed-term-expiration${account.expiration ? ' has-expiration' : ''}`}>
+                                                    {account.expiration
+                                                        ? `Expirácia: ${formatExpirationDate(account.expiration)}`
+                                                        : formatExpirationDate(account.expiration)}
+                                                </span>
+                                            </div>
+                                        </div>
                                     </div>
                                     <span className="fixed-term-balance">
                                         {formatCurrencyInteger(account.balance, account.currency || currency)}
-                                    </span>
-                                    <span className="rate-badge fixed-term-rate">
-                                        {Number(account.rate).toFixed(2)} % p.a.
-                                    </span>
-                                    <span className={`fixed-term-expiration${account.expiration ? ' has-expiration' : ''}`}>
-                                        {account.expiration
-                                            ? `Expirácia: ${formatExpirationDate(account.expiration)}`
-                                            : formatExpirationDate(account.expiration)}
                                     </span>
                                 </div>
                             ))}

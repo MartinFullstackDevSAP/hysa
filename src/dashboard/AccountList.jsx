@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Landmark } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 import { BANK_LOGOS, getBankLogo } from '../bankLogos';
 
@@ -100,7 +101,10 @@ const AccountList = ({ accounts, loading, onAccountsChange }) => {
         <>
             <section className="stat-card accounts-list-card">
                 <div className="card-header-flex">
-                    <h2 className="bank-distribution-title accounts-list-title">Zoznam účtov</h2>
+                    <h2 className="bank-distribution-title card-payment-title accounts-list-title">
+                        <Landmark size={20} aria-hidden="true" />
+                        <span>Zoznam účtov</span>
+                    </h2>
                     <span className="rate-badge">
                         {accounts.length}{' '}
                         {accounts.length === 1 ? 'účet' : accounts.length >= 2 && accounts.length <= 4 ? 'účty' : 'účtov'}

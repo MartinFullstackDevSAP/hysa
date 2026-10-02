@@ -417,6 +417,21 @@
   flex-shrink: 0;
 }
 
+.fixed-term-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.fixed-term-header .card-payment-title {
+  margin-bottom: 0;
+}
+
+.fixed-term-count {
+  flex-shrink: 0;
+}
+
 .fixed-term-list {
   display: flex;
   flex-direction: column;
@@ -425,25 +440,48 @@
 
 .fixed-term-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 1rem;
   padding: 0.85rem 0;
   border-top: 1px solid var(--border-color, #e2d9f2);
 }
 
-.fixed-term-balance,
-.fixed-term-rate,
-.fixed-term-expiration {
+.fixed-term-account {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  min-width: 0;
+}
+
+.fixed-term-account .card-payment-bank-logo {
+  flex: 0 0 32px;
+}
+
+.fixed-term-account-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.fixed-term-account-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.fixed-term-balance {
   color: var(--text-primary, #26183f);
   font-size: 0.85rem;
   font-weight: 600;
   text-align: right;
+  white-space: nowrap;
 }
 
 .fixed-term-expiration {
-  grid-column: 1 / -1;
-  justify-self: end;
   color: var(--text-secondary, #655b7d);
 }
 
@@ -655,11 +693,19 @@
   .finova-main-content {
     padding-bottom: 0;
     order: 2;
+    width: calc(100% - 260px);
+    margin-left: 260px;
   }
 
   .finova-desktop-sidebar {
     display: flex;
     order: 1;
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: 260px;
+    height: 100vh;
+    height: 100dvh;
+    overflow-y: auto;
   }
 
   .finova-mobile-bottom-bar {
@@ -688,9 +734,6 @@
     width: auto;
   }
 
-  .dashboard-stats-grid .fixed-term-row {
-    grid-template-columns: minmax(0, 1fr) auto auto;
-  }
 }
 
 /* MEDIA QUERY PRE TABLET / MOBIL (<= 768px) */
@@ -767,24 +810,17 @@
   }
 
   .fixed-term-row {
-    grid-template-columns: minmax(0, 1fr) auto;
     gap: 0.65rem;
   }
 
-  .fixed-term-balance,
-  .fixed-term-rate,
-  .fixed-term-expiration {
-    text-align: right;
+  .fixed-term-account-meta {
+    gap: 0.4rem;
   }
 
-  .fixed-term-rate {
-    grid-column: 2;
-  }
-
-  .fixed-term-expiration {
-    grid-column: 1 / -1;
-    text-align: left;
-    justify-self: start;
+  .fixed-term-account-meta .rate-badge,
+  .fixed-term-account-meta .fixed-term-expiration {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.5rem;
   }
 
   .finova-list-item {
