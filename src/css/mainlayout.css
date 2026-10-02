@@ -501,7 +501,10 @@
 }
 
 .fixed-term-account .card-payment-bank-logo {
-  flex: 0 0 32px;
+  width: 68px;
+  height: 68px;
+  flex: 0 0 68px;
+  border-radius: 12px;
 }
 
 .fixed-term-account-info {
@@ -521,8 +524,8 @@
 
 .fixed-term-balance {
   color: var(--text-primary, #26183f);
-  font-size: 0.85rem;
-  font-weight: 600;
+  font-size: 1.1rem;
+  font-weight: 700;
   text-align: right;
   white-space: nowrap;
 }
@@ -871,6 +874,17 @@
   .fixed-term-account-meta .fixed-term-expiration {
     font-size: 0.75rem;
     padding: 0.2rem 0.5rem;
+  }
+
+  .fixed-term-account .card-payment-bank-logo {
+    width: 38px;
+    height: 38px;
+    flex-basis: 38px;
+    border-radius: 10px;
+  }
+
+  .fixed-term-balance {
+    font-size: 1rem;
   }
 
   .finova-list-item {

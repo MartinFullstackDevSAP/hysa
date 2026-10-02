@@ -105,7 +105,7 @@ const AccountList = ({ accounts, loading, onAccountsChange }) => {
                         <Landmark size={20} aria-hidden="true" />
                         <span>Zoznam účtov</span>
                     </h2>
-                    <span className="card-payment-month account-count-badge">
+                    <span className="card-payment-month">
                         {accounts.length}{' '}
                         {accounts.length === 1 ? 'účet' : accounts.length >= 2 && accounts.length <= 4 ? 'účty' : 'účtov'}
                     </span>
