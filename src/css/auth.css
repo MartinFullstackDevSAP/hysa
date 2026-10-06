@@ -5,9 +5,7 @@
   place-items: center;
   gap: 1rem;
   align-content: center;
-  background:
-    radial-gradient(ellipse at 50% 42%, var(--accent-soft, rgba(197, 154, 72, 0.12)), transparent 42%),
-    var(--bg-main, #f5f6f8);
+  background: var(--app-page-background, var(--bg-main, #f5f6f8));
   color: var(--text-secondary, #6d7079);
 }
 
@@ -33,9 +31,7 @@
   place-items: center;
   padding: 1.5rem;
   box-sizing: border-box;
-  background:
-    radial-gradient(ellipse at 50% 0%, var(--accent-soft, rgba(197, 154, 72, 0.12)), transparent 44%),
-    var(--bg-main, #f5f6f8);
+  background: var(--app-page-background, var(--bg-main, #f5f6f8));
   overflow-y: auto;
 }
 

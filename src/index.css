@@ -9,6 +9,9 @@
   --accent-border: rgba(182, 141, 72, 0.5);
   --social-bg: rgba(236, 238, 241, 0.8);
   --shadow: rgba(18, 20, 25, 0.08) 0 10px 15px -3px, rgba(18, 20, 25, 0.04) 0 4px 6px -2px;
+  --app-page-background:
+    linear-gradient(rgba(245, 246, 248, 0.84), rgba(245, 246, 248, 0.84)),
+    url('/dashboard-background.png') center / cover fixed;
 
   --sans: 'Space Grotesk', 'Segoe UI', Roboto, sans-serif;
   --heading: 'Space Grotesk', 'Segoe UI', Roboto, sans-serif;
@@ -40,12 +43,15 @@
   --accent-border: rgba(245, 210, 138, 0.45);
   --social-bg: rgba(16, 17, 22, 0.8);
   --shadow: rgba(0, 0, 0, 0.42) 0 12px 28px -8px, rgba(0, 0, 0, 0.24) 0 4px 10px -4px;
+  --app-page-background:
+    linear-gradient(rgba(5, 5, 7, 0.24), rgba(5, 5, 7, 0.24)),
+    url('/dashboard-background.png') center / cover fixed;
   color-scheme: dark;
 }
 
 body {
   margin: 0;
-  background: var(--bg);
+  background: var(--app-page-background);
 }
 
 html,

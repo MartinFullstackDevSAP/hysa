@@ -4,7 +4,7 @@
   min-height: 100vh;
   width: 100%;
   min-width: 0;
-  background-color: var(--bg-main, #f7f5ff);
+  background-color: transparent;
   box-sizing: border-box;
   position: relative;
   flex-direction: column;
@@ -534,27 +534,15 @@
 }
 
 .dashboard-badge-success {
-  border-color: color-mix(in srgb, var(--accent-green, #477c67) 30%, transparent);
-  background: var(--accent-green-bg, #edf5f0);
-  color: var(--accent-green, #477c67);
+  border-color: var(--badge-gold-border, #ead49e);
+  background: var(--badge-gold-bg, #f8f1df);
+  color: var(--badge-gold-text, #775a20);
 }
 
 .dashboard-badge-danger {
-  border-color: rgba(220, 38, 38, 0.3);
-  background: rgba(239, 68, 68, 0.1);
-  color: #dc2626;
-}
-
-:root[data-theme='dark'] .dashboard-badge-success {
-  border-color: color-mix(in srgb, var(--accent-green, #75c6a3) 34%, transparent);
-  background: var(--accent-green-bg, rgba(42, 112, 83, 0.2));
-  color: var(--accent-green, #75c6a3);
-}
-
-:root[data-theme='dark'] .dashboard-badge-danger {
-  border-color: rgba(248, 113, 113, 0.35);
-  background: rgba(239, 68, 68, 0.16);
-  color: #fca5a5;
+  border-color: var(--badge-silver-border, #d9dde3);
+  background: var(--badge-silver-bg, #eef0f3);
+  color: var(--badge-silver-text, #5d6570);
 }
 
 .hero-net-interest-badge {

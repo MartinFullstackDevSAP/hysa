@@ -31,6 +31,12 @@ body {
   --accent-green: #477c67;
   --accent-green-bg: #edf5f0;
   --accent-red: #dc2626;
+  --badge-gold-bg: #f8f1df;
+  --badge-gold-border: #ead49e;
+  --badge-gold-text: #775a20;
+  --badge-silver-bg: #eef0f3;
+  --badge-silver-border: #d9dde3;
+  --badge-silver-text: #5d6570;
   --shadow-card: 0 10px 25px -8px rgba(18, 20, 25, 0.09), 0 4px 10px -5px rgba(18, 20, 25, 0.05);
 }
 
@@ -52,6 +58,12 @@ body {
   --accent-green: #75c6a3;
   --accent-green-bg: rgba(42, 112, 83, 0.2);
   --accent-red: #f18b8b;
+  --badge-gold-bg: rgba(245, 210, 138, 0.12);
+  --badge-gold-border: rgba(245, 210, 138, 0.34);
+  --badge-gold-text: #f5d28a;
+  --badge-silver-bg: rgba(192, 198, 209, 0.1);
+  --badge-silver-border: rgba(192, 198, 209, 0.28);
+  --badge-silver-text: #c4c8d0;
   --shadow-card: 0 14px 34px -12px rgba(0, 0, 0, 0.7), 0 3px 10px -4px rgba(0, 0, 0, 0.4);
 }
 
@@ -63,7 +75,7 @@ body {
   margin: 0 auto;
   font-family: var(--sans, 'Space Grotesk'), 'Segoe UI', sans-serif;
   color: var(--text-primary);
-  background-color: var(--bg-main);
+  background-color: transparent;
   min-height: 100vh;
   box-sizing: border-box;
 }
@@ -137,8 +149,9 @@ body {
 }
 
 .stat-badge.green {
-  background: var(--accent-green-bg);
-  color: var(--accent-green);
+  background: var(--badge-gold-bg);
+  border: 1px solid var(--badge-gold-border);
+  color: var(--badge-gold-text);
 }
 
 .settings-error {
@@ -487,9 +500,9 @@ body {
   border-radius: 20px;
   font-size: 0.825rem;
   font-weight: 700;
-  color: #047857;
-  background-color: #ecfdf5;
-  border: 1px solid #a7f3d0;
+  color: var(--badge-gold-text);
+  background-color: var(--badge-gold-bg);
+  border: 1px solid var(--badge-gold-border);
   white-space: nowrap;
 }
 
@@ -501,9 +514,9 @@ body {
   border-radius: 20px;
   font-size: 0.825rem;
   font-weight: 600;
-  color: var(--accent-red);
-  background-color: #fef2f2;
-  border: 1px solid #fecaca;
+  color: var(--badge-silver-text);
+  background-color: var(--badge-silver-bg);
+  border: 1px solid var(--badge-silver-border);
   white-space: nowrap;
 }
 
@@ -564,8 +577,9 @@ input[type='number'] {
 }
 
 .account-count-badge {
-  background-color: var(--accent-green-bg);
-  color: var(--accent-green);
+  background-color: var(--badge-gold-bg);
+  border: 1px solid var(--badge-gold-border);
+  color: var(--badge-gold-text);
   font-size: 0.8rem;
   font-weight: 700;
   padding: 0.25rem 0.75rem;
