@@ -20,8 +20,20 @@ export default function CustomSelect({ options, value, onChange }) {
   return (
     <div className="custom-select-container" ref={dropdownRef}>
       <div
+        role="button"
+        tabIndex={0}
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
         className={`custom-select-trigger ${isOpen ? 'open' : ''}`}
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => setIsOpen((open) => !open)}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            setIsOpen((open) => !open);
+          } else if (event.key === 'Escape') {
+            setIsOpen(false);
+          }
+        }}
       >
         <span>{selectedOption.label}</span>
         <svg
@@ -40,10 +52,12 @@ export default function CustomSelect({ options, value, onChange }) {
       </div>
 
       {isOpen && (
-        <div className="custom-select-options">
+        <div className="custom-select-options" role="listbox">
           {options.map((option) => (
             <div
               key={option.value}
+              role="option"
+              aria-selected={option.value === value}
               className={`custom-select-option ${option.value === value ? 'selected' : ''}`}
               onClick={() => {
                 onChange(option.value);

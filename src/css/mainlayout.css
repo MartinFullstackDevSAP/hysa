@@ -115,9 +115,9 @@
   align-items: center;
   gap: 0.85rem;
   padding: 0.75rem 1rem;
-  border-radius: 12px;
-  border: none;
-  background: transparent;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: var(--control-surface, transparent);
   color: var(--text-secondary, #655b7d);
   font-size: 0.95rem;
   font-weight: 600;
@@ -128,19 +128,22 @@
 }
 
 .sidebar-nav-item:hover {
-  background-color: var(--bg-muted, #f0f1f3);
-  color: var(--text-primary, #26183f);
+  background-color: var(--control-surface-hover, var(--control-surface, var(--bg-muted, #f0f1f3)));
+  border-color: var(--control-border, var(--border-color, #e2e4e8));
+  color: var(--control-text, var(--text-primary, #26183f));
+  box-shadow: 0 0 18px -7px var(--control-glow, transparent);
 }
 
 :root[data-theme='dark'] .sidebar-nav-item:hover {
-  background-color: var(--bg-muted, #14151b);
-  color: var(--text-primary, #f5f6f8);
+  background-color: var(--control-surface-hover, var(--control-surface, var(--bg-muted, #14151b)));
+  color: var(--control-text, var(--text-primary, #f5f6f8));
 }
 
 .sidebar-nav-item.active {
-  background-color: var(--accent-soft, rgba(197, 154, 72, 0.12));
-  color: var(--accent-pink, #b38b49);
-  box-shadow: inset 0 0 0 1px var(--accent-border, rgba(182, 141, 72, 0.35));
+  background-color: var(--control-surface, var(--accent-soft, rgba(197, 154, 72, 0.12)));
+  border-color: var(--control-border, var(--accent-border, rgba(182, 141, 72, 0.35)));
+  color: var(--control-text, var(--accent-pink, #b38b49));
+  box-shadow: 0 0 20px -6px var(--control-glow, rgba(182, 141, 72, 0.2));
 }
 
 .sidebar-footer {
@@ -183,14 +186,14 @@
   box-sizing: border-box;
   width: 72px;
   height: 58px;
-  background: transparent;
-  border: none;
+  background: var(--control-surface, transparent);
+  border: 1px solid transparent;
   color: var(--text-secondary, #655b7d);
   font-size: 0.7rem;
   font-weight: 600;
   cursor: pointer;
   padding: 0.4rem 0.75rem;
-  border-radius: 10px;
+  border-radius: 999px;
   position: relative;
   touch-action: manipulation;
   transition: color 0.15s ease, background-color 0.15s ease;
@@ -198,23 +201,17 @@
 
 .mobile-nav-item:hover,
 .mobile-nav-item.active {
-  color: var(--accent-pink, #b38b49);
+  color: var(--control-text, var(--accent-pink, #b38b49));
 }
 
 .mobile-nav-item.active {
-  background-color: var(--accent-soft, rgba(197, 154, 72, 0.12));
-  box-shadow: inset 0 0 0 1px var(--accent-border, rgba(182, 141, 72, 0.35));
+  background-color: var(--control-surface-hover, var(--control-surface, var(--accent-soft, rgba(197, 154, 72, 0.12))));
+  border-color: var(--control-border, var(--accent-border, rgba(182, 141, 72, 0.35)));
+  box-shadow: 0 0 18px -6px var(--control-glow, rgba(182, 141, 72, 0.2));
 }
 
 .mobile-nav-item.active::before {
-  position: absolute;
-  top: -0.5rem;
-  left: 0;
-  width: 72px;
-  height: 3px;
-  border-radius: 999px;
-  background: var(--accent-gradient);
-  content: '';
+  content: none;
 }
 
 .mobile-logout {
@@ -222,11 +219,11 @@
 }
 
 .mobile-logout:hover {
-  color: var(--accent-red, #dc2626);
+  color: var(--control-text, var(--accent-pink, #b38b49));
 }
 
 :root[data-theme='dark'] .mobile-nav-item.active {
-  background-color: var(--accent-soft, rgba(245, 210, 138, 0.12));
+  background-color: var(--control-surface, var(--accent-soft, rgba(245, 210, 138, 0.12)));
 }
 
 /* Dashboard & Hero Card */
@@ -636,20 +633,20 @@
 }
 
 .payment-step-button {
-  background: var(--accent-gradient);
-  color: var(--text-on-accent, #211a10);
-  border: none;
-  border-radius: 10px;
+  background: var(--control-surface, var(--accent-gradient));
+  color: var(--control-text, var(--text-on-accent, #211a10));
+  border: 1px solid var(--control-border, var(--border-focus, #b68d48));
+  border-radius: 999px;
   cursor: pointer;
   font-weight: 600;
-  box-shadow: 0 4px 14px var(--accent-glow, rgba(197, 154, 72, 0.2));
+  box-shadow: 0 0 16px -7px var(--control-glow, var(--accent-glow, rgba(197, 154, 72, 0.2)));
   transition: transform 0.15s ease, opacity 0.2s ease, box-shadow 0.2s ease;
 }
 
 .payment-step-button:hover:not(:disabled) {
-  opacity: 0.95;
+  background: var(--control-surface-hover, var(--control-surface, var(--accent-gradient)));
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px var(--accent-glow, rgba(197, 154, 72, 0.2));
+  box-shadow: 0 0 22px -5px var(--control-glow, var(--accent-glow, rgba(197, 154, 72, 0.2)));
 }
 
 .payment-step-button:disabled {
