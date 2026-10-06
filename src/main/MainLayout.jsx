@@ -67,32 +67,34 @@ const MainLayout = ({ activeTab, onTabSelect, onSignOut, isLoading, children }) 
 
       {/* Spodná fixačná lišta pre Mobil / Tablet (< 1024px) */}
       <nav className="finova-mobile-bottom-bar">
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = activeTab === item.id;
-          return (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => onTabSelect(item.id)}
-              className={`mobile-nav-item ${isActive ? 'active' : ''}`}
-              aria-current={isActive ? 'page' : undefined}
-              aria-label={item.label}
-            >
-              <Icon size={20} />
-              <span>{item.label}</span>
-            </button>
-          );
-        })}
-        <button
-          type="button"
-          className="mobile-nav-item mobile-logout"
-          onClick={() => setConfirmingSignOut(true)}
-          aria-label="Odhlásiť"
-        >
-          <LogOut size={20} />
-          <span>Odhlásiť</span>
-        </button>
+        <div className="mobile-bottom-bar-content">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = activeTab === item.id;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => onTabSelect(item.id)}
+                className={`mobile-nav-item ${isActive ? 'active' : ''}`}
+                aria-current={isActive ? 'page' : undefined}
+                aria-label={item.label}
+              >
+                <Icon size={20} />
+                <span>{item.label}</span>
+              </button>
+            );
+          })}
+          <button
+            type="button"
+            className="mobile-nav-item mobile-logout"
+            onClick={() => setConfirmingSignOut(true)}
+            aria-label="Odhlásiť"
+          >
+            <LogOut size={20} />
+            <span>Odhlásiť</span>
+          </button>
+        </div>
       </nav>
       {confirmingSignOut && (
         <div className="finova-modal-overlay" role="presentation">
