@@ -34,6 +34,10 @@
   }
 }
 
+html {
+  background-color: #050507;
+}
+
 :root[data-theme='dark'] {
   --text: #a3a5ad;
   --text-h: #f5f6f8;

@@ -36,7 +36,7 @@ const MainLayout = ({ activeTab, onTabSelect, onSignOut, isLoading, children }) 
       {/* Pravý bočný panel pre Desktop (>= 1024px) */}
       <aside className="finova-desktop-sidebar">
         <div className="sidebar-brand">
-        <img className="sidebar-logo-icon" src="/brand-icon.svg" alt="" />
+        <img className="sidebar-logo-icon" src="/brand-icon.png" alt="" />
           <span className="sidebar-brand-title">F.I.R.E</span>
         </div>
 

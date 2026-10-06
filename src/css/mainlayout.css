@@ -91,8 +91,11 @@
   width: 36px;
   height: 36px;
   flex: 0 0 36px;
-  object-fit: cover;
+  padding: 2px;
+  box-sizing: border-box;
+  object-fit: contain;
   border-radius: 10px;
+  background: #050507;
   box-shadow: 0 4px 16px var(--accent-glow, rgba(197, 154, 72, 0.2));
 }
 
@@ -986,7 +989,7 @@
     bottom: 0;
     width: auto;
     padding: 0.5rem 0.75rem calc(0.5rem + env(safe-area-inset-bottom, 0px));
-    border-top: 1px solid var(--control-border, rgba(245, 210, 138, 0.34));
+    border-top: 1px solid var(--border-color, #25262e);
     border-radius: 0;
     background: var(--bg-card, #0e0f14);
     box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.2);
@@ -1000,7 +1003,7 @@
     gap: 0.35rem;
     margin: 0 auto;
     padding: 0.35rem 0.45rem;
-    border: 1px solid var(--control-border, rgba(245, 210, 138, 0.34));
+    border: 0;
     border-radius: 20px;
     background: var(--bg-card, #0e0f14);
     box-shadow: 0 0 20px -12px var(--control-glow, rgba(245, 210, 138, 0.3));

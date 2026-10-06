@@ -5,8 +5,8 @@
   place-items: center;
   gap: 1rem;
   align-content: center;
-  background: var(--app-page-background, var(--bg-main, #f5f6f8));
-  color: var(--text-secondary, #6d7079);
+  background: #050507;
+  color: #a3a5ad;
 }
 
 .auth-loading .busy-spinner {

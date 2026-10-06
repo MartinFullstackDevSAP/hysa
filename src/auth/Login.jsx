@@ -31,7 +31,7 @@ export default function Login() {
     <main className="auth-page">
       <section className="auth-card">
         <div className="auth-brand">
-          <img className="sidebar-logo-icon" src="/brand-icon.svg" alt="" />
+          <img className="sidebar-logo-icon" src="/brand-icon.png" alt="" />
           <span>F.I.R.E</span>
         </div>
         <h1>Prihlásenie</h1>
