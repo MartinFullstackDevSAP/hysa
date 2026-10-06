@@ -729,8 +729,10 @@
 }
 
 .payment-step-button {
-  display: grid;
-  place-items: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
   width: 36px;
   height: 36px;
   padding: 0;
@@ -837,6 +839,10 @@
   }
 
   .finova-hero-card {
+    margin-top: 0.2rem;
+  }
+
+  .finova-hero-card {
     flex-direction: column !important;
     align-items: center !important;
     text-align: center !important;
@@ -921,10 +927,18 @@
   }
 
   .mobile-nav-item {
-    width: 56px;
-    height: 52px;
-    gap: 0;
-    padding: 0.4rem;
+    display: grid;
+    flex: 1;
+    place-items: center;
+    width: auto;
+    max-width: 72px;
+    height: 48px;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 16px;
+    background: transparent;
+    color: var(--text-secondary, #a3a5ad);
+    transition: color 0.18s ease, background-color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
   }
 
   .mobile-nav-item span {
@@ -932,8 +946,39 @@
   }
 
   .mobile-nav-item svg {
-    width: 26px;
-    height: 26px;
+    width: 24px;
+    height: 24px;
+  }
+
+  .mobile-nav-item:hover,
+  .mobile-nav-item.active {
+    color: var(--control-text, var(--accent-pink, #b38b49));
+  }
+
+  .mobile-nav-item.active {
+    background: radial-gradient(ellipse at center, var(--accent-soft, rgba(245, 210, 138, 0.12)), transparent 78%);
+    border-color: var(--control-border, rgba(245, 210, 138, 0.48));
+    box-shadow: 0 0 18px -8px var(--control-glow, rgba(245, 210, 138, 0.3)), inset 0 1px rgba(255, 255, 255, 0.06);
+  }
+
+  .mobile-logout:hover {
+    color: var(--control-text, var(--accent-pink, #b38b49));
+  }
+
+  .finova-mobile-bottom-bar {
+    left: 12px;
+    right: 12px;
+    bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+    width: auto;
+    justify-content: space-between;
+    gap: 0.35rem;
+    padding: 0.45rem 0.55rem;
+    border: 1px solid var(--control-border, rgba(245, 210, 138, 0.34));
+    border-radius: 22px;
+    background: color-mix(in srgb, var(--bg-card, #0e0f14) 82%, transparent);
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.22), 0 0 22px -14px var(--control-glow, rgba(245, 210, 138, 0.3));
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    backdrop-filter: blur(18px) saturate(140%);
   }
 
   .finova-list-item {

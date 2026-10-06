@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { CalendarClock, CreditCard } from 'lucide-react';
+import { CalendarClock, CreditCard, Minus, Plus } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 import { BANK_LOGOS, getBankLogo } from '../bankLogos';
 import AccountList from './AccountList';
@@ -218,7 +218,7 @@ const Dashboard = ({ currency = 'CZK', navigationKey = 0, onLoadingChange }) => 
                                                 disabled={made === 0 || paymentLoading}
                                                 aria-label={`Odpočítať platbu pre ${account.name}`}
                                             >
-                                                −
+                                                <Minus size={16} strokeWidth={2.5} aria-hidden="true" />
                                             </button>
                                             <button
                                                 type="button"
@@ -227,7 +227,7 @@ const Dashboard = ({ currency = 'CZK', navigationKey = 0, onLoadingChange }) => 
                                                 disabled={made >= required || paymentLoading}
                                                 aria-label={`Pridať platbu pre ${account.name}`}
                                             >
-                                                +
+                                                <Plus size={16} strokeWidth={2.5} aria-hidden="true" />
                                             </button>
                                         </div>
                                     </div>
