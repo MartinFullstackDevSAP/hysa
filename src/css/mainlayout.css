@@ -729,6 +729,8 @@
 }
 
 .payment-step-button {
+  display: grid;
+  place-items: center;
   width: 36px;
   height: 36px;
   padding: 0;
@@ -916,6 +918,22 @@
 
   .fixed-term-balance {
     font-size: 1rem;
+  }
+
+  .mobile-nav-item {
+    width: 56px;
+    height: 52px;
+    gap: 0;
+    padding: 0.4rem;
+  }
+
+  .mobile-nav-item span {
+    display: none;
+  }
+
+  .mobile-nav-item svg {
+    width: 26px;
+    height: 26px;
   }
 
   .finova-list-item {

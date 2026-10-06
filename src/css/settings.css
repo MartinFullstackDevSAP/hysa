@@ -1194,3 +1194,17 @@ input[type='number'] {
   color: var(--text-secondary);
   opacity: 1;
 }
+
+@media (hover: none) {
+  .stat-card:hover {
+    border-color: var(--card-border-color);
+    box-shadow: var(--shadow-card);
+  }
+
+  .finova-list-item:hover,
+  :root[data-theme='dark'] .finova-list-item:hover {
+    background-color: var(--card-surface, var(--bg-card));
+    border-color: var(--card-border-color);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.02);
+  }
+}

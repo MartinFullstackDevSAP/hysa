@@ -77,13 +77,19 @@ const MainLayout = ({ activeTab, onTabSelect, onSignOut, isLoading, children }) 
               onClick={() => onTabSelect(item.id)}
               className={`mobile-nav-item ${isActive ? 'active' : ''}`}
               aria-current={isActive ? 'page' : undefined}
+              aria-label={item.label}
             >
               <Icon size={20} />
               <span>{item.label}</span>
             </button>
           );
         })}
-        <button type="button" className="mobile-nav-item mobile-logout" onClick={() => setConfirmingSignOut(true)}>
+        <button
+          type="button"
+          className="mobile-nav-item mobile-logout"
+          onClick={() => setConfirmingSignOut(true)}
+          aria-label="Odhlásiť"
+        >
           <LogOut size={20} />
           <span>Odhlásiť</span>
         </button>
