@@ -12,36 +12,47 @@ body {
   padding: 0;
 }
 
-/* Konštanty a svetlá fialová téma */
+/* Shared surfaces and accents for the light theme. */
 :root {
-  --bg-main: #f7f5ff;
+  --bg-main: #f5f6f8;
   --bg-card: #ffffff;
-  --bg-input: #fcfaff;
-  --border-color: #e2d9f2;
-  --border-focus: #8b5cf6;
-  --text-primary: #26183f;
-  --text-secondary: #655b7d;
-  --accent-purple: #7c3aed;
-  --accent-pink: #a855f7;
-  --accent-gradient: linear-gradient(135deg, #7c3aed 0%, #a855f7 52%, #ec4899 100%);
-  --accent-green: #059669;
-  --accent-green-bg: #ecfdf5;
+  --bg-input: #fafbfc;
+  --bg-muted: #f0f1f3;
+  --border-color: #e2e4e8;
+  --border-focus: #b68d48;
+  --text-primary: #202228;
+  --text-secondary: #6d7079;
+  --accent-purple: #a77d35;
+  --accent-pink: #b38b49;
+  --accent-gradient: linear-gradient(135deg, #f5d28a 0%, #e7bc6d 52%, #d5a957 100%);
+  --accent-soft: rgba(197, 154, 72, 0.12);
+  --accent-glow: rgba(197, 154, 72, 0.2);
+  --text-on-accent: #211a10;
+  --accent-green: #477c67;
+  --accent-green-bg: #edf5f0;
   --accent-red: #dc2626;
-  --shadow-card: 0 10px 25px -8px rgba(76, 29, 149, 0.16), 0 4px 10px -5px rgba(76, 29, 149, 0.08);
+  --shadow-card: 0 10px 25px -8px rgba(18, 20, 25, 0.09), 0 4px 10px -5px rgba(18, 20, 25, 0.05);
 }
 
 :root[data-theme='dark'] {
-  --bg-main: #120d1f;
-  --bg-card: #1b1229;
-  --bg-input: #211531;
-  --border-color: #34234d;
-  --border-focus: #c084fc;
-  --text-primary: #f5f3ff;
-  --text-secondary: #c4b5d9;
-  --accent-purple: #c084fc;
-  --accent-pink: #d8b4fe;
-  --accent-gradient: linear-gradient(135deg, #7c3aed 0%, #a855f7 52%, #ec4899 100%);
-  --shadow-card: 0 10px 25px -8px rgba(0, 0, 0, 0.35), 0 4px 10px -5px rgba(0, 0, 0, 0.2);
+  --bg-main: #050507;
+  --bg-card: #0e0f14;
+  --bg-input: #090a0e;
+  --bg-muted: #14151b;
+  --border-color: #25262e;
+  --border-focus: #f5d28a;
+  --text-primary: #f5f6f8;
+  --text-secondary: #a3a5ad;
+  --accent-purple: #f5d28a;
+  --accent-pink: #f5d28a;
+  --accent-gradient: linear-gradient(135deg, #f5d28a 0%, #e7bc6d 52%, #d5a957 100%);
+  --accent-soft: rgba(245, 210, 138, 0.12);
+  --accent-glow: rgba(245, 210, 138, 0.2);
+  --text-on-accent: #211a10;
+  --accent-green: #75c6a3;
+  --accent-green-bg: rgba(42, 112, 83, 0.2);
+  --accent-red: #f18b8b;
+  --shadow-card: 0 14px 34px -12px rgba(0, 0, 0, 0.7), 0 3px 10px -4px rgba(0, 0, 0, 0.4);
 }
 
 /* Kontejner roztiahnutý na celú obrazovku */
@@ -50,7 +61,7 @@ body {
   width: 100%;
   max-width: 100%;
   margin: 0 auto;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: var(--sans, 'Space Grotesk'), 'Segoe UI', sans-serif;
   color: var(--text-primary);
   background-color: var(--bg-main);
   min-height: 100vh;
@@ -88,11 +99,19 @@ body {
 }
 
 .stat-card {
-  background: var(--bg-card);
+  background:
+    radial-gradient(ellipse at top right, var(--accent-soft), transparent 44%),
+    var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: 16px;
+  border-radius: 14px;
   padding: 1.25rem 1.5rem;
   box-shadow: var(--shadow-card);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+  border-color: color-mix(in srgb, var(--border-focus) 42%, var(--border-color));
+  box-shadow: var(--shadow-card), 0 0 24px -18px var(--accent-glow);
 }
 
 .stat-label {
@@ -142,7 +161,7 @@ body {
 .finova-card, .form-container, .card-block {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: 20px;
+  border-radius: 16px;
   padding: 1.5rem;
   margin-bottom: 2rem;
   box-shadow: var(--shadow-card);
@@ -175,7 +194,7 @@ body {
   width: 32px;
   height: 32px;
   border-radius: 8px;
-  background: linear-gradient(135deg, rgba(219, 39, 119, 0.12) 0%, rgba(99, 102, 241, 0.12) 100%);
+  background: var(--accent-soft);
   color: var(--accent-pink);
   font-size: 0.9rem;
 }
@@ -234,7 +253,7 @@ body {
 .finova-input:focus, .finova-select:focus, input:focus, select:focus {
   background-color: var(--bg-card) !important;
   border-color: var(--border-focus) !important;
-  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.16) !important;
+  box-shadow: 0 0 0 3px var(--accent-soft) !important;
 }
 
 .finova-input:focus::placeholder {
@@ -244,7 +263,7 @@ body {
 /* Hlavné tlačidlo - posunuté nižšie s oddelením */
 .btn-finova-primary {
   background: var(--accent-gradient);
-  color: #ffffff;
+  color: var(--text-on-accent);
   border: none;
   border-radius: 10px;
   padding: 0.75rem 1.5rem;
@@ -258,14 +277,14 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(224, 82, 160, 0.25);
+  box-shadow: 0 4px 14px var(--accent-glow);
   box-sizing: border-box;
 }
 
 .btn-finova-primary:hover {
   opacity: 0.95;
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(224, 82, 160, 0.35);
+  box-shadow: 0 6px 20px var(--accent-glow);
 }
 
 /* Responzivita pre Desktop (od 1024px) */
@@ -315,7 +334,7 @@ body {
   left: 0;
   width: 100%;
   min-width: 100%;
-  background: #ffffff;
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 12px;
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
@@ -366,12 +385,12 @@ body {
 }
 
 .custom-select-option:hover {
-  background-color: #f1f5f9;
+  background-color: var(--bg-muted);
   color: var(--accent-purple);
 }
 
 .custom-select-option.selected {
-  background-color: rgba(139, 92, 246, 0.1);
+  background-color: var(--accent-soft);
   color: var(--accent-purple);
   font-weight: 600;
 }
@@ -389,7 +408,7 @@ body {
   border-collapse: separate;
   border-spacing: 0;
   text-align: left;
-  background-color: #ffffff;
+  background-color: var(--bg-card);
 }
 
 .finova-table th {
@@ -399,7 +418,7 @@ body {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  background-color: #f8fafc;
+  background-color: var(--bg-muted);
   border-bottom: 1px solid var(--border-color);
   white-space: nowrap;
 }
@@ -426,7 +445,7 @@ body {
 }
 
 .finova-table tbody tr:hover td {
-  background-color: #f8fafc;
+  background-color: var(--bg-muted);
 }
 
 .bank-badge {
@@ -447,11 +466,11 @@ body {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-muted);
+  border: 1px solid var(--border-color);
   font-size: 0.95rem;
   font-weight: 600;
-  color: #475569;
+  color: var(--text-secondary);
 }
 
 .bank-icon img {
@@ -497,8 +516,8 @@ body {
   font-size: 0.825rem;
   font-weight: 500;
   color: var(--text-secondary);
-  background-color: #f1f5f9;
-  border: 1px solid #e2e8f0;
+  background-color: var(--bg-muted);
+  border: 1px solid var(--border-color);
   white-space: nowrap;
 }
 
@@ -531,7 +550,7 @@ input[type='number'] {
   text-align: center;
   padding: 3rem 1rem;
   color: var(--text-secondary);
-  background-color: #ffffff;
+  background-color: var(--bg-card);
   border-radius: 12px;
   border: 1px dashed var(--border-color);
 }
@@ -566,7 +585,7 @@ input[type='number'] {
   align-items: center;
   justify-content: space-between;
   gap: 1.25rem;
-  background-color: #ffffff;
+  background-color: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 14px;
   padding: 1.1rem 1.35rem;
@@ -577,8 +596,8 @@ input[type='number'] {
 }
 
 .finova-list-item:hover {
-  background-color: #ffffff;
-  border-color: #94a3b8;
+  background-color: var(--bg-card);
+  border-color: var(--border-focus);
   box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.05);
 }
 
@@ -760,7 +779,7 @@ input[type='number'] {
     width: 100%;
     justify-content: space-between;
     margin-left: 0;
-    border-top: 1px solid #f1f5f9;
+    border-top: 1px solid var(--border-color);
     padding-top: 0.75rem;
   }
 
@@ -857,6 +876,10 @@ input[type='number'] {
   animation: modalFadeIn 0.2s ease-out;
 }
 
+.success-modal {
+  max-width: 380px;
+}
+
 @keyframes modalFadeIn {
   from {
     opacity: 0;
@@ -898,7 +921,7 @@ input[type='number'] {
 }
 
 .btn-close-modal:hover {
-  background-color: #f1f5f9;
+  background-color: var(--bg-muted);
   color: var(--text-primary);
 }
 
@@ -909,9 +932,13 @@ input[type='number'] {
   gap: 1.25rem;
 }
 
+.success-modal .finova-modal-body {
+  line-height: 1.5;
+}
+
 .finova-modal-footer {
   padding: 1rem 1.5rem;
-  background-color: #f8fafc;
+  background-color: var(--bg-muted);
   border-top: 1px solid var(--border-color);
   display: flex;
   align-items: center;
@@ -920,7 +947,7 @@ input[type='number'] {
 }
 
 .btn-finova-secondary {
-  background: #ffffff;
+  background: var(--bg-card);
   color: var(--text-primary);
   border: 1px solid var(--border-color);
   border-radius: 10px;
@@ -933,13 +960,13 @@ input[type='number'] {
 }
 
 .btn-finova-secondary:hover {
-  background-color: #f1f5f9;
-  border-color: #94a3b8;
+  background-color: var(--bg-muted);
+  border-color: var(--border-focus);
 }
 
 .btn-finova-primary-sm {
   background: var(--accent-gradient);
-  color: #ffffff;
+  color: var(--text-on-accent);
   border: none;
   border-radius: 10px;
   padding: 0.65rem 1.25rem;
@@ -947,7 +974,7 @@ input[type='number'] {
   font-size: 0.9rem;
   cursor: pointer;
   height: 40px;
-  box-shadow: 0 4px 12px rgba(224, 82, 160, 0.25);
+  box-shadow: 0 4px 14px var(--accent-glow);
   transition: all 0.15s ease;
 }
 
@@ -959,8 +986,8 @@ input[type='number'] {
 /* Tlačidlo na úpravu vo forme ikony (vedľa zmazať) */
 .btn-edit-icon {
   background: transparent;
-  border: 1px solid #cbd5e1;
-  color: #64748b;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
   cursor: pointer;
   width: 40px;
   height: 40px;
@@ -973,9 +1000,9 @@ input[type='number'] {
 }
 
 .btn-edit-icon:hover {
-  background: #eff6ff;
-  color: #2563eb;
-  border-color: #2563eb;
+  background: var(--accent-soft);
+  color: var(--accent-purple);
+  border-color: var(--border-focus);
 }
 
 .btn-edit-icon.btn-delete-icon:hover {
@@ -985,9 +1012,9 @@ input[type='number'] {
 }
 
 .btn-edit-icon:not(.btn-delete-icon):hover {
-  background: #2563eb;
-  color: #ffffff;
-  border-color: #2563eb;
+  background: var(--accent-gradient);
+  color: var(--text-on-accent);
+  border-color: var(--border-focus);
 }
 
 @media (max-width: 640px) {
@@ -1018,7 +1045,7 @@ input[type='number'] {
   }
 }
 
-/* Jemné levanduľové povrchy pre tabuľky, zoznamy a modálne okná. */
+/* Keep table, list, and menu surfaces aligned with the active theme. */
 .finova-list-item,
 .finova-table,
 .empty-table-container,
@@ -1031,23 +1058,23 @@ input[type='number'] {
 .custom-select-option:hover,
 .btn-close-modal:hover,
 .btn-finova-secondary:hover {
-  background-color: #f5f1ff;
+  background-color: var(--bg-muted);
 }
 
 .finova-table th,
 .finova-modal-footer {
-  background-color: #faf8ff;
+  background-color: var(--bg-muted);
 }
 
 .bank-icon {
-  background: #f5f1ff;
+  background: var(--bg-muted);
   border-color: var(--border-color);
   color: var(--text-secondary);
 }
 
 .info-badge {
-  background-color: #f1edfb;
-  border-color: #e2d9f2;
+  background-color: var(--bg-muted);
+  border-color: var(--border-color);
 }
 
 .btn-delete-icon,
@@ -1075,7 +1102,7 @@ input[type='number'] {
 
 :root[data-theme='dark'] .btn-edit-icon,
 :root[data-theme='dark'] .btn-delete-icon {
-  color: #ffffff;
+  color: var(--text-secondary);
 }
 
 :root[data-theme='dark'] .btn-edit-icon.btn-delete-icon:hover {
@@ -1089,13 +1116,13 @@ input[type='number'] {
 :root[data-theme='dark'] .custom-select-option:hover,
 :root[data-theme='dark'] .btn-close-modal:hover,
 :root[data-theme='dark'] .btn-finova-secondary:hover {
-  background-color: #27183a;
+  background-color: var(--bg-muted);
 }
 
 :root[data-theme='dark'] .finova-table th,
 :root[data-theme='dark'] .finova-modal-footer,
 :root[data-theme='dark'] .bank-icon {
-  background-color: #211531;
+  background-color: var(--bg-muted);
 }
 
 :root[data-theme='dark'] .bank-icon {
@@ -1109,6 +1136,6 @@ input[type='number'] {
 
 :root[data-theme='dark'] .finova-input::placeholder,
 :root[data-theme='dark'] input::placeholder {
-  color: #ffffff;
+  color: var(--text-secondary);
   opacity: 1;
 }

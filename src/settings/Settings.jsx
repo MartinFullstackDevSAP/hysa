@@ -289,7 +289,7 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
       <section className="finova-card">
         <h2 className="card-title">✦ Pridať účet</h2>
         {errorMsg && (
-          <div style={{ color: '#dc2626', background: '#fee2e2', padding: '10px 14px', borderRadius: '8px', marginBottom: '16px', fontSize: '0.875rem', fontWeight: 500 }}>
+          <div className="settings-error" role="alert">
             {errorMsg}
           </div>
         )}
@@ -451,47 +451,24 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
 
       {/* Modálne okno - Úspešné uloženie/pridanie/úprava */}
       {showSuccessModal && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: '0',
-            background: 'rgba(0,0,0,0.5)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000,
-            padding: '16px',
-            boxSizing: 'border-box',
-          }}
-        >
-          <div
-            style={{
-              background: '#fff',
-              padding: '24px',
-              borderRadius: '16px',
-              maxWidth: '380px',
-              width: '100%',
-              boxShadow: '0 10px 25px rgba(0,0,0,0.15)',
-              boxSizing: 'border-box',
-            }}
-          >
-            <h3 style={{ margin: '0 0 12px 0', fontSize: '1.15rem', color: '#0f172a' }}>
-              Informácia
-            </h3>
-            <p style={{ margin: '0 0 24px 0', color: '#475569', fontSize: '0.95rem', lineHeight: '1.5' }}>
-              {successModalText}
-            </p>
-            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+        <div className="finova-modal-overlay" role="presentation">
+          <section className="finova-modal success-modal" role="dialog" aria-modal="true" aria-labelledby="success-modal-title">
+            <div className="finova-modal-header">
+              <h2 className="finova-modal-title" id="success-modal-title">Informácia</h2>
+            </div>
+            <div className="finova-modal-body">
+              <p>{successModalText}</p>
+            </div>
+            <div className="finova-modal-footer">
               <button
                 type="button"
                 onClick={() => setShowSuccessModal(false)}
-                className="btn-finova-primary"
-                style={{ flex: 1 }}
+                className="btn-finova-primary-sm"
               >
                 OK
               </button>
             </div>
-          </div>
+          </section>
         </div>
       )}
     </div>
