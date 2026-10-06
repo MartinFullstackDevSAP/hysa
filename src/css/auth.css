@@ -39,7 +39,7 @@
   width: min(100%, 420px);
   padding: 2rem;
   box-sizing: border-box;
-  border: 1px solid var(--border-color, #e2e4e8);
+  border: 1px solid var(--card-border-color, rgba(182, 141, 72, 0.46));
   border-radius: 20px;
   background: var(--bg-card, #ffffff);
   box-shadow: var(--shadow-card);
