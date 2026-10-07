@@ -127,15 +127,23 @@
 }
 
 .sidebar-nav-item:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  border-color: var(--control-border, rgba(245, 210, 138, 0.45));
+  background-image: radial-gradient(
+    ellipse at 50% 50%,
+    color-mix(in srgb, var(--accent-pink, var(--accent)) 18%, transparent) 0%,
+    color-mix(in srgb, var(--accent-pink, var(--accent)) 8%, transparent) 48%,
+    transparent 80%
+  );
+  border-color: color-mix(
+    in srgb,
+    var(--control-border, var(--accent-border)) 72%,
+    var(--accent-pink, var(--accent))
+  );
   color: #ffffff;
-  box-shadow: 0 0 18px -7px var(--control-glow, transparent);
-}
-
-:root[data-theme='dark'] .sidebar-nav-item:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent-pink, var(--accent)) 48%, transparent),
+    0 0 10px 1px color-mix(in srgb, var(--accent-pink, var(--accent)) 42%, transparent),
+    0 0 26px 5px color-mix(in srgb, var(--accent-pink, var(--accent)) 22%, transparent),
+    inset 0 0 16px -4px var(--control-glow, var(--accent-glow));
 }
 
 .sidebar-nav-item.active {
