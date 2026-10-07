@@ -1068,6 +1068,10 @@ input[type='number'] {
   box-shadow: 0 0 18px -6px var(--control-glow);
 }
 
+.finova-modal button:hover {
+  transform: none;
+}
+
 @media (max-width: 640px) {
   .finova-modal-overlay {
     padding: 0.75rem;

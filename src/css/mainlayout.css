@@ -644,12 +644,11 @@
   cursor: pointer;
   font-weight: 600;
   box-shadow: 0 0 16px -7px var(--control-glow, var(--accent-glow, rgba(197, 154, 72, 0.2)));
-  transition: transform 0.15s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+  transition: opacity 0.2s ease, box-shadow 0.2s ease;
 }
 
 .payment-step-button:hover:not(:disabled) {
   background: var(--control-surface-hover, var(--control-surface, var(--accent-gradient)));
-  transform: translateY(-1px);
   box-shadow: 0 0 22px -5px var(--control-glow, var(--accent-glow, rgba(197, 154, 72, 0.2)));
 }
 
