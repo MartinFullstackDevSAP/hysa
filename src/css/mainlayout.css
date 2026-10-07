@@ -98,9 +98,8 @@
   max-width: 220px;
   margin: 0;
   color: var(--text-secondary, #655b7d);
-  font-family: 'Caveat Variable', cursive;
   font-size: 0.85rem;
-  font-style: normal;
+  font-style: italic;
   line-height: 1.35;
 }
 
