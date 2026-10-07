@@ -70,8 +70,7 @@ const MainLayout = ({ activeTab, onTabSelect, onSignOut, onRefresh, isLoading, c
             <img className="sidebar-logo-icon" src="/brand-icon.png" alt="" />
             <span className="sidebar-brand-title">Freedom Vault</span>
             <blockquote className="sidebar-brand-quote">
-              <p>Ak nenájdeš spôsob, ako zarábať peniaze, kým spíš, budeš pracovať až do smrti.</p>
-              <cite>— Warren Buffett</cite>
+              Ak nenájdeš spôsob, ako zarábať peniaze, kým spíš, budeš pracovať až do smrti.
             </blockquote>
           </div>
 
