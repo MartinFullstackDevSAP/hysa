@@ -256,6 +256,7 @@ const AccountList = ({ accounts, loading, onAccountsChange }) => {
                                 <CustomSelect
                                     ariaLabel="Platby kartou"
                                     optionsClassName="account-edit-payment-options"
+                                    portalOptions
                                     options={[0, 5, 10, 15].map((count) => ({
                                         value: String(count),
                                         label: String(count),

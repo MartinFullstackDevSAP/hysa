@@ -55,7 +55,7 @@
 .finova-desktop-sidebar {
   display: none;
   width: 260px;
-  background-color: var(--bg-card, #ffffff);
+  background: linear-gradient(155deg, #243650 0%, #1b5962 100%);
   border-right: 1px solid var(--card-border-color, rgba(182, 141, 72, 0.46));
   padding: 2rem 1.25rem;
   box-sizing: border-box;
@@ -78,9 +78,9 @@
 
 .sidebar-logo-icon {
   display: block;
-  width: 112px;
-  height: 112px;
-  flex: 0 0 112px;
+  width: 134px;
+  height: 134px;
+  flex: 0 0 134px;
   box-sizing: border-box;
   object-fit: contain;
 }
@@ -88,14 +88,14 @@
 .sidebar-brand-title {
   font-size: 1.4rem;
   font-weight: 700;
-  color: var(--text-primary, #26183f);
+  color: #f5f6f8;
   letter-spacing: -0.02em;
 }
 
 .sidebar-brand-quote {
   max-width: 220px;
   margin: 0;
-  color: var(--text-secondary, #655b7d);
+  color: rgba(245, 246, 248, 0.82);
   font-size: 0.7rem;
   font-style: italic;
   font-synthesis: style;
@@ -117,7 +117,7 @@
   border-radius: 999px;
   border: 1px solid transparent;
   background: var(--control-surface, transparent);
-  color: var(--text-secondary, #655b7d);
+  color: rgba(245, 246, 248, 0.78);
   font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
@@ -127,15 +127,15 @@
 }
 
 .sidebar-nav-item:hover {
-  background-color: var(--control-surface-hover, var(--control-surface, var(--bg-muted, #f0f1f3)));
-  border-color: var(--control-border, var(--border-color, #e2e4e8));
-  color: var(--control-text, var(--text-primary, #26183f));
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: var(--control-border, rgba(245, 210, 138, 0.45));
+  color: #ffffff;
   box-shadow: 0 0 18px -7px var(--control-glow, transparent);
 }
 
 :root[data-theme='dark'] .sidebar-nav-item:hover {
-  background-color: var(--control-surface-hover, var(--control-surface, var(--bg-muted, #14151b)));
-  color: var(--control-text, var(--text-primary, #f5f6f8));
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
 }
 
 .sidebar-nav-item.active {
@@ -147,7 +147,7 @@
 
 .sidebar-footer {
   padding-top: 1.5rem;
-  border-top: 1px solid var(--border-color, #e2e8f0);
+  border-top: 1px solid rgba(245, 246, 248, 0.2);
 }
 
 .sidebar-action-btn {

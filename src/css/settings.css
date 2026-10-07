@@ -1031,18 +1031,12 @@ input[type='number'] {
   min-width: 0;
 }
 
-@media (min-width: 641px) {
-  .finova-modal.account-edit-modal {
-    overflow: visible;
-  }
-}
-
 .account-edit-modal .custom-select-container {
   z-index: 2;
 }
 
 .account-edit-payment-options {
-  z-index: 3;
+  z-index: 2100;
 }
 
 .account-expiration-input-wrapper {

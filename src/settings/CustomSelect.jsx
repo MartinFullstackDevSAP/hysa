@@ -1,15 +1,28 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useLayoutEffect } from 'react';
+import { createPortal } from 'react-dom';
 
-export default function CustomSelect({ options, value, onChange, ariaLabel, optionsClassName = '' }) {
+export default function CustomSelect({
+  options,
+  value,
+  onChange,
+  ariaLabel,
+  optionsClassName = '',
+  portalOptions = false,
+}) {
   const [isOpen, setIsOpen] = useState(false);
+  const [optionsStyle, setOptionsStyle] = useState(null);
   const dropdownRef = useRef(null);
+  const triggerRef = useRef(null);
+  const optionsRef = useRef(null);
 
   const selectedOption = options.find((opt) => opt.value === value) || options[0];
 
-  // Zavretie dropdownu pri kliknutí mimo neho
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      if (
+        !dropdownRef.current?.contains(event.target)
+        && !optionsRef.current?.contains(event.target)
+      ) {
         setIsOpen(false);
       }
     };
@@ -17,9 +30,68 @@ export default function CustomSelect({ options, value, onChange, ariaLabel, opti
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  useLayoutEffect(() => {
+    if (!isOpen || !portalOptions) return undefined;
+
+    const positionOptions = () => {
+      const trigger = triggerRef.current;
+      if (!trigger) return;
+
+      const rect = trigger.getBoundingClientRect();
+      const estimatedHeight = Math.min(220, options.length * 44 + 8);
+      const spaceAbove = rect.top - 6;
+      const spaceBelow = window.innerHeight - rect.bottom - 6;
+      const openAbove = spaceBelow < estimatedHeight && spaceAbove > spaceBelow;
+      const availableSpace = openAbove ? spaceAbove : spaceBelow;
+      const maxHeight = Math.max(80, Math.min(220, availableSpace));
+
+      setOptionsStyle({
+        position: 'fixed',
+        left: rect.left,
+        top: openAbove ? rect.top - 6 : rect.bottom + 6,
+        width: rect.width,
+        maxHeight,
+        transform: openAbove ? 'translateY(-100%)' : 'none',
+      });
+    };
+
+    positionOptions();
+    window.addEventListener('resize', positionOptions);
+    window.addEventListener('scroll', positionOptions, true);
+    return () => {
+      window.removeEventListener('resize', positionOptions);
+      window.removeEventListener('scroll', positionOptions, true);
+    };
+  }, [isOpen, options.length, portalOptions]);
+
+  const optionsMenu = isOpen && (
+    <div
+      ref={optionsRef}
+      className={`custom-select-options ${optionsClassName}`.trim()}
+      role="listbox"
+      style={portalOptions ? optionsStyle : undefined}
+    >
+      {options.map((option) => (
+        <div
+          key={option.value}
+          role="option"
+          aria-selected={option.value === value}
+          className={`custom-select-option ${option.value === value ? 'selected' : ''}`}
+          onClick={() => {
+            onChange(option.value);
+            setIsOpen(false);
+          }}
+        >
+          {option.label}
+        </div>
+      ))}
+    </div>
+  );
+
   return (
     <div className="custom-select-container" ref={dropdownRef}>
       <div
+        ref={triggerRef}
         role="button"
         tabIndex={0}
         aria-label={ariaLabel}
@@ -52,24 +124,7 @@ export default function CustomSelect({ options, value, onChange, ariaLabel, opti
         </svg>
       </div>
 
-      {isOpen && (
-        <div className={`custom-select-options ${optionsClassName}`.trim()} role="listbox">
-          {options.map((option) => (
-            <div
-              key={option.value}
-              role="option"
-              aria-selected={option.value === value}
-              className={`custom-select-option ${option.value === value ? 'selected' : ''}`}
-              onClick={() => {
-                onChange(option.value);
-                setIsOpen(false);
-              }}
-            >
-              {option.label}
-            </div>
-          ))}
-        </div>
-      )}
+      {portalOptions && optionsMenu ? createPortal(optionsMenu, document.body) : optionsMenu}
     </div>
   );
 }
