@@ -55,7 +55,7 @@
 .finova-desktop-sidebar {
   display: none;
   width: 260px;
-  background: linear-gradient(155deg, #0F1B2A 0%, #0E1F22 100%);
+  background: linear-gradient(155deg, #050507 0%, #0E0F14 100%);
   border-right: 1px solid var(--card-border-color, rgba(182, 141, 72, 0.46));
   padding: 2rem 1.25rem;
   box-sizing: border-box;
