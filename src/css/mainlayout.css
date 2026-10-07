@@ -88,15 +88,11 @@
 
 .sidebar-logo-icon {
   display: block;
-  width: 56px;
-  height: 56px;
-  flex: 0 0 56px;
-  padding: 3px;
+  width: 112px;
+  height: 112px;
+  flex: 0 0 112px;
   box-sizing: border-box;
   object-fit: contain;
-  border-radius: 14px;
-  background: linear-gradient(145deg, #08090c, #292a2f);
-  box-shadow: 0 4px 16px var(--accent-glow, rgba(197, 154, 72, 0.2));
 }
 
 .sidebar-brand-title {
