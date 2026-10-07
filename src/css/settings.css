@@ -277,6 +277,19 @@ body {
   border-color: var(--control-border) !important;
 }
 
+.finova-input-control {
+  background-color: var(--control-surface) !important;
+  border-color: var(--control-border) !important;
+  border-radius: 999px !important;
+  color: var(--control-text) !important;
+}
+
+.finova-input-control:focus {
+  background-color: var(--control-surface-hover, var(--control-surface)) !important;
+  border-color: var(--border-focus) !important;
+  box-shadow: 0 0 20px -6px var(--control-glow) !important;
+}
+
 .finova-input:focus, .finova-select:focus, input:focus, select:focus {
   background-color: var(--bg-card) !important;
   border-color: var(--border-focus) !important;

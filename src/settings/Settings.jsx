@@ -324,7 +324,7 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
               onChange={handleInputChange(setRate)}
               onFocus={handleFocus(rate, setRate)}
               onBlur={handleBlur(rate, setRate)}
-              className="finova-input"
+              className="finova-input finova-input-control"
             />
           </div>
 
@@ -337,7 +337,7 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
               onChange={handleInputChange(setBalance)}
               onFocus={handleFocus(balance, setBalance)}
               onBlur={handleBlur(balance, setBalance)}
-              className="finova-input"
+              className="finova-input finova-input-control"
             />
           </div>
 
@@ -390,7 +390,7 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
                 value={expirationSk}
                 placeholder="DD.MM.RRRR"
                 onChange={(e) => setExpirationSk(e.target.value)}
-                className="finova-input"
+                className="finova-input finova-input-control"
                 style={{ paddingRight: '38px', width: '100%', boxSizing: 'border-box' }}
               />
 
