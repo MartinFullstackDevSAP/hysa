@@ -99,9 +99,9 @@
   margin: 0;
   color: var(--text-secondary, #655b7d);
   font-family: 'Caveat Variable', cursive;
-  font-size: 0.7rem;
+  font-size: 0.85rem;
   font-style: normal;
-  line-height: 1.4;
+  line-height: 1.35;
 }
 
 .sidebar-nav {
@@ -777,6 +777,14 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 2.5rem;
+  }
+
+  .finova-container:has(> .finova-dashboard) {
+    padding: 1rem;
+  }
+
+  .finova-container > .finova-dashboard {
+    padding: 0;
   }
 
   .finova-dashboard .dashboard-stats-grid {
