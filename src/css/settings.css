@@ -1049,8 +1049,8 @@ input[type='number'] {
   border: 1px solid var(--control-border);
   color: var(--control-text);
   cursor: pointer;
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 40px;
   border-radius: 999px;
   display: flex;
   align-items: center;
