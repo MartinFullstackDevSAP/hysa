@@ -9,11 +9,7 @@
   --accent-border: rgba(182, 141, 72, 0.5);
   --social-bg: rgba(236, 238, 241, 0.8);
   --shadow: rgba(18, 20, 25, 0.08) 0 10px 15px -3px, rgba(18, 20, 25, 0.04) 0 4px 6px -2px;
-  --app-page-background:
-    radial-gradient(ellipse at 78% 12%, rgba(26, 28, 42, 0.18), transparent 44%),
-    radial-gradient(ellipse at 14% 76%, rgba(15, 27, 42, 0.14), transparent 46%),
-    radial-gradient(ellipse at 64% 66%, rgba(14, 31, 34, 0.08), transparent 52%),
-    linear-gradient(145deg, #f5f6f8 4%, #edf0f3 54%, #f5f6f8 100%);
+  --app-page-background: #f5f6f8;
 
   --sans: 'Space Grotesk', 'Segoe UI', Roboto, sans-serif;
   --heading: 'Space Grotesk', 'Segoe UI', Roboto, sans-serif;
@@ -49,12 +45,7 @@ html {
   --accent-border: rgba(245, 210, 138, 0.45);
   --social-bg: rgba(16, 17, 22, 0.8);
   --shadow: rgba(0, 0, 0, 0.42) 0 12px 28px -8px, rgba(0, 0, 0, 0.24) 0 4px 10px -4px;
-  --app-page-background:
-    radial-gradient(ellipse at 78% 12%, rgba(26, 28, 42, 0.8), transparent 46%),
-    radial-gradient(ellipse at 14% 76%, rgba(15, 27, 42, 0.68), transparent 48%),
-    radial-gradient(ellipse at 64% 66%, rgba(14, 31, 34, 0.48), transparent 52%),
-    radial-gradient(ellipse at 48% 34%, rgba(26, 28, 42, 0.52), transparent 58%),
-    linear-gradient(145deg, #050507 4%, #0e0f14 48%, #0f1b2a 76%, #050507 100%);
+  --app-page-background: #050507;
   color-scheme: dark;
 }
 
@@ -62,9 +53,6 @@ body {
   margin: 0;
   background: var(--app-page-background);
   background-color: var(--bg, #f5f6f8);
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
 }
 
 html,

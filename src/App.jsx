@@ -83,7 +83,12 @@ function App() {
   }, [session]);
 
   useEffect(() => {
-    document.documentElement.dataset.theme = globalSettings.dark_mode ? 'dark' : 'light';
+    const theme = globalSettings.dark_mode ? 'dark' : 'light';
+    document.documentElement.dataset.theme = theme;
+    const statusBarStyle = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
+    if (statusBarStyle) {
+      statusBarStyle.content = theme === 'dark' ? 'black' : 'default';
+    }
   }, [globalSettings.dark_mode]);
 
   const handleDashboardLoadingChange = useCallback((isLoading, key) => {

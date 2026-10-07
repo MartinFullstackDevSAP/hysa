@@ -16,7 +16,7 @@ body {
 :root {
   --bg-main: #f5f6f8;
   --bg-card: #ffffff;
-  --card-surface: rgba(255, 255, 255, 0.88);
+  --card-surface: #ffffff;
   --bg-input: #fafbfc;
   --bg-muted: #f0f1f3;
   --border-color: #e2e4e8;
@@ -50,7 +50,7 @@ body {
 :root[data-theme='dark'] {
   --bg-main: #050507;
   --bg-card: #0e0f14;
-  --card-surface: rgba(14, 15, 20, 0.82);
+  --card-surface: #0e0f14;
   --bg-input: #090a0e;
   --bg-muted: #14151b;
   --border-color: #25262e;
