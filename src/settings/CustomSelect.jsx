@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 
-export default function CustomSelect({ options, value, onChange }) {
+export default function CustomSelect({ options, value, onChange, ariaLabel }) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -22,6 +22,7 @@ export default function CustomSelect({ options, value, onChange }) {
       <div
         role="button"
         tabIndex={0}
+        aria-label={ariaLabel}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         className={`custom-select-trigger ${isOpen ? 'open' : ''}`}

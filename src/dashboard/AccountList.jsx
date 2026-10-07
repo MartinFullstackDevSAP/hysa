@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Landmark } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 import { BANK_LOGOS, getBankLogo } from '../bankLogos';
+import CustomSelect from '../settings/CustomSelect';
 
 const formatCurrency = (amount, currency) => (
     `${Number(amount || 0).toLocaleString('cs-CZ', {
@@ -220,11 +221,18 @@ const AccountList = ({ accounts, loading, onAccountsChange }) => {
                             </label>
                             <label className="form-group">
                                 <span className="form-label">Platby kartou</span>
-                                <select className="finova-input" value={editValues.cardPayments} onChange={updateEditValue('cardPayments')}>
-                                    {[0, 5, 10, 15].map((count) => (
-                                        <option key={count} value={count}>{count}</option>
-                                    ))}
-                                </select>
+                                <CustomSelect
+                                    ariaLabel="Platby kartou"
+                                    options={[0, 5, 10, 15].map((count) => ({
+                                        value: String(count),
+                                        label: String(count),
+                                    }))}
+                                    value={editValues.cardPayments}
+                                    onChange={(value) => setEditValues((current) => ({
+                                        ...current,
+                                        cardPayments: value,
+                                    }))}
+                                />
                             </label>
                             <label className="form-group">
                                 <span className="form-label">Expirácia</span>
