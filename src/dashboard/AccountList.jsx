@@ -10,6 +10,31 @@ const formatCurrency = (amount, currency) => (
     })} ${currency || 'CZK'}`
 );
 
+const formatExpirationForInput = (isoDate) => {
+    const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(isoDate || '');
+    return match ? `${match[3]}.${match[2]}.${match[1]}` : isoDate || '';
+};
+
+const parseExpirationInput = (date) => {
+    if (!date) return '';
+    const match = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(date);
+    if (!match) return null;
+
+    const [, day, month, year] = match;
+    const parsedDate = new Date(0);
+    parsedDate.setUTCHours(0, 0, 0, 0);
+    parsedDate.setUTCFullYear(Number(year), Number(month) - 1, Number(day));
+    if (
+        parsedDate.getUTCFullYear() !== Number(year)
+        || parsedDate.getUTCMonth() !== Number(month) - 1
+        || parsedDate.getUTCDate() !== Number(day)
+    ) {
+        return null;
+    }
+
+    return `${year}-${month}-${day}`;
+};
+
 const AccountList = ({ accounts, loading, onAccountsChange }) => {
     const [editingAccount, setEditingAccount] = useState(null);
     const [editValues, setEditValues] = useState(null);
@@ -23,7 +48,7 @@ const AccountList = ({ accounts, loading, onAccountsChange }) => {
             rate: String(account.rate ?? ''),
             balance: String(account.balance ?? ''),
             cardPayments: String(account.card_payments ?? account.cardPayments ?? 0),
-            expiration: account.expiration || '',
+            expiration: formatExpirationForInput(account.expiration),
         });
         setError('');
     };
@@ -45,6 +70,12 @@ const AccountList = ({ accounts, loading, onAccountsChange }) => {
             return;
         }
 
+        const expiration = parseExpirationInput(editValues.expiration);
+        if (expiration === null) {
+            setError('Zadajte expiráciu vo formáte DD.MM.RRRR.');
+            return;
+        }
+
         setSaving(true);
         setError('');
         const { data, error: updateError } = await supabase
@@ -53,7 +84,7 @@ const AccountList = ({ accounts, loading, onAccountsChange }) => {
                 rate,
                 balance,
                 card_payments: Number(editValues.cardPayments),
-                expiration: editValues.expiration || null,
+                expiration: expiration || null,
             })
             .eq('id', editingAccount.id)
             .select()
@@ -213,11 +244,11 @@ const AccountList = ({ accounts, loading, onAccountsChange }) => {
                             {error && <div className="settings-error" role="alert">{error}</div>}
                             <label className="form-group">
                                 <span className="form-label">Úrok (% p.a.)</span>
-                                <input className="finova-input" type="number" step="any" value={editValues.rate} onChange={updateEditValue('rate')} required />
+                                <input className="finova-input finova-input-control" type="number" step="any" value={editValues.rate} onChange={updateEditValue('rate')} required />
                             </label>
                             <label className="form-group">
                                 <span className="form-label">Zostatok</span>
-                                <input className="finova-input" type="number" step="any" value={editValues.balance} onChange={updateEditValue('balance')} required />
+                                <input className="finova-input finova-input-control" type="number" step="any" value={editValues.balance} onChange={updateEditValue('balance')} required />
                             </label>
                             <label className="form-group">
                                 <span className="form-label">Platby kartou</span>
@@ -236,7 +267,14 @@ const AccountList = ({ accounts, loading, onAccountsChange }) => {
                             </label>
                             <label className="form-group">
                                 <span className="form-label">Expirácia</span>
-                                <input className="finova-input" type="date" value={editValues.expiration} onChange={updateEditValue('expiration')} />
+                                <input
+                                    className="finova-input finova-input-control"
+                                    type="text"
+                                    inputMode="numeric"
+                                    placeholder="DD.MM.RRRR"
+                                    value={editValues.expiration}
+                                    onChange={updateEditValue('expiration')}
+                                />
                             </label>
                         </div>
                         <div className="finova-modal-footer">

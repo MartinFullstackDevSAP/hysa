@@ -1031,18 +1031,6 @@ input[type='number'] {
   min-width: 0;
 }
 
-.account-edit-modal input[type='date'] {
-  display: block;
-  width: 100%;
-  min-width: 0;
-  max-width: 100%;
-  padding-right: 0.5rem !important;
-  padding-left: 0.5rem !important;
-  box-sizing: border-box !important;
-  font-size: 0.875rem !important;
-  -webkit-appearance: none;
-}
-
 /* Tlačidlo na úpravu vo forme ikony (vedľa zmazať) */
 .btn-edit-icon {
   background: var(--control-surface);
