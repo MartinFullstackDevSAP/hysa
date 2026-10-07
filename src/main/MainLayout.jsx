@@ -36,8 +36,11 @@ const MainLayout = ({ activeTab, onTabSelect, onSignOut, isLoading, children }) 
       {/* Pravý bočný panel pre Desktop (>= 1024px) */}
       <aside className="finova-desktop-sidebar">
         <div className="sidebar-brand">
-        <img className="sidebar-logo-icon" src="/brand-icon.png" alt="" />
-          <span className="sidebar-brand-title">F.I.R.E</span>
+          <img className="sidebar-logo-icon" src="/brand-icon.png" alt="" />
+          <span className="sidebar-brand-title">Freedom Vault</span>
+          <p className="sidebar-brand-quote">
+            Ak nenájdeš spôsob, ako zarábať peniaze, kým spíš, budeš pracovať až do smrti.
+          </p>
         </div>
 
         <nav className="sidebar-nav">
