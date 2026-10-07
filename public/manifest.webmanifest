@@ -4,8 +4,8 @@
   "description": "Prehľad financií na ceste k finančnej slobode.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#050507",
-  "theme_color": "#050507",
+  "background_color": "#08090c",
+  "theme_color": "#08090c",
   "icons": [
     {
       "src": "/icon-192.png",
