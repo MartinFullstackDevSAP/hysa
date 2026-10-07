@@ -125,9 +125,7 @@ body {
 }
 
 .stat-card {
-  background:
-    radial-gradient(ellipse at top right, var(--accent-soft), transparent 44%),
-    var(--card-surface, var(--bg-card));
+  background: var(--card-surface, var(--bg-card));
   border: 1px solid var(--card-border-color);
   border-radius: 14px;
   padding: 1.25rem 1.5rem;

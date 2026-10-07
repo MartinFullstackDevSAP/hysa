@@ -58,11 +58,8 @@ const MainLayout = ({ activeTab, onTabSelect, onSignOut, onRefresh, isLoading, c
             {children}
           </div>
           {isLoading && (
-            <div className="page-loading-overlay" role="status" aria-live="polite">
-              <div className="page-loading-indicator">
-                <span className="busy-spinner" aria-hidden="true" />
-                <span>Načítavam obsah</span>
-              </div>
+            <div className="page-loading-overlay" role="status" aria-label="Načítavam" aria-live="polite">
+              <span className="busy-spinner" aria-hidden="true" />
             </div>
           )}
         </main>
