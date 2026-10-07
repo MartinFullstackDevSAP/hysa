@@ -57,11 +57,6 @@ const MainLayout = ({ activeTab, onTabSelect, onSignOut, onRefresh, isLoading, c
           <div className="finova-container">
             {children}
           </div>
-          {isLoading && (
-            <div className="page-loading-overlay" role="status" aria-label="Načítavam" aria-live="polite">
-              <span className="busy-spinner" aria-hidden="true" />
-            </div>
-          )}
         </main>
 
         {/* Pravý bočný panel pre Desktop (>= 1024px) */}
@@ -99,6 +94,12 @@ const MainLayout = ({ activeTab, onTabSelect, onSignOut, onRefresh, isLoading, c
 
         </aside>
       </div>
+
+      {isLoading && (
+        <div className="page-loading-overlay" role="status" aria-label="Načítavam" aria-live="polite">
+          <span className="busy-spinner" aria-hidden="true" />
+        </div>
+      )}
 
       {/* Spodná fixačná lišta pre Mobil / Tablet (< 1024px) */}
       <nav className="finova-mobile-bottom-bar">

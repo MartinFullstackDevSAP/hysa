@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 
-export default function CustomSelect({ options, value, onChange, ariaLabel }) {
+export default function CustomSelect({ options, value, onChange, ariaLabel, optionsClassName = '' }) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -53,7 +53,7 @@ export default function CustomSelect({ options, value, onChange, ariaLabel }) {
       </div>
 
       {isOpen && (
-        <div className="custom-select-options" role="listbox">
+        <div className={`custom-select-options ${optionsClassName}`.trim()} role="listbox">
           {options.map((option) => (
             <div
               key={option.value}

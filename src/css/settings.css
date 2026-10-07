@@ -1031,6 +1031,62 @@ input[type='number'] {
   min-width: 0;
 }
 
+@media (min-width: 641px) {
+  .finova-modal.account-edit-modal {
+    overflow: visible;
+  }
+}
+
+.account-edit-modal .custom-select-container {
+  z-index: 2;
+}
+
+.account-edit-payment-options {
+  z-index: 3;
+}
+
+.account-expiration-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.account-expiration-input-wrapper .finova-input {
+  padding-right: 2.75rem !important;
+}
+
+.account-expiration-native-picker {
+  position: absolute;
+  top: 50%;
+  right: 0.5rem;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.account-edit-modal .account-expiration-picker-button {
+  position: absolute;
+  right: 0.5rem;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--control-text);
+  cursor: pointer;
+}
+
+.account-edit-modal .account-expiration-picker-button:hover {
+  transform: none;
+  background: var(--control-surface-hover, var(--control-surface));
+}
+
 /* Tlačidlo na úpravu vo forme ikony (vedľa zmazať) */
 .btn-edit-icon {
   background: var(--control-surface);

@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Landmark } from 'lucide-react';
+import { useRef, useState } from 'react';
+import { CalendarDays, Landmark } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 import { BANK_LOGOS, getBankLogo } from '../bankLogos';
 import CustomSelect from '../settings/CustomSelect';
@@ -36,6 +36,7 @@ const parseExpirationInput = (date) => {
 };
 
 const AccountList = ({ accounts, loading, onAccountsChange }) => {
+    const expirationDatePickerRef = useRef(null);
     const [editingAccount, setEditingAccount] = useState(null);
     const [editValues, setEditValues] = useState(null);
     const [confirmDeleteAccount, setConfirmDeleteAccount] = useState(null);
@@ -254,6 +255,7 @@ const AccountList = ({ accounts, loading, onAccountsChange }) => {
                                 <span className="form-label">Platby kartou</span>
                                 <CustomSelect
                                     ariaLabel="Platby kartou"
+                                    optionsClassName="account-edit-payment-options"
                                     options={[0, 5, 10, 15].map((count) => ({
                                         value: String(count),
                                         label: String(count),
@@ -267,14 +269,43 @@ const AccountList = ({ accounts, loading, onAccountsChange }) => {
                             </label>
                             <label className="form-group">
                                 <span className="form-label">Expirácia</span>
-                                <input
-                                    className="finova-input finova-input-control"
-                                    type="text"
-                                    inputMode="numeric"
-                                    placeholder="DD.MM.RRRR"
-                                    value={editValues.expiration}
-                                    onChange={updateEditValue('expiration')}
-                                />
+                                <div className="account-expiration-input-wrapper">
+                                    <input
+                                        className="finova-input finova-input-control"
+                                        type="text"
+                                        inputMode="numeric"
+                                        placeholder="DD.MM.RRRR"
+                                        value={editValues.expiration}
+                                        onChange={updateEditValue('expiration')}
+                                    />
+                                    <input
+                                        ref={expirationDatePickerRef}
+                                        className="account-expiration-native-picker"
+                                        type="date"
+                                        value={parseExpirationInput(editValues.expiration) || ''}
+                                        onChange={(event) => setEditValues((current) => ({
+                                            ...current,
+                                            expiration: formatExpirationForInput(event.target.value),
+                                        }))}
+                                        tabIndex={-1}
+                                        aria-hidden="true"
+                                    />
+                                    <button
+                                        type="button"
+                                        className="account-expiration-picker-button"
+                                        aria-label="Vybrať dátum expirácie"
+                                        onClick={() => {
+                                            const dateInput = expirationDatePickerRef.current;
+                                            if (dateInput?.showPicker) {
+                                                dateInput.showPicker();
+                                            } else {
+                                                dateInput?.click();
+                                            }
+                                        }}
+                                    >
+                                        <CalendarDays size={18} aria-hidden="true" />
+                                    </button>
+                                </div>
                             </label>
                         </div>
                         <div className="finova-modal-footer">
