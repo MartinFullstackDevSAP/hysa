@@ -218,7 +218,7 @@ const Dashboard = ({ currency = 'CZK', navigationKey = 0, onLoadingChange }) => 
                                                 disabled={made === 0 || paymentLoading}
                                                 aria-label={`Odpočítať platbu pre ${account.name}`}
                                             >
-                                                <Minus size={16} strokeWidth={2.5} aria-hidden="true" />
+                                                <Minus size={18} strokeWidth={2.5} aria-hidden="true" />
                                             </button>
                                             <button
                                                 type="button"
@@ -227,7 +227,7 @@ const Dashboard = ({ currency = 'CZK', navigationKey = 0, onLoadingChange }) => 
                                                 disabled={made >= required || paymentLoading}
                                                 aria-label={`Pridať platbu pre ${account.name}`}
                                             >
-                                                <Plus size={16} strokeWidth={2.5} aria-hidden="true" />
+                                                <Plus size={18} strokeWidth={2.5} aria-hidden="true" />
                                             </button>
                                         </div>
                                     </div>

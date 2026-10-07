@@ -732,29 +732,6 @@ input[type='number'] {
   white-space: nowrap;
 }
 
-/* Tlačidlo na vymazanie vo forme ikony */
-.btn-delete-icon {
-  background: var(--control-surface);
-  color: var(--control-text);
-  border: 1px solid var(--control-border);
-  border-radius: 999px;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
-}
-
-.btn-delete-icon:hover {
-  background-color: var(--control-surface-hover, var(--control-surface));
-  color: var(--control-text);
-  border-color: var(--border-focus);
-  box-shadow: 0 0 18px -6px var(--control-glow);
-}
-
 /* DESKTOP (od 1024px) – Grid layout pre položku zoznamu s jednotnou šírkou ľavého stĺpca */
 @media (min-width: 1024px) {
   .finova-list-item {
@@ -878,10 +855,6 @@ input[type='number'] {
     font-size: 1rem;
   }
 
-  .btn-delete-icon {
-    width: 32px;
-    height: 32px;
-  }
 }
 
 /* Zjednotenie date inputu do Finova štýlu */
@@ -1076,8 +1049,8 @@ input[type='number'] {
   border: 1px solid var(--control-border);
   color: var(--control-text);
   cursor: pointer;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 999px;
   display: flex;
   align-items: center;
@@ -1088,20 +1061,6 @@ input[type='number'] {
 }
 
 .btn-edit-icon:hover {
-  background: var(--control-surface-hover, var(--control-surface));
-  color: var(--control-text);
-  border-color: var(--control-border);
-  box-shadow: 0 0 18px -6px var(--control-glow);
-}
-
-.btn-edit-icon.btn-delete-icon:hover {
-  background: var(--control-surface-hover, var(--control-surface));
-  color: var(--control-text);
-  border-color: var(--border-focus);
-  box-shadow: 0 0 18px -6px var(--control-glow);
-}
-
-.btn-edit-icon:not(.btn-delete-icon):hover {
   background: var(--control-surface-hover, var(--control-surface));
   color: var(--control-text);
   border-color: var(--control-border);
@@ -1143,10 +1102,6 @@ input[type='number'] {
     overflow-y: auto;
   }
 
-  .btn-edit-icon {
-    width: 32px;
-    height: 32px;
-  }
 }
 
 .modal-actions-container {
@@ -1202,7 +1157,6 @@ input[type='number'] {
   border-color: var(--border-color);
 }
 
-.btn-delete-icon,
 .btn-finova-secondary {
   background: var(--control-surface);
 }
@@ -1221,20 +1175,8 @@ input[type='number'] {
   background-color: var(--card-surface, var(--bg-card));
 }
 
-:root[data-theme='dark'] .btn-delete-icon {
-  background-color: var(--control-surface);
-}
-
-:root[data-theme='dark'] .btn-edit-icon,
-:root[data-theme='dark'] .btn-delete-icon {
+:root[data-theme='dark'] .btn-edit-icon {
   color: var(--control-text);
-}
-
-:root[data-theme='dark'] .btn-edit-icon.btn-delete-icon:hover {
-  background-color: var(--control-surface-hover);
-  color: var(--control-text);
-  border-color: var(--control-border);
-  box-shadow: 0 0 18px -6px var(--control-glow);
 }
 
 :root[data-theme='dark'] .finova-list-item:hover,

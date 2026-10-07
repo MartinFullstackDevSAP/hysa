@@ -166,7 +166,7 @@ const AccountList = ({ accounts, loading, onAccountsChange }) => {
                                         <div className="account-list-actions">
                                             <button
                                                 type="button"
-                                                className="btn-edit-icon btn-delete-icon"
+                                                className="btn-edit-icon"
                                                 onClick={() => {
                                                     setError('');
                                                     setConfirmDeleteAccount(account);
