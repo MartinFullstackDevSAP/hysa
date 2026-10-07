@@ -1240,6 +1240,14 @@ input[type='number'] {
   border-color: var(--border-color);
 }
 
+:root[data-theme='dark'] .finova-dashboard .stat-card,
+:root[data-theme='dark'] .finova-dashboard .finova-list-item,
+:root[data-theme='dark'] .finova-container .finova-card,
+:root[data-theme='dark'] .finova-container .form-container,
+:root[data-theme='dark'] .finova-container .card-block {
+  background: linear-gradient(155deg, #0E0F14 0%, #1A1C2A 100%);
+}
+
 .finova-input::placeholder {
   color: var(--text-secondary);
   opacity: 1;
