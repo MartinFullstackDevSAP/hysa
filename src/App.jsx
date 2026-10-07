@@ -147,8 +147,28 @@ function App() {
     }
   };
 
+  const handleRefresh = () => {
+    if (activeTab !== 'dashboard' || tabLoading) return;
+
+    navigationId.current += 1;
+    const currentNavigation = navigationId.current;
+    navigationStartedAt.current = Date.now();
+    setNavigationKey(currentNavigation);
+    setTabLoading(true);
+
+    if (navigationTimeout.current) {
+      window.clearTimeout(navigationTimeout.current);
+    }
+  };
+
   return (
-    <MainLayout activeTab={activeTab} onTabSelect={handleTabSelect} onSignOut={handleSignOut} isLoading={tabLoading}>
+    <MainLayout
+      activeTab={activeTab}
+      onTabSelect={handleTabSelect}
+      onSignOut={handleSignOut}
+      onRefresh={handleRefresh}
+      isLoading={tabLoading}
+    >
       {activeTab === 'dashboard' && (
         <Dashboard
           key={navigationKey}
