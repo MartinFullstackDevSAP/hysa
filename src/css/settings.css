@@ -928,6 +928,8 @@ input[type='number'] {
   border-radius: 20px;
   width: 100%;
   max-width: 500px;
+  min-width: 0;
+  box-sizing: border-box;
   box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
   overflow: hidden;
   animation: modalFadeIn 0.2s ease-out;
@@ -1004,6 +1006,13 @@ input[type='number'] {
   gap: 0.75rem;
 }
 
+.finova-modal-footer > button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
 .btn-finova-secondary {
   background: var(--control-surface);
   color: var(--control-text);
@@ -1042,6 +1051,23 @@ input[type='number'] {
   border-color: var(--border-focus);
   transform: translateY(-1px);
   box-shadow: 0 0 24px -5px var(--control-glow);
+}
+
+.account-edit-modal .finova-modal-body,
+.account-edit-modal .form-group {
+  min-width: 0;
+}
+
+.account-edit-modal input[type='date'] {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  padding-right: 0.5rem !important;
+  padding-left: 0.5rem !important;
+  box-sizing: border-box !important;
+  font-size: 0.875rem !important;
+  -webkit-appearance: none;
 }
 
 /* Tlačidlo na úpravu vo forme ikony (vedľa zmazať) */
@@ -1083,6 +1109,40 @@ input[type='number'] {
 }
 
 @media (max-width: 640px) {
+  .finova-modal-overlay {
+    padding: 0.75rem;
+  }
+
+  .finova-modal-header {
+    padding: 1rem;
+  }
+
+  .finova-modal-body {
+    min-width: 0;
+    padding: 1rem;
+  }
+
+  .finova-modal-footer {
+    padding: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .finova-modal-footer > button {
+    flex: 1 1 120px;
+    min-width: 0;
+  }
+
+  .account-edit-modal {
+    max-height: calc(100dvh - 1.5rem);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .account-edit-modal .finova-modal-body {
+    overflow-y: auto;
+  }
+
   .btn-edit-icon {
     width: 32px;
     height: 32px;
