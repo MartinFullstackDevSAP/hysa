@@ -100,38 +100,49 @@ select:focus-visible {
   }
 
   :root :is(button, [role='button']):not(:disabled):not([aria-disabled='true']):hover {
-    border-color: var(--control-border, var(--accent-border));
+    border-color: color-mix(
+      in srgb,
+      var(--control-border, var(--accent-border)) 72%,
+      var(--accent-pink, var(--accent))
+    );
     background-image: radial-gradient(
-      ellipse at center,
-      color-mix(in srgb, var(--accent-pink, var(--accent)) 20%, transparent),
+      ellipse at 50% 50%,
+      color-mix(in srgb, var(--accent-pink, var(--accent)) 18%, transparent) 0%,
       color-mix(in srgb, var(--accent-pink, var(--accent)) 8%, transparent) 48%,
-      transparent 82%
+      transparent 80%
     );
     box-shadow:
-      0 0 0 1px color-mix(in srgb, var(--control-border, var(--accent-border)) 72%, transparent),
-      0 0 18px -3px var(--control-glow, var(--accent-glow)),
-      inset 0 0 16px -5px var(--control-glow, var(--accent-glow));
+      0 0 0 1px color-mix(in srgb, var(--accent-pink, var(--accent)) 48%, transparent),
+      0 0 10px 1px color-mix(in srgb, var(--accent-pink, var(--accent)) 42%, transparent),
+      0 0 26px 5px color-mix(in srgb, var(--accent-pink, var(--accent)) 22%, transparent),
+      inset 0 0 16px -4px var(--control-glow, var(--accent-glow));
   }
 }
 
 :root :is(button, [role='button']):not(:disabled):not([aria-disabled='true']):active {
   background-image: radial-gradient(
-    ellipse at center,
-    color-mix(in srgb, var(--accent-pink, var(--accent)) 24%, transparent),
+    ellipse at 50% 50%,
+    color-mix(in srgb, var(--accent-pink, var(--accent)) 24%, transparent) 0%,
     color-mix(in srgb, var(--accent-pink, var(--accent)) 10%, transparent) 48%,
-    transparent 82%
+    transparent 80%
   );
   box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--control-border, var(--accent-border)) 72%, transparent),
-    0 0 20px -3px var(--control-glow, var(--accent-glow)),
-    inset 0 0 18px -4px var(--control-glow, var(--accent-glow));
+    0 0 0 1px color-mix(in srgb, var(--accent-pink, var(--accent)) 58%, transparent),
+    0 0 12px 2px color-mix(in srgb, var(--accent-pink, var(--accent)) 48%, transparent),
+    0 0 30px 6px color-mix(in srgb, var(--accent-pink, var(--accent)) 26%, transparent),
+    inset 0 0 18px -3px var(--control-glow, var(--accent-glow));
 }
 
 :root :is(button, [role='button']):not(:disabled):not([aria-disabled='true']):focus-visible {
-  border-color: var(--control-border, var(--accent-border));
+  border-color: color-mix(
+    in srgb,
+    var(--control-border, var(--accent-border)) 72%,
+    var(--accent-pink, var(--accent))
+  );
   box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--control-border, var(--accent-border)) 72%, transparent),
-    0 0 18px -3px var(--control-glow, var(--accent-glow)),
+    0 0 0 1px color-mix(in srgb, var(--accent-pink, var(--accent)) 48%, transparent),
+    0 0 10px 1px color-mix(in srgb, var(--accent-pink, var(--accent)) 42%, transparent),
+    0 0 26px 5px color-mix(in srgb, var(--accent-pink, var(--accent)) 22%, transparent),
     inset 0 0 16px -5px var(--control-glow, var(--accent-glow));
 }
 
