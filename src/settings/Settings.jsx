@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { SlidersHorizontal } from 'lucide-react';
+import { ArrowLeftRight, SlidersHorizontal } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 import CustomSelect from './CustomSelect';
 import { DEFAULT_GLOBAL_SETTINGS } from '../globalSettings';
@@ -447,6 +447,146 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
             </button>
           </div>
         </form>
+      </section>
+
+      <section className="finova-card transaction-card">
+        <h2 className="card-title">
+          <ArrowLeftRight size={22} aria-hidden="true" />
+          Pridať transakciu
+        </h2>
+        <div className="finova-form transaction-form">
+          <div className="form-group">
+            <label className="form-label" htmlFor="transaction-type">Typ obchodu *</label>
+            <select id="transaction-type" className="finova-select" defaultValue="buy" required>
+              <option value="buy">Nákup</option>
+              <option value="sell">Predaj</option>
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label" htmlFor="transaction-asset-type">Typ aktíva *</label>
+            <select id="transaction-asset-type" className="finova-select" defaultValue="stock" required>
+              <option value="stock">Akcia</option>
+              <option value="etf">ETF</option>
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label" htmlFor="transaction-security-name">Názov cenného papiera *</label>
+            <input
+              id="transaction-security-name"
+              className="finova-input finova-input-control"
+              type="text"
+              autoComplete="off"
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label" htmlFor="transaction-isin">ISIN *</label>
+            <input
+              id="transaction-isin"
+              className="finova-input finova-input-control"
+              type="text"
+              autoComplete="off"
+              minLength={12}
+              maxLength={12}
+              pattern="[A-Za-z]{2}[A-Za-z0-9]{9}[0-9]"
+              placeholder="Napr. US0378331005"
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label" htmlFor="transaction-date">Dátum obchodu *</label>
+            <input
+              id="transaction-date"
+              className="finova-input finova-input-control"
+              type="date"
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label" htmlFor="transaction-quantity">Počet kusov *</label>
+            <input
+              id="transaction-quantity"
+              className="finova-input finova-input-control"
+              type="number"
+              inputMode="decimal"
+              min="0.000001"
+              step="any"
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label" htmlFor="transaction-unit-price">Cena za kus *</label>
+            <input
+              id="transaction-unit-price"
+              className="finova-input finova-input-control"
+              type="number"
+              inputMode="decimal"
+              min="0.000001"
+              step="any"
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label" htmlFor="transaction-currency">Mena obchodu *</label>
+            <input
+              id="transaction-currency"
+              className="finova-input finova-input-control"
+              type="text"
+              autoComplete="off"
+              minLength={3}
+              maxLength={3}
+              pattern="[A-Za-z]{3}"
+              placeholder="Napr. EUR"
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label" htmlFor="transaction-commission">Provízia / poplatok</label>
+            <input
+              id="transaction-commission"
+              className="finova-input finova-input-control"
+              type="number"
+              inputMode="decimal"
+              min="0"
+              step="any"
+              defaultValue="0"
+            />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label" htmlFor="transaction-broker">Broker / účet</label>
+            <input
+              id="transaction-broker"
+              className="finova-input finova-input-control"
+              type="text"
+              autoComplete="off"
+            />
+          </div>
+
+          <div className="form-group form-group-full">
+            <label className="form-label" htmlFor="transaction-note">Poznámka</label>
+            <textarea
+              id="transaction-note"
+              className="finova-input finova-input-control transaction-note"
+              rows="3"
+            />
+          </div>
+
+          <div className="form-group form-group-full transaction-form-footer">
+            <p role="status">Formulár zatiaľ slúži na zadanie údajov; ukladanie transakcií ešte nie je zapojené.</p>
+            <button type="button" className="btn-finova-primary" disabled>
+              Pridať transakciu
+            </button>
+          </div>
+        </div>
       </section>
 
       {/* Modálne okno - Úspešné uloženie/pridanie/úprava */}

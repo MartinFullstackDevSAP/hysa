@@ -330,6 +330,19 @@ body {
 
 /* Responzivita pre Desktop (od 1024px) */
 @media (min-width: 1024px) {
+  .finova-main-content > .finova-container:has(> .finova-container) {
+    padding: 1rem;
+  }
+
+  .finova-main-content > .finova-container > .finova-container {
+    padding: 0;
+    min-height: 0;
+  }
+
+  .finova-main-content > .finova-container > .finova-container > .finova-card {
+    margin-bottom: 1rem;
+  }
+
   .finova-form, .form-grid {
     grid-template-columns: repeat(4, 1fr);
   }
@@ -341,6 +354,25 @@ body {
     min-width: 220px;
     margin-top: 0.75rem;
   }
+
+  .transaction-form .form-group-full {
+    grid-column: 1 / -1;
+  }
+}
+
+.transaction-form-footer {
+  gap: 0.5rem;
+}
+
+.transaction-form-footer p {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.transaction-form .transaction-note {
+  height: auto !important;
+  min-height: 100px;
+  resize: vertical;
 }
 
 /* Kontajner pre Custom Select */
