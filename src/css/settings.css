@@ -360,9 +360,18 @@ body {
   }
 }
 
-.transaction-form-footer {
-  gap: 0.5rem;
-}
+  .transaction-form .form-label {
+    overflow: visible;
+    white-space: normal;
+  }
+
+  .transaction-form .custom-select-container {
+    z-index: 2;
+  }
+
+  .transaction-form-footer {
+    gap: 0.5rem;
+  }
 
 .transaction-form-footer p {
   color: var(--text-secondary);
@@ -373,6 +382,77 @@ body {
   height: auto !important;
   min-height: 100px;
   resize: vertical;
+}
+
+.transaction-security-search {
+  position: relative;
+}
+
+.transaction-security-status,
+.transaction-security-selected {
+  display: block;
+  margin-top: 0.35rem;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+
+.transaction-security-suggestions {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  right: 0;
+  left: 0;
+  z-index: 10;
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 0.3rem;
+  border: 1px solid var(--control-border);
+  border-radius: 14px;
+  background: var(--card-surface, var(--bg-card));
+  box-shadow: var(--shadow-card);
+}
+
+.transaction-security-suggestion {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-primary);
+  cursor: pointer;
+  text-align: left;
+}
+
+.transaction-security-suggestion:hover,
+.transaction-security-suggestion:focus-visible {
+  border-color: var(--control-border);
+  background: var(--control-surface-hover, var(--control-surface));
+}
+
+.transaction-security-suggestion small {
+  color: var(--text-secondary);
+}
+
+.transaction-date-picker-button {
+  position: absolute;
+  right: 0.5rem;
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--control-text);
+  cursor: pointer;
+}
+
+.transaction-date-picker-button:hover {
+  background: var(--control-surface-hover, var(--control-surface));
 }
 
 /* Kontajner pre Custom Select */

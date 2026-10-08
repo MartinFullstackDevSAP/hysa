@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { ArrowLeftRight, SlidersHorizontal } from 'lucide-react';
+import { ArrowLeftRight, CalendarDays, SlidersHorizontal } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 import CustomSelect from './CustomSelect';
 import { DEFAULT_GLOBAL_SETTINGS } from '../globalSettings';
@@ -90,12 +90,29 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
   const [tax, setTax] = useState('15');
   const [currency, setCurrency] = useState('CZK');
   const [expirationSk, setExpirationSk] = useState('');
+  const [transactionType, setTransactionType] = useState('buy');
+  const [transactionAssetType, setTransactionAssetType] = useState('stock');
+  const [transactionCurrency, setTransactionCurrency] = useState('CZK');
+  const [transactionDateSk, setTransactionDateSk] = useState('');
+  const [securityQuery, setSecurityQuery] = useState('');
+  const [securitySuggestions, setSecuritySuggestions] = useState([]);
+  const [selectedSecurity, setSelectedSecurity] = useState(null);
+  const [securitySearchLoading, setSecuritySearchLoading] = useState(false);
+  const [securitySearchError, setSecuritySearchError] = useState('');
 
   const hiddenDateRef = useRef(null);
+  const transactionDateRef = useRef(null);
+  const securitySearchTimerRef = useRef(null);
+  const securitySearchIdRef = useRef(0);
 
   useEffect(() => {
     setGlobalSettingsForm(globalSettings);
   }, [globalSettings]);
+
+  useEffect(() => () => {
+    window.clearTimeout(securitySearchTimerRef.current);
+    securitySearchIdRef.current += 1;
+  }, []);
 
   const handleSaveGlobalSettings = async (e) => {
     e.preventDefault();
@@ -238,6 +255,75 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
     }
   };
 
+  const handleOpenTransactionDatePicker = () => {
+    if (transactionDateRef.current) {
+      if (typeof transactionDateRef.current.showPicker === 'function') {
+        const iso = toIsoDate(transactionDateSk);
+        transactionDateRef.current.value = iso || '';
+        transactionDateRef.current.showPicker();
+      } else {
+        transactionDateRef.current.click();
+      }
+    }
+  };
+
+  const searchSecurity = (query, assetType) => {
+    setSecurityQuery(query);
+    setSelectedSecurity(null);
+    setSecuritySuggestions([]);
+    setSecuritySearchError('');
+    window.clearTimeout(securitySearchTimerRef.current);
+
+    const normalizedQuery = query.trim().toUpperCase();
+    const isIsin = /^[A-Z]{2}[A-Z0-9]{9}\d$/.test(normalizedQuery);
+    if (!isIsin && normalizedQuery.length < 2) {
+      setSecuritySearchLoading(false);
+      securitySearchIdRef.current += 1;
+      return;
+    }
+
+    setSecuritySearchLoading(true);
+    const searchId = ++securitySearchIdRef.current;
+    securitySearchTimerRef.current = window.setTimeout(() => {
+      const fetchSuggestions = async () => {
+        try {
+          const { data, error } = await supabase.functions.invoke('security-search', {
+            body: { query: normalizedQuery, assetType },
+          });
+
+          if (searchId !== securitySearchIdRef.current) return;
+          if (error) {
+            console.error('Chyba pri vyhľadávaní cenného papiera:', error.message);
+            const errorResponse = error.context instanceof Response
+              ? await error.context.clone().json().catch(() => null)
+              : null;
+            setSecuritySearchError(errorResponse?.error || 'Cenné papiere sa nepodarilo vyhľadať. Skúste to znova.');
+            return;
+          }
+
+          setSecuritySuggestions(data?.results || []);
+          if (!data?.results?.length) {
+            setSecuritySearchError('Nenašli sa žiadne zodpovedajúce akcie alebo ETF.');
+          }
+        } catch (error) {
+          if (searchId !== securitySearchIdRef.current) return;
+          console.error('Chyba pri vyhľadávaní cenného papiera:', error);
+          setSecuritySearchError('Cenné papiere sa nepodarilo vyhľadať. Skúste to znova.');
+        } finally {
+          if (searchId === securitySearchIdRef.current) {
+            setSecuritySearchLoading(false);
+          }
+        }
+      };
+
+      fetchSuggestions();
+    }, 450);
+  };
+
+  const handleSecuritySearchChange = (event) => {
+    searchSecurity(event.target.value.trimStart(), transactionAssetType);
+  };
+
   return (
     <div className="finova-container">
       <section className="finova-card">
@@ -258,6 +344,7 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
           <div className="form-group">
             <label className="form-label">Režim zobrazenia</label>
             <CustomSelect
+              ariaLabel="Typ obchodu"
               options={[
                 { value: 'light', label: 'Svetlý režim' },
                 { value: 'dark', label: 'Tmavý režim' },
@@ -269,6 +356,7 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
           <div className="form-group">
             <label className="form-label">Dashboard mena</label>
             <CustomSelect
+              ariaLabel="Typ aktíva"
               options={[
                 { value: 'CZK', label: 'CZK (Kč)' },
                 { value: 'EUR', label: 'EUR (€)' },
@@ -344,6 +432,7 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
           <div className="form-group">
             <label className="form-label">Platby kartou</label>
             <CustomSelect
+              ariaLabel="Mena obchodu"
               options={[
                 { value: '0', label: '0' },
                 { value: '5', label: '5' },
@@ -456,55 +545,115 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
         </h2>
         <div className="finova-form transaction-form">
           <div className="form-group">
-            <label className="form-label" htmlFor="transaction-type">Typ obchodu *</label>
-            <select id="transaction-type" className="finova-select" defaultValue="buy" required>
-              <option value="buy">Nákup</option>
-              <option value="sell">Predaj</option>
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label" htmlFor="transaction-asset-type">Typ aktíva *</label>
-            <select id="transaction-asset-type" className="finova-select" defaultValue="stock" required>
-              <option value="stock">Akcia</option>
-              <option value="etf">ETF</option>
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label" htmlFor="transaction-security-name">Názov cenného papiera *</label>
-            <input
-              id="transaction-security-name"
-              className="finova-input finova-input-control"
-              type="text"
-              autoComplete="off"
-              required
+            <label className="form-label">Typ obchodu *</label>
+            <CustomSelect
+              options={[
+                { value: 'buy', label: 'Nákup' },
+                { value: 'sell', label: 'Predaj' },
+              ]}
+              value={transactionType}
+              onChange={setTransactionType}
             />
           </div>
 
           <div className="form-group">
-            <label className="form-label" htmlFor="transaction-isin">ISIN *</label>
-            <input
-              id="transaction-isin"
-              className="finova-input finova-input-control"
-              type="text"
-              autoComplete="off"
-              minLength={12}
-              maxLength={12}
-              pattern="[A-Za-z]{2}[A-Za-z0-9]{9}[0-9]"
-              placeholder="Napr. US0378331005"
-              required
+            <label className="form-label">Typ aktíva *</label>
+            <CustomSelect
+              options={[
+                { value: 'stock', label: 'Akcia' },
+                { value: 'etf', label: 'ETF' },
+              ]}
+              value={transactionAssetType}
+              onChange={(value) => {
+                setTransactionAssetType(value);
+                if (securityQuery.trim().length >= 2) {
+                  searchSecurity(securityQuery, value);
+                }
+              }}
             />
           </div>
 
           <div className="form-group">
-            <label className="form-label" htmlFor="transaction-date">Dátum obchodu *</label>
-            <input
-              id="transaction-date"
-              className="finova-input finova-input-control"
-              type="date"
-              required
-            />
+            <label className="form-label" htmlFor="transaction-security-search">Ticker alebo ISIN *</label>
+            <div className="transaction-security-search">
+              <input
+                id="transaction-security-search"
+                className="finova-input finova-input-control"
+                type="text"
+                autoComplete="off"
+                placeholder="Zadajte ticker alebo ISIN"
+                value={securityQuery}
+                onChange={handleSecuritySearchChange}
+                role="combobox"
+                aria-autocomplete="list"
+                aria-expanded={securitySuggestions.length > 0}
+                aria-controls="transaction-security-suggestions"
+                required
+              />
+              {securitySearchLoading && <span className="transaction-security-status" role="status">Vyhľadávam...</span>}
+              {securitySearchError && !securitySearchLoading && (
+                <span className="transaction-security-status" role="status">{securitySearchError}</span>
+              )}
+              {securitySuggestions.length > 0 && (
+                <div className="transaction-security-suggestions" id="transaction-security-suggestions" role="listbox">
+                  {securitySuggestions.map((security) => (
+                    <button
+                      key={security.figi || `${security.ticker}-${security.exchCode}`}
+                      type="button"
+                      role="option"
+                      aria-selected={selectedSecurity?.figi === security.figi}
+                      className="transaction-security-suggestion"
+                      onClick={() => {
+                        setSelectedSecurity(security);
+                        setSecurityQuery(security.ticker);
+                        setSecuritySuggestions([]);
+                        setSecuritySearchError('');
+                      }}
+                    >
+                      <span>{security.ticker} · {security.name}</span>
+                      <small>{security.exchCode}{security.currency ? ` · ${security.currency}` : ''}</small>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+            {selectedSecurity && (
+              <span className="transaction-security-selected">
+                Vybrané: {selectedSecurity.name} ({selectedSecurity.ticker})
+              </span>
+            )}
+          </div>
+
+          <div className="form-group">
+            <label className="form-label" htmlFor="transaction-date-display">Dátum obchodu *</label>
+            <div className="account-expiration-input-wrapper">
+              <input
+                id="transaction-date-display"
+                className="finova-input finova-input-control"
+                type="text"
+                value={transactionDateSk}
+                placeholder="DD.MM.RRRR"
+                onChange={(event) => setTransactionDateSk(event.target.value)}
+                required
+              />
+              <input
+                ref={transactionDateRef}
+                type="date"
+                value={toIsoDate(transactionDateSk)}
+                onChange={(event) => setTransactionDateSk(toSkDate(event.target.value))}
+                className="account-expiration-native-picker"
+                title="Vybrať dátum"
+                tabIndex={-1}
+              />
+              <button
+                type="button"
+                className="transaction-date-picker-button"
+                onClick={handleOpenTransactionDatePicker}
+                aria-label="Vybrať dátum obchodu"
+              >
+                <CalendarDays size={18} aria-hidden="true" />
+              </button>
+            </div>
           </div>
 
           <div className="form-group">
@@ -534,17 +683,15 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
           </div>
 
           <div className="form-group">
-            <label className="form-label" htmlFor="transaction-currency">Mena obchodu *</label>
-            <input
-              id="transaction-currency"
-              className="finova-input finova-input-control"
-              type="text"
-              autoComplete="off"
-              minLength={3}
-              maxLength={3}
-              pattern="[A-Za-z]{3}"
-              placeholder="Napr. EUR"
-              required
+            <label className="form-label">Mena obchodu *</label>
+            <CustomSelect
+              options={[
+                { value: 'CZK', label: 'CZK (Kč)' },
+                { value: 'EUR', label: 'EUR (€)' },
+                { value: 'USD', label: 'USD ($)' },
+              ]}
+              value={transactionCurrency}
+              onChange={setTransactionCurrency}
             />
           </div>
 
