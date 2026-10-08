@@ -762,11 +762,20 @@
     flex-basis: 73px;
   }
 
-  .card-payment-row {
+  .card-payment-list {
+    display: grid;
     grid-template-columns: max-content minmax(0, 1fr) 4rem auto;
+    column-gap: 1rem;
+    row-gap: 0.85rem;
+  }
+
+  .card-payment-row {
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
   }
 
   .card-payment-account-bank {
+    min-width: max-content;
     overflow: visible;
     text-overflow: clip;
     white-space: nowrap;
@@ -942,13 +951,14 @@
   }
 
   .card-payment-row {
-    grid-template-columns: minmax(max-content, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr) auto;
     gap: 0.65rem;
   }
 
   .card-payment-account-bank {
-    overflow: visible;
-    text-overflow: clip;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
     white-space: nowrap;
   }
 
