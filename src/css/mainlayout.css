@@ -763,13 +763,13 @@
   }
 
   .card-payment-row {
-    grid-template-columns: minmax(0, 1.5fr) minmax(60px, 0.5fr) 4rem auto;
+    grid-template-columns: max-content minmax(0, 1fr) 4rem auto;
   }
 
   .card-payment-account-bank {
     overflow: visible;
     text-overflow: clip;
-    white-space: normal;
+    white-space: nowrap;
   }
 
   .finova-main-content {
@@ -942,8 +942,14 @@
   }
 
   .card-payment-row {
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: minmax(max-content, 1fr) auto;
     gap: 0.65rem;
+  }
+
+  .card-payment-account-bank {
+    overflow: visible;
+    text-overflow: clip;
+    white-space: nowrap;
   }
 
   .card-payment-count {
