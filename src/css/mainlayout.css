@@ -757,6 +757,17 @@
     flex-direction: row;
   }
 
+  .payment-step-button {
+    width: 73px;
+    height: 28px;
+    flex-basis: 73px;
+  }
+
+  .payment-step-button svg {
+    width: 13px;
+    height: 13px;
+  }
+
   .finova-main-content {
     padding-bottom: 0;
     order: 2;
@@ -929,6 +940,10 @@
   .card-payment-row {
     grid-template-columns: minmax(0, 1fr) auto;
     gap: 0.65rem;
+  }
+
+  .card-payment-count {
+    text-align: right;
   }
 
   .fixed-term-row {
