@@ -252,8 +252,8 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
     setTransactionSaveError('');
     setTransactionSaveSuccess('');
 
-    if (!selectedSecurity?.ticker || !selectedSecurity?.isin || !selectedSecurity?.name) {
-      setTransactionSaveError('Najprv vyhľadajte a vyberte cenný papier podľa ISIN-u.');
+    if (!selectedSecurity?.ticker || !selectedSecurity?.figi || !selectedSecurity?.exchange || !selectedSecurity?.name) {
+      setTransactionSaveError('Najprv vyhľadajte a vyberte cenný papier podľa tickeru alebo ISIN-u.');
       return;
     }
 
@@ -268,13 +268,13 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
     const quantity = Number(formData.get('quantity'));
     const unitPrice = Number(formData.get('unit_price'));
     const commission = Number(formData.get('commission') || 0);
-    const isin = selectedSecurity.isin.toUpperCase();
+    const isin = typeof selectedSecurity.isin === 'string' ? selectedSecurity.isin.toUpperCase() : null;
 
     if (!isValidDate) {
       setTransactionSaveError('Zadajte platný dátum obchodu.');
       return;
     }
-    if (!/^[A-Z]{2}[A-Z0-9]{9}\d$/.test(isin)) {
+    if (isin && !/^[A-Z]{2}[A-Z0-9]{9}\d$/.test(isin)) {
       setTransactionSaveError('Vybraný cenný papier nemá platný ISIN.');
       return;
     }
@@ -306,6 +306,8 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
         asset_type: transactionAssetType,
         isin,
         ticker: selectedSecurity.ticker,
+        exchange: selectedSecurity.exchange,
+        figi: selectedSecurity.figi,
         security_name: selectedSecurity.name,
         trade_date: transactionDate,
         quantity,
@@ -376,7 +378,8 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
 
     const normalizedQuery = query.trim().toUpperCase();
     const isIsin = /^[A-Z]{2}[A-Z0-9]{9}\d$/.test(normalizedQuery);
-    if (!isIsin) {
+    const isTicker = /^[A-Z0-9._-]{1,20}$/.test(normalizedQuery);
+    if (!isIsin && !isTicker) {
       setSecuritySearchLoading(false);
       securitySearchIdRef.current += 1;
       return;
@@ -407,7 +410,8 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
 
           const uniqueSecurities = new Map();
           for (const security of data?.results || []) {
-            const key = security.compositeFIGI || `${security.ticker}:${security.name}`;
+            if (!security.ticker || !security.figi || !security.exchange || !security.name) continue;
+            const key = `${security.figi}:${security.exchange}`;
             if (!uniqueSecurities.has(key)) {
               uniqueSecurities.set(key, security);
             }
@@ -692,16 +696,15 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
           </div>
 
           <div className="form-group">
-            <label className="form-label" htmlFor="transaction-security-search">ISIN cenného papiera *</label>
+            <label className="form-label" htmlFor="transaction-security-search">Cenný papier (ticker alebo ISIN) *</label>
             <div className="transaction-security-search" aria-busy={securitySearchLoading}>
               <input
                 id="transaction-security-search"
                 className="finova-input finova-input-control"
                 type="text"
                 autoComplete="off"
-                placeholder="Zadajte 12-znakový ISIN"
-                maxLength={12}
-                pattern="[A-Za-z]{2}[A-Za-z0-9]{9}[0-9]"
+                placeholder="Zadajte ticker alebo 12-znakový ISIN"
+                maxLength={20}
                 value={securityQuery}
                 onChange={handleSecuritySearchChange}
                 role="combobox"
@@ -714,25 +717,24 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
                 <div className="transaction-security-suggestions" id="transaction-security-suggestions" role="listbox">
                   {securitySuggestions.map((security) => (
                     <button
-                      key={security.figi || `${security.ticker}-${security.exchCode}`}
+                      key={`${security.figi}-${security.exchange}`}
                       type="button"
                       role="option"
-                      aria-selected={selectedSecurity?.figi === security.figi}
+                      aria-selected={selectedSecurity?.figi === security.figi
+                        && selectedSecurity?.exchange === security.exchange}
                       className="transaction-security-suggestion"
                       onClick={() => {
                         setSelectedSecurity({
                           ...security,
-                          ticker: security.ticker,
-                          isin: security.isin || (/^[A-Z]{2}[A-Z0-9]{9}\d$/.test(securityQuery.trim().toUpperCase())
-                            ? securityQuery.trim().toUpperCase()
-                            : ''),
+                          ticker: security.ticker.toUpperCase(),
+                          isin: security.isin?.toUpperCase() || null,
                         });
-                        setSecurityQuery(security.isin || securityQuery.trim().toUpperCase());
                         setSecuritySuggestions([]);
                         setSecuritySearchError('');
                       }}
                     >
                       <span className="transaction-security-ticker">{security.ticker}</span>
+                      <span className="transaction-security-exchange">{security.exchange}</span>
                       <span className="transaction-security-name">{security.name}</span>
                     </button>
                   ))}
