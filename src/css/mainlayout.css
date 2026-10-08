@@ -759,13 +759,17 @@
 
   .payment-step-button {
     width: 73px;
-    height: 28px;
     flex-basis: 73px;
   }
 
-  .payment-step-button svg {
-    width: 13px;
-    height: 13px;
+  .card-payment-row {
+    grid-template-columns: minmax(0, 1.5fr) minmax(60px, 0.5fr) 4rem auto;
+  }
+
+  .card-payment-account-bank {
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
   }
 
   .finova-main-content {
