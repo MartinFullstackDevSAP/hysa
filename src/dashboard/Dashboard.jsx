@@ -208,7 +208,7 @@ const Dashboard = ({ currency = 'CZK', navigationKey = 0, onLoadingChange }) => 
                                             <span style={{ width: `${percentage}%` }} />
                                         </div>
                                         <strong className="card-payment-count">
-                                            {formatIntegerWithSpaces(made)}/{formatIntegerWithSpaces(required)}
+                                            {formatIntegerWithSpaces(made)} / {formatIntegerWithSpaces(required)}
                                         </strong>
                                         <div className="card-payment-actions">
                                             <button

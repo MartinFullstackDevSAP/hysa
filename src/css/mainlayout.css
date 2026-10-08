@@ -885,14 +885,28 @@
 @media (max-width: 640px) {
   .finova-main-content {
     padding-bottom: calc(82px + env(safe-area-inset-bottom, 0px));
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .finova-main-content::-webkit-scrollbar {
+    display: none;
+  }
+
+  .finova-main-content > .finova-container {
+    padding-top: 1.5rem;
+  }
+
+  .finova-main-content > .finova-container > .finova-container {
+    padding-top: 0;
   }
 
   .finova-dashboard {
-    padding: 0.5rem 0.375rem;
+    padding: 0 0.375rem;
   }
 
   .finova-hero-card {
-    margin-top: 0.2rem;
+    margin-top: 0;
   }
 
   .finova-hero-card {
