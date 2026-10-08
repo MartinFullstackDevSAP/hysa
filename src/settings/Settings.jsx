@@ -99,9 +99,13 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
   const [selectedSecurity, setSelectedSecurity] = useState(null);
   const [securitySearchLoading, setSecuritySearchLoading] = useState(false);
   const [securitySearchError, setSecuritySearchError] = useState('');
+  const [transactionSaving, setTransactionSaving] = useState(false);
+  const [transactionSaveError, setTransactionSaveError] = useState('');
+  const [transactionSaveSuccess, setTransactionSaveSuccess] = useState('');
 
   const hiddenDateRef = useRef(null);
   const transactionDateRef = useRef(null);
+  const transactionFormRef = useRef(null);
   const securitySearchTimerRef = useRef(null);
   const securitySearchIdRef = useRef(0);
 
@@ -243,6 +247,102 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
     }
   };
 
+  const handleSaveTransaction = async (event) => {
+    event.preventDefault();
+    setTransactionSaveError('');
+    setTransactionSaveSuccess('');
+
+    if (!selectedSecurity?.ticker || !selectedSecurity?.isin || !selectedSecurity?.name) {
+      setTransactionSaveError('Najprv vyhľadajte a vyberte cenný papier podľa ISIN-u.');
+      return;
+    }
+
+    const formData = new FormData(event.currentTarget);
+    const transactionDate = toIsoDate(transactionDateSk);
+    const dateParts = transactionDate.split('-').map(Number);
+    const parsedDate = new Date(Date.UTC(dateParts[0], dateParts[1] - 1, dateParts[2]));
+    const isValidDate = transactionDate
+      && parsedDate.getUTCFullYear() === dateParts[0]
+      && parsedDate.getUTCMonth() === dateParts[1] - 1
+      && parsedDate.getUTCDate() === dateParts[2];
+    const quantity = Number(formData.get('quantity'));
+    const unitPrice = Number(formData.get('unit_price'));
+    const commission = Number(formData.get('commission') || 0);
+    const isin = selectedSecurity.isin.toUpperCase();
+
+    if (!isValidDate) {
+      setTransactionSaveError('Zadajte platný dátum obchodu.');
+      return;
+    }
+    if (!/^[A-Z]{2}[A-Z0-9]{9}\d$/.test(isin)) {
+      setTransactionSaveError('Vybraný cenný papier nemá platný ISIN.');
+      return;
+    }
+    if (!Number.isFinite(quantity) || quantity <= 0 || !Number.isFinite(unitPrice) || unitPrice <= 0) {
+      setTransactionSaveError('Počet kusov a cena za kus musia byť väčšie ako nula.');
+      return;
+    }
+    if (!Number.isFinite(commission) || commission < 0) {
+      setTransactionSaveError('Provízia alebo poplatok nemôže byť záporný.');
+      return;
+    }
+
+    setTransactionSaving(true);
+    try {
+      const { data: authData, error: authError } = await supabase.auth.getUser();
+      if (authError) {
+        console.error('Chyba pri overovaní používateľa transakcie:', authError.message);
+        setTransactionSaveError('Používateľa sa nepodarilo overiť. Skúste sa znova prihlásiť.');
+        return;
+      }
+      if (!authData.user) {
+        setTransactionSaveError('Pre uloženie transakcie sa musíte prihlásiť.');
+        return;
+      }
+
+      const payload = {
+        user_id: authData.user.id,
+        transaction_type: transactionType,
+        asset_type: transactionAssetType,
+        isin,
+        ticker: selectedSecurity.ticker,
+        security_name: selectedSecurity.name,
+        trade_date: transactionDate,
+        quantity,
+        unit_price: unitPrice,
+        currency: transactionCurrency,
+        commission,
+        broker: String(formData.get('broker') || '').trim() || null,
+        note: String(formData.get('note') || '').trim() || null,
+      };
+
+      const { error } = await supabase
+        .from('investment_transactions')
+        .insert(payload);
+
+      if (error) {
+        console.error('Chyba pri ukladaní investičnej transakcie:', error.message);
+        setTransactionSaveError(`Chyba pri ukladaní do databázy: ${error.message}`);
+        return;
+      }
+
+      transactionFormRef.current?.reset();
+      setTransactionType('buy');
+      setTransactionAssetType('stock');
+      setTransactionCurrency('CZK');
+      setTransactionDateSk('');
+      setSecurityQuery('');
+      setSelectedSecurity(null);
+      setSecuritySuggestions([]);
+      setTransactionSaveSuccess('Transakcia bola úspešne uložená.');
+    } catch (error) {
+      console.error('Chyba pri ukladaní investičnej transakcie:', error);
+      setTransactionSaveError('Transakciu sa nepodarilo uložiť. Skúste to znova.');
+    } finally {
+      setTransactionSaving(false);
+    }
+  };
+
   const handleOpenDatePicker = () => {
     if (hiddenDateRef.current) {
       if (typeof hiddenDateRef.current.showPicker === 'function') {
@@ -276,7 +376,7 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
 
     const normalizedQuery = query.trim().toUpperCase();
     const isIsin = /^[A-Z]{2}[A-Z0-9]{9}\d$/.test(normalizedQuery);
-    if (!isIsin && normalizedQuery.length < 2) {
+    if (!isIsin) {
       setSecuritySearchLoading(false);
       securitySearchIdRef.current += 1;
       return;
@@ -294,6 +394,10 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
           if (searchId !== securitySearchIdRef.current) return;
           if (error) {
             console.error('Chyba pri vyhľadávaní cenného papiera:', error.message);
+            if (error.context?.status === 404) {
+              setSecuritySearchError('Vyhľadávacia funkcia nie je nasadená v Supabase. Nasadíte ju príkazom uvedeným v návode k projektu.');
+              return;
+            }
             const errorResponse = error.context instanceof Response
               ? await error.context.clone().json().catch(() => null)
               : null;
@@ -301,8 +405,16 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
             return;
           }
 
-          setSecuritySuggestions(data?.results || []);
-          if (!data?.results?.length) {
+          const uniqueSecurities = new Map();
+          for (const security of data?.results || []) {
+            const key = security.compositeFIGI || `${security.ticker}:${security.name}`;
+            if (!uniqueSecurities.has(key)) {
+              uniqueSecurities.set(key, security);
+            }
+          }
+          const results = [...uniqueSecurities.values()].slice(0, 8);
+          setSecuritySuggestions(results);
+          if (!results.length) {
             setSecuritySearchError('Nenašli sa žiadne zodpovedajúce akcie alebo ETF.');
           }
         } catch (error) {
@@ -344,7 +456,6 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
           <div className="form-group">
             <label className="form-label">Režim zobrazenia</label>
             <CustomSelect
-              ariaLabel="Typ obchodu"
               options={[
                 { value: 'light', label: 'Svetlý režim' },
                 { value: 'dark', label: 'Tmavý režim' },
@@ -356,7 +467,6 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
           <div className="form-group">
             <label className="form-label">Dashboard mena</label>
             <CustomSelect
-              ariaLabel="Typ aktíva"
               options={[
                 { value: 'CZK', label: 'CZK (Kč)' },
                 { value: 'EUR', label: 'EUR (€)' },
@@ -432,7 +542,7 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
           <div className="form-group">
             <label className="form-label">Platby kartou</label>
             <CustomSelect
-              ariaLabel="Mena obchodu"
+              ariaLabel="Počet platieb kartou"
               options={[
                 { value: '0', label: '0' },
                 { value: '5', label: '5' },
@@ -543,10 +653,17 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
           <ArrowLeftRight size={22} aria-hidden="true" />
           Pridať transakciu
         </h2>
-        <div className="finova-form transaction-form">
+        {(securitySearchError || transactionSaveError) && (
+          <div className="settings-error" role="alert">{transactionSaveError || securitySearchError}</div>
+        )}
+        {transactionSaveSuccess && (
+          <div className="transaction-save-success" role="status">{transactionSaveSuccess}</div>
+        )}
+        <form ref={transactionFormRef} onSubmit={handleSaveTransaction} className="finova-form transaction-form">
           <div className="form-group">
             <label className="form-label">Typ obchodu *</label>
             <CustomSelect
+              ariaLabel="Typ obchodu"
               options={[
                 { value: 'buy', label: 'Nákup' },
                 { value: 'sell', label: 'Predaj' },
@@ -559,6 +676,7 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
           <div className="form-group">
             <label className="form-label">Typ aktíva *</label>
             <CustomSelect
+              ariaLabel="Typ aktíva"
               options={[
                 { value: 'stock', label: 'Akcia' },
                 { value: 'etf', label: 'ETF' },
@@ -574,14 +692,16 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
           </div>
 
           <div className="form-group">
-            <label className="form-label" htmlFor="transaction-security-search">Ticker alebo ISIN *</label>
-            <div className="transaction-security-search">
+            <label className="form-label" htmlFor="transaction-security-search">ISIN cenného papiera *</label>
+            <div className="transaction-security-search" aria-busy={securitySearchLoading}>
               <input
                 id="transaction-security-search"
                 className="finova-input finova-input-control"
                 type="text"
                 autoComplete="off"
-                placeholder="Zadajte ticker alebo ISIN"
+                placeholder="Zadajte 12-znakový ISIN"
+                maxLength={12}
+                pattern="[A-Za-z]{2}[A-Za-z0-9]{9}[0-9]"
                 value={securityQuery}
                 onChange={handleSecuritySearchChange}
                 role="combobox"
@@ -590,10 +710,6 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
                 aria-controls="transaction-security-suggestions"
                 required
               />
-              {securitySearchLoading && <span className="transaction-security-status" role="status">Vyhľadávam...</span>}
-              {securitySearchError && !securitySearchLoading && (
-                <span className="transaction-security-status" role="status">{securitySearchError}</span>
-              )}
               {securitySuggestions.length > 0 && (
                 <div className="transaction-security-suggestions" id="transaction-security-suggestions" role="listbox">
                   {securitySuggestions.map((security) => (
@@ -604,24 +720,25 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
                       aria-selected={selectedSecurity?.figi === security.figi}
                       className="transaction-security-suggestion"
                       onClick={() => {
-                        setSelectedSecurity(security);
-                        setSecurityQuery(security.ticker);
+                        setSelectedSecurity({
+                          ...security,
+                          ticker: security.ticker,
+                          isin: security.isin || (/^[A-Z]{2}[A-Z0-9]{9}\d$/.test(securityQuery.trim().toUpperCase())
+                            ? securityQuery.trim().toUpperCase()
+                            : ''),
+                        });
+                        setSecurityQuery(security.isin || securityQuery.trim().toUpperCase());
                         setSecuritySuggestions([]);
                         setSecuritySearchError('');
                       }}
                     >
-                      <span>{security.ticker} · {security.name}</span>
-                      <small>{security.exchCode}{security.currency ? ` · ${security.currency}` : ''}</small>
+                      <span className="transaction-security-ticker">{security.ticker}</span>
+                      <span className="transaction-security-name">{security.name}</span>
                     </button>
                   ))}
                 </div>
               )}
             </div>
-            {selectedSecurity && (
-              <span className="transaction-security-selected">
-                Vybrané: {selectedSecurity.name} ({selectedSecurity.ticker})
-              </span>
-            )}
           </div>
 
           <div className="form-group">
@@ -631,6 +748,7 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
                 id="transaction-date-display"
                 className="finova-input finova-input-control"
                 type="text"
+                name="trade_date_display"
                 value={transactionDateSk}
                 placeholder="DD.MM.RRRR"
                 onChange={(event) => setTransactionDateSk(event.target.value)}
@@ -661,6 +779,7 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
             <input
               id="transaction-quantity"
               className="finova-input finova-input-control"
+              name="quantity"
               type="number"
               inputMode="decimal"
               min="0.000001"
@@ -674,6 +793,7 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
             <input
               id="transaction-unit-price"
               className="finova-input finova-input-control"
+              name="unit_price"
               type="number"
               inputMode="decimal"
               min="0.000001"
@@ -685,6 +805,7 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
           <div className="form-group">
             <label className="form-label">Mena obchodu *</label>
             <CustomSelect
+              ariaLabel="Mena obchodu"
               options={[
                 { value: 'CZK', label: 'CZK (Kč)' },
                 { value: 'EUR', label: 'EUR (€)' },
@@ -700,6 +821,7 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
             <input
               id="transaction-commission"
               className="finova-input finova-input-control"
+              name="commission"
               type="number"
               inputMode="decimal"
               min="0"
@@ -713,6 +835,7 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
             <input
               id="transaction-broker"
               className="finova-input finova-input-control"
+              name="broker"
               type="text"
               autoComplete="off"
             />
@@ -723,17 +846,17 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
             <textarea
               id="transaction-note"
               className="finova-input finova-input-control transaction-note"
+              name="note"
               rows="3"
             />
           </div>
 
           <div className="form-group form-group-full transaction-form-footer">
-            <p role="status">Formulár zatiaľ slúži na zadanie údajov; ukladanie transakcií ešte nie je zapojené.</p>
-            <button type="button" className="btn-finova-primary" disabled>
-              Pridať transakciu
+            <button type="submit" className="btn-finova-primary" disabled={transactionSaving || securitySearchLoading}>
+              {transactionSaving ? 'Ukladám...' : 'Pridať transakciu'}
             </button>
           </div>
-        </div>
+        </form>
       </section>
 
       {/* Modálne okno - Úspešné uloženie/pridanie/úprava */}

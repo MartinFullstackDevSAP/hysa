@@ -94,16 +94,21 @@ Deno.serve(async (request) => {
       if (!matchesAssetType || !ticker || !name) continue;
 
       const exchCode = typeof candidate.exchCode === 'string' ? candidate.exchCode : '';
-      const key = `${ticker}:${exchCode}`;
+      const compositeFIGI = typeof candidate.compositeFIGI === 'string' ? candidate.compositeFIGI : '';
+      const shareClassFIGI = typeof candidate.shareClassFIGI === 'string' ? candidate.shareClassFIGI : '';
+      const key = compositeFIGI || shareClassFIGI || `${ticker}:${name}`;
       if (!uniqueSecurities.has(key)) {
         uniqueSecurities.set(key, {
           figi: typeof candidate.figi === 'string' ? candidate.figi : '',
           ticker,
           name,
-          exchCode,
+          exchCodes: exchCode ? [exchCode] : [],
+          isin: isIsin ? query : '',
           currency: typeof candidate.currency === 'string' ? candidate.currency : '',
           securityType: securityType2 || securityType,
         });
+      } else if (exchCode && !uniqueSecurities.get(key).exchCodes.includes(exchCode)) {
+        uniqueSecurities.get(key).exchCodes.push(exchCode);
       }
     }
   }

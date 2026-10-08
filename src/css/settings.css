@@ -378,6 +378,16 @@ body {
   font-size: 0.875rem;
 }
 
+.transaction-save-success {
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  border-radius: 10px;
+  background: rgba(34, 197, 94, 0.1);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+}
+
 .transaction-form .transaction-note {
   height: auto !important;
   min-height: 100px;
@@ -386,14 +396,6 @@ body {
 
 .transaction-security-search {
   position: relative;
-}
-
-.transaction-security-status,
-.transaction-security-selected {
-  display: block;
-  margin-top: 0.35rem;
-  color: var(--text-secondary);
-  font-size: 0.8rem;
 }
 
 .transaction-security-suggestions {
@@ -414,9 +416,8 @@ body {
 .transaction-security-suggestion {
   display: flex;
   width: 100%;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.15rem;
+  align-items: baseline;
+  gap: 0.5rem;
   padding: 0.6rem 0.75rem;
   border: 1px solid transparent;
   border-radius: 10px;
@@ -426,14 +427,24 @@ body {
   text-align: left;
 }
 
+.transaction-security-ticker {
+  flex: 0 0 auto;
+  font-weight: 700;
+}
+
+.transaction-security-name {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .transaction-security-suggestion:hover,
 .transaction-security-suggestion:focus-visible {
   border-color: var(--control-border);
   background: var(--control-surface-hover, var(--control-surface));
-}
-
-.transaction-security-suggestion small {
-  color: var(--text-secondary);
 }
 
 .transaction-date-picker-button {
