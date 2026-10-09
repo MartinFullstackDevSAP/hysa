@@ -15,6 +15,7 @@ function App() {
   const [globalSettingsReady, setGlobalSettingsReady] = useState(false);
   const [tabLoading, setTabLoading] = useState(false);
   const [navigationKey, setNavigationKey] = useState(0);
+  const [investmentRefreshKey, setInvestmentRefreshKey] = useState(0);
   const [globalSettings, setGlobalSettings] = useState(DEFAULT_GLOBAL_SETTINGS);
   const navigationId = useRef(0);
   const navigationStartedAt = useRef(0);
@@ -154,7 +155,12 @@ function App() {
   };
 
   const handleRefresh = () => {
-    if (activeTab !== 'dashboard' || tabLoading) return;
+    if (tabLoading) return;
+    if (activeTab === 'investments') {
+      setInvestmentRefreshKey((key) => key + 1);
+      return;
+    }
+    if (activeTab !== 'dashboard') return;
 
     navigationId.current += 1;
     const currentNavigation = navigationId.current;
@@ -190,7 +196,10 @@ function App() {
         </div>
       )}
       {activeTab === 'investments' && (
-        <Investments currency={globalSettings.dashboard_currency} />
+        <Investments
+          currency={globalSettings.dashboard_currency}
+          refreshKey={investmentRefreshKey}
+        />
       )}
       {activeTab === 'settings' && (
         <Settings

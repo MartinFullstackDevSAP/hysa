@@ -11,6 +11,7 @@ const CHART_RANGES = [
   { value: 'all', label: 'Celé obdobie' },
 ];
 const EMPTY_OBJECT = {};
+const REFRESH_INTERVAL_MS = 2 * 60 * 1000;
 
 const formatMoney = (value, currency) => {
   if (!Number.isFinite(value)) return '—';
@@ -144,7 +145,7 @@ const PortfolioChart = ({ points, currency }) => {
   );
 };
 
-export default function Investments({ currency = 'CZK' }) {
+export default function Investments({ currency = 'CZK', refreshKey = 0 }) {
   const [transactions, setTransactions] = useState([]);
   const [transactionsLoading, setTransactionsLoading] = useState(true);
   const [transactionError, setTransactionError] = useState('');
@@ -152,7 +153,22 @@ export default function Investments({ currency = 'CZK' }) {
   const [marketData, setMarketData] = useState({ quotes: {}, fxRates: {}, errors: [] });
   const [marketDataLoading, setMarketDataLoading] = useState(false);
   const [marketDataError, setMarketDataError] = useState('');
-  const [refreshKey, setRefreshKey] = useState(0);
+  const [autoRefreshKey, setAutoRefreshKey] = useState(0);
+
+  useEffect(() => {
+    let lastRefreshAt = Date.now();
+    const refreshIfDue = () => {
+      if (document.visibilityState !== 'visible' || Date.now() - lastRefreshAt < REFRESH_INTERVAL_MS) return;
+      lastRefreshAt = Date.now();
+      setAutoRefreshKey((key) => key + 1);
+    };
+    const intervalId = window.setInterval(refreshIfDue, REFRESH_INTERVAL_MS);
+    document.addEventListener('visibilitychange', refreshIfDue);
+    return () => {
+      window.clearInterval(intervalId);
+      document.removeEventListener('visibilitychange', refreshIfDue);
+    };
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -187,7 +203,7 @@ export default function Investments({ currency = 'CZK' }) {
     return () => {
       active = false;
     };
-  }, [refreshKey]);
+  }, [autoRefreshKey, refreshKey]);
 
   const holdings = useMemo(() => calculateHoldings(transactions), [transactions]);
 
@@ -320,14 +336,10 @@ export default function Investments({ currency = 'CZK' }) {
   return (
     <div className="finova-container investments-container">
       <div className="investments-header">
-        <div>
-          <h1 className="finova-title">Investície</h1>
-          <p className="finova-subtitle">Prehľad hodnoty a výkonnosti tvojho portfólia</p>
-        </div>
         <button
           type="button"
           className="portfolio-refresh-button"
-          onClick={() => setRefreshKey((key) => key + 1)}
+          onClick={() => setAutoRefreshKey((key) => key + 1)}
           disabled={isLoading}
           aria-label="Obnoviť portfólio"
         >
@@ -498,9 +510,6 @@ export default function Investments({ currency = 'CZK' }) {
               </table>
             </div>
           </section>
-          <p className="portfolio-data-note">
-            Trhové ceny a kurzy sú oneskorené podľa dostupnosti poskytovateľa. Zisk/strata používa váženú priemernú nákupnú cenu a zahŕňa poplatky; historický graf používa aktuálne FX kurzy.
-          </p>
         </>
       )}
     </div>

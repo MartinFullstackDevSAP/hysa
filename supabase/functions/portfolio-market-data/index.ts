@@ -43,6 +43,10 @@ const YAHOO_RANGE_BY_RANGE: Record<string, string> = {
   all: 'max',
 };
 
+const YAHOO_SYMBOLS_BY_ISIN: Record<string, { symbol: string; currency: string }[]> = {
+  'IE000VAHT5T0': [{ symbol: 'VGLA.DE', currency: 'EUR' }],
+};
+
 const getTwelveDataJson = async (path: string, apiKey: string) => {
   const url = new URL(`https://api.twelvedata.com/${path}`);
   url.searchParams.set('apikey', apiKey);
@@ -109,10 +113,15 @@ const getYahooFinanceQuote = async (position: Record<string, unknown>, range: st
         String(position.name),
       ) > 0)
     : [];
+  const preferredListings = (YAHOO_SYMBOLS_BY_ISIN[isin] || [])
+    .filter((listing) => listing.currency === position.currency);
+  const symbols = [...new Set([
+    ...preferredListings.map((listing) => listing.symbol),
+    ...candidates.map((candidate) => String(candidate.symbol)),
+  ])];
   const candidateErrors: string[] = [];
 
-  for (const candidate of candidates) {
-    const symbol = String(candidate.symbol);
+  for (const symbol of symbols) {
     const chartUrl = new URL(
       `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}`,
     );
@@ -150,6 +159,9 @@ const getYahooFinanceQuote = async (position: Record<string, unknown>, range: st
         : history.at(-1)?.close;
       if (typeof price !== 'number' || !Number.isFinite(price) || price <= 0 || typeof meta.currency !== 'string') {
         throw new Error(`Pre symbol ${symbol} Yahoo Finance nevrátil platnú cenu.`);
+      }
+      if (preferredListings.length && meta.currency !== position.currency) {
+        throw new Error(`Pre ISIN ${isin} sa vyžaduje listing v mene ${String(position.currency)}.`);
       }
 
       const previousClose = history.at(-2)?.close

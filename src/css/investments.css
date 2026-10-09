@@ -12,6 +12,7 @@
 
 .investments-header {
   margin-bottom: 1.5rem;
+  justify-content: flex-end;
 }
 
 .portfolio-refresh-button {
@@ -247,7 +248,6 @@
   color: var(--accent-red);
 }
 
-.portfolio-data-note,
 .portfolio-partial-warning {
   color: var(--text-secondary);
   font-size: 0.75rem;
@@ -326,5 +326,11 @@
 
   .portfolio-card {
     padding: 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .investments-header {
+    display: none;
   }
 }
