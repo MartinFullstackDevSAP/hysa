@@ -312,6 +312,8 @@ export default function Investments({ currency = 'CZK' }) {
   const isLoading = transactionsLoading || marketDataLoading;
   const hasTransactions = transactions.length > 0;
   const hasMarketPrices = pricedRows.length > 0;
+  const positionErrors = (marketData.errors || []).filter((error) => !error.id.startsWith('fx:'));
+  const fxErrors = (marketData.errors || []).filter((error) => error.id.startsWith('fx:'));
 
   return (
     <div className="finova-container investments-container">
@@ -340,7 +342,29 @@ export default function Investments({ currency = 'CZK' }) {
       )}
       {!marketDataError && marketData.errors?.length > 0 && (
         <div className="portfolio-partial-warning" role="status">
-          Ceny sa nepodarilo načítať pre {marketData.errors.length} pozícií. Celkové hodnoty zahŕňajú len dostupné ceny.
+          {positionErrors.length > 0 && (
+            <>
+              <p>
+                Ceny sa nepodarilo načítať pre {positionErrors.length} pozícií. Celkové hodnoty zahŕňajú len dostupné ceny.
+              </p>
+              <ul>
+                {positionErrors.map((error) => {
+                  const holding = holdings.find((position) => position.id === error.id);
+                  return (
+                    <li key={error.id}>
+                      <strong>{holding ? `${holding.ticker} (${holding.exchange})` : error.id}:</strong> {error.error}
+                    </li>
+                  );
+                })}
+              </ul>
+            </>
+          )}
+          {fxErrors.length > 0 && (
+            <p>
+              Menové kurzy sa nepodarilo načítať: {fxErrors.map((error) => error.id.slice(3)).join(', ')}.
+              {' '}Hodnoty v inej mene môžu byť neúplné.
+            </p>
+          )}
         </div>
       )}
 

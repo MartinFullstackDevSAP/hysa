@@ -261,6 +261,23 @@
   background: var(--control-surface);
 }
 
+.portfolio-partial-warning p {
+  margin: 0;
+}
+
+.portfolio-partial-warning ul {
+  margin: 0.5rem 0 0;
+  padding-left: 1.25rem;
+}
+
+.portfolio-partial-warning li + li {
+  margin-top: 0.25rem;
+}
+
+.portfolio-partial-warning p + p {
+  margin-top: 0.5rem;
+}
+
 .portfolio-empty,
 .portfolio-loading {
   display: flex;
