@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import MainLayout from './main/MainLayout';
 import Dashboard from './dashboard/Dashboard';
+import Investments from './investments/Investments';
 import Settings from './settings/Settings';
 import Login from './auth/Login';
 import { supabase } from './supabaseClient';
@@ -189,10 +190,7 @@ function App() {
         </div>
       )}
       {activeTab === 'investments' && (
-        <div className="finova-card">
-          <h1 className="finova-title">Investície</h1>
-          <p className="finova-subtitle">ETF, dlhopisy a portfólio</p>
-        </div>
+        <Investments currency={globalSettings.dashboard_currency} />
       )}
       {activeTab === 'settings' && (
         <Settings
