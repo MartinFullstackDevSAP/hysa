@@ -138,6 +138,19 @@ const getYahooFinanceQuote = async (position: Record<string, unknown>, range: st
       }
 
       const meta = result.meta;
+      const dailyQuoteUrl = new URL(
+        `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}`,
+      );
+      dailyQuoteUrl.searchParams.set('range', '1d');
+      dailyQuoteUrl.searchParams.set('interval', '1d');
+      const dailyQuote = await getYahooFinanceJson(dailyQuoteUrl);
+      const dailyQuoteResult = isRecord(dailyQuote.chart) && Array.isArray(dailyQuote.chart.result)
+        ? dailyQuote.chart.result[0]
+        : null;
+      if (!isRecord(dailyQuoteResult) || !isRecord(dailyQuoteResult.meta)) {
+        throw new Error(`Pre symbol ${symbol} Yahoo Finance nevrátilo dennú zmenu.`);
+      }
+      const dailyMeta = dailyQuoteResult.meta;
       const timestamps = Array.isArray(result.timestamp) ? result.timestamp : [];
       const indicators = isRecord(result.indicators) && Array.isArray(result.indicators.quote)
         ? result.indicators.quote[0]
@@ -153,7 +166,7 @@ const getYahooFinanceQuote = async (position: Record<string, unknown>, range: st
           close,
         }];
       });
-      const marketPrice = Number(meta.regularMarketPrice);
+      const marketPrice = Number(dailyMeta.regularMarketPrice || meta.regularMarketPrice);
       const price = Number.isFinite(marketPrice) && marketPrice > 0
         ? marketPrice
         : history.at(-1)?.close;
@@ -164,8 +177,8 @@ const getYahooFinanceQuote = async (position: Record<string, unknown>, range: st
         throw new Error(`Pre ISIN ${isin} sa vyžaduje listing v mene ${String(position.currency)}.`);
       }
 
-      const previousClose = history.at(-2)?.close
-        || Number(meta.chartPreviousClose || meta.previousClose)
+      const previousClose = Number(dailyMeta.chartPreviousClose || dailyMeta.previousClose)
+        || history.at(-2)?.close
         || price;
       return {
         symbol,
