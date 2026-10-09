@@ -54,6 +54,7 @@ const calculateHoldings = (transactions) => {
     const position = positions.get(key) || {
       id: key,
       figi: transaction.figi,
+      isin: transaction.isin,
       ticker: transaction.ticker,
       exchange: transaction.exchange,
       name: transaction.security_name || transaction.ticker,
@@ -169,7 +170,7 @@ export default function Investments({ currency = 'CZK' }) {
 
         const { data, error } = await supabase
           .from('investment_transactions')
-          .select('figi, ticker, exchange, security_name, asset_type, trade_date, transaction_type, quantity, unit_price, currency, commission, created_at')
+          .select('figi, isin, ticker, exchange, security_name, asset_type, trade_date, transaction_type, quantity, unit_price, currency, commission, created_at')
           .eq('user_id', authData.user.id)
           .order('trade_date', { ascending: true });
         if (error) throw error;
@@ -207,8 +208,9 @@ export default function Investments({ currency = 'CZK' }) {
           body: {
             currency,
             range,
-            positions: holdings.map(({ id, ticker, exchange, name, currency: costCurrency }) => ({
+            positions: holdings.map(({ id, isin, ticker, exchange, name, currency: costCurrency }) => ({
               id,
+              isin,
               ticker,
               exchange,
               name,
@@ -441,7 +443,7 @@ export default function Investments({ currency = 'CZK' }) {
             <div className="portfolio-section-header">
               <div>
                 <h2 className="portfolio-section-title">Moje pozície</h2>
-                <p className="portfolio-section-subtitle">{holdings.length} otvorených pozícií · ceny z Twelve Data</p>
+                <p className="portfolio-section-subtitle">{holdings.length} otvorených pozícií · Twelve Data a záložný Yahoo Finance</p>
               </div>
             </div>
             <div className="portfolio-table-scroll">
@@ -465,7 +467,19 @@ export default function Investments({ currency = 'CZK' }) {
                         <span className="portfolio-security-market">{row.exchange} · {row.assetType === 'etf' ? 'ETF' : 'Akcia'}</span>
                       </td>
                       <td>{formatQuantity(row.quantity)}</td>
-                      <td>{row.quote ? formatMoney(row.quote.price, row.quote.currency) : '—'}</td>
+                      <td>
+                        {row.quote ? (
+                          <>
+                            {formatMoney(row.quote.price, row.quote.currency)}
+                            {row.quote.source && (
+                              <span className="portfolio-table-secondary">
+                                {row.quote.source}{row.quote.sourceSymbol ? ` · ${row.quote.sourceSymbol}` : ''}
+                                {row.quote.exchange ? ` (${row.quote.exchange})` : ''}
+                              </span>
+                            )}
+                          </>
+                        ) : '—'}
+                      </td>
                       <td className={row.dayChangePercent >= 0 ? 'is-positive' : 'is-negative'}>
                         {Number.isFinite(row.dayChangePercent) ? formatPercent(row.dayChangePercent) : '—'}
                       </td>

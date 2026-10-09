@@ -1,12 +1,12 @@
 # Portfolio market data function
 
-The function loads delayed daily price history from Twelve Data for active portfolio positions. It resolves each security to a Twelve Data symbol using its ticker and MIC, then returns daily prices, the previous close, and current FX rates in the selected portfolio currency. Market-data API keys stay in Supabase and are never sent to the browser.
+The function loads daily price history from Twelve Data for active portfolio positions. If Twelve Data does not cover a symbol on the configured plan, it searches Yahoo Finance by ISIN and uses an available listing of the same security as a fallback. The Yahoo Finance listing may be on a different exchange and in a different currency from the transaction; its symbol and provider are shown under the price. Currency conversion uses Twelve Data first and Frankfurter's latest ECB reference rate if Twelve Data cannot provide the rate. Market-data API keys stay in Supabase and are never sent to the browser.
 
-In the Twelve Data account, create an API key and set it as a Supabase Function secret. Do not commit the key or place it in a `VITE_` environment variable:
+Twelve Data is an optional primary source. If used, create an API key and set it as a Supabase Function secret; Yahoo Finance and Frankfurter fallbacks can still provide data when the key is absent. Do not commit the key or place it in a `VITE_` environment variable:
 
 ```sh
 supabase secrets set TWELVE_DATA_API_KEY=your_api_key --project-ref fysdpicaetzkxapvixcy
 supabase functions deploy portfolio-market-data --project-ref fysdpicaetzkxapvixcy
 ```
 
-The function supports the OpenFIGI exchange codes configured in `index.ts`. Listings on other exchange codes are reported as unavailable rather than silently using a different market. Twelve Data plan entitlements and request quotas determine which listings and history are available.
+The function supports the OpenFIGI exchange codes configured in `index.ts`. Yahoo Finance fallback requires a valid ISIN on the transaction, and provider coverage, delays, and quotas determine which listings and history are available.
