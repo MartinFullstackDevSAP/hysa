@@ -75,6 +75,13 @@
   font-size: 0.78rem;
 }
 
+.portfolio-summary-change {
+  align-self: center;
+  justify-content: center;
+  width: 100%;
+  text-align: center;
+}
+
 .portfolio-summary-change.is-positive {
   color: var(--accent-green);
 }
@@ -210,6 +217,11 @@
 .portfolio-table th:first-child,
 .portfolio-table td:first-child {
   text-align: left;
+}
+
+.portfolio-table th:nth-child(4),
+.portfolio-table td:nth-child(4) {
+  text-align: center;
 }
 
 .portfolio-table td:first-child {

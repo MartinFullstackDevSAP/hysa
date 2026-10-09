@@ -415,16 +415,12 @@ export default function Investments({ currency = 'CZK', refreshKey = 0 }) {
               <strong className={`portfolio-summary-value ${totalProfitLoss >= 0 ? 'is-positive' : 'is-negative'}`}>
                 {formatMoney(totalProfitLoss, currency)}
               </strong>
-              <span className="portfolio-summary-caption">
-                Nákladová cena: {formatMoney(totalCostBasis, currency)}
-              </span>
             </article>
             <article className="stat-card portfolio-summary-card">
               <span className="stat-label">Realizovaný zisk / strata</span>
               <strong className={`portfolio-summary-value ${totalRealizedProfit >= 0 ? 'is-positive' : 'is-negative'}`}>
                 {formatMoney(totalRealizedProfit, currency)}
               </strong>
-              <span className="portfolio-summary-caption">Z uzavretých častí pozícií</span>
             </article>
           </section>
 
