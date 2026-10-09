@@ -92,24 +92,32 @@ Deno.serve(async (request) => {
       const name = typeof candidate.name === 'string' ? candidate.name : '';
       const figi = typeof candidate.figi === 'string' ? candidate.figi : '';
       const exchange = typeof candidate.exchCode === 'string' ? candidate.exchCode : '';
+      const compositeFigi = typeof candidate.compositeFIGI === 'string' ? candidate.compositeFIGI : null;
       if (!resultAssetType || (!searchByIsin && resultAssetType !== body.assetType)
         || !ticker || !name || !figi || !exchange) continue;
 
-      const key = `${figi}:${exchange}`;
-      if (uniqueSecurities.has(key)) continue;
-      uniqueSecurities.set(key, {
+      const key = compositeFigi || `${figi}:${exchange}`;
+      const security = {
         figi,
         ticker,
         exchange,
         name,
         assetType: resultAssetType,
         isin: searchByIsin ? query : null,
-        compositeFigi: typeof candidate.compositeFIGI === 'string' ? candidate.compositeFIGI : null,
+        compositeFigi,
         currency: typeof candidate.currency === 'string' ? candidate.currency : '',
         securityType: securityType || securityType2,
-      });
+      };
+      const existingSecurity = uniqueSecurities.get(key);
+      const isPrimaryListing = figi === compositeFigi;
+      const existingIsPrimaryListing = existingSecurity?.figi === existingSecurity?.compositeFigi;
+      if (!existingSecurity || (isPrimaryListing && !existingIsPrimaryListing)) {
+        uniqueSecurities.set(key, security);
+      }
     }
   }
 
-  return jsonResponse({ results: [...uniqueSecurities.values()].slice(0, 8) });
+  const results = [...uniqueSecurities.values()].sort((a, b) =>
+    Number(b.figi === b.compositeFigi) - Number(a.figi === a.compositeFigi));
+  return jsonResponse({ results: results.slice(0, 8) });
 });
