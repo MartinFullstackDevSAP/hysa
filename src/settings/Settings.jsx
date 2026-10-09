@@ -419,7 +419,7 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
           const results = [...uniqueSecurities.values()].slice(0, 8);
           setSecuritySuggestions(results);
           if (!results.length) {
-            setSecuritySearchError('Nenašli sa žiadne zodpovedajúce akcie alebo ETF.');
+            setSecuritySearchError('Nenašli sa žiadne zodpovedajúce cenné papiere.');
           }
         } catch (error) {
           if (searchId !== securitySearchIdRef.current) return;
@@ -729,6 +729,7 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
                           ticker: security.ticker.toUpperCase(),
                           isin: security.isin?.toUpperCase() || null,
                         });
+                        setTransactionAssetType(security.assetType);
                         setSecuritySuggestions([]);
                         setSecuritySearchError('');
                       }}

@@ -83,14 +83,17 @@ Deno.serve(async (request) => {
       const securityType2 = typeof candidate.securityType2 === 'string' ? candidate.securityType2 : '';
       const marketSector = typeof candidate.marketSector === 'string' ? candidate.marketSector : '';
       const type = `${securityType} ${securityType2} ${marketSector}`;
-      const matchesAssetType = body.assetType === 'etf'
-        ? /(etf|etp|exchange.?traded)/i.test(type)
-        : /(common stock|preferred stock|depositary receipt)/i.test(type);
+      const resultAssetType = /(etf|etp|exchange.?traded)/i.test(type)
+        ? 'etf'
+        : /(common stock|preferred stock|depositary receipt)/i.test(type)
+          ? 'stock'
+          : null;
       const ticker = typeof candidate.ticker === 'string' ? candidate.ticker.toUpperCase() : '';
       const name = typeof candidate.name === 'string' ? candidate.name : '';
       const figi = typeof candidate.figi === 'string' ? candidate.figi : '';
       const exchange = typeof candidate.exchCode === 'string' ? candidate.exchCode : '';
-      if (!matchesAssetType || !ticker || !name || !figi || !exchange) continue;
+      if (!resultAssetType || (!searchByIsin && resultAssetType !== body.assetType)
+        || !ticker || !name || !figi || !exchange) continue;
 
       const key = `${figi}:${exchange}`;
       if (uniqueSecurities.has(key)) continue;
@@ -99,6 +102,7 @@ Deno.serve(async (request) => {
         ticker,
         exchange,
         name,
+        assetType: resultAssetType,
         isin: searchByIsin ? query : null,
         compositeFigi: typeof candidate.compositeFIGI === 'string' ? candidate.compositeFIGI : null,
         currency: typeof candidate.currency === 'string' ? candidate.currency : '',
