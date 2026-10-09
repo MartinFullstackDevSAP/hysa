@@ -96,7 +96,7 @@ Deno.serve(async (request) => {
       if (!resultAssetType || (!searchByIsin && resultAssetType !== body.assetType)
         || !ticker || !name || !figi || !exchange) continue;
 
-      const key = compositeFigi || `${figi}:${exchange}`;
+      const key = `${figi}:${exchange}`;
       const security = {
         figi,
         ticker,
@@ -109,9 +109,7 @@ Deno.serve(async (request) => {
         securityType: securityType || securityType2,
       };
       const existingSecurity = uniqueSecurities.get(key);
-      const isPrimaryListing = figi === compositeFigi;
-      const existingIsPrimaryListing = existingSecurity?.figi === existingSecurity?.compositeFigi;
-      if (!existingSecurity || (isPrimaryListing && !existingIsPrimaryListing)) {
+      if (!existingSecurity) {
         uniqueSecurities.set(key, security);
       }
     }
@@ -119,5 +117,5 @@ Deno.serve(async (request) => {
 
   const results = [...uniqueSecurities.values()].sort((a, b) =>
     Number(b.figi === b.compositeFigi) - Number(a.figi === a.compositeFigi));
-  return jsonResponse({ results: results.slice(0, 8) });
+  return jsonResponse({ results: searchByIsin ? results : results.slice(0, 8) });
 });

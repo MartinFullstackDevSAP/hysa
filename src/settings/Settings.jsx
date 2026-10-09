@@ -443,7 +443,8 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
               uniqueSecurities.set(key, security);
             }
           }
-          const results = [...uniqueSecurities.values()].slice(0, 8);
+          const securities = [...uniqueSecurities.values()];
+          const results = isIsin ? securities : securities.slice(0, 8);
           setSecuritySuggestions(results);
           if (!results.length) {
             setSecuritySearchError('Nenašli sa žiadne zodpovedajúce cenné papiere.');
