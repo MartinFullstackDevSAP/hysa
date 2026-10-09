@@ -32,6 +32,39 @@ const formatQuantity = (value) => new Intl.NumberFormat('sk-SK', {
 
 const formatPercent = (value) => `${value >= 0 ? '+' : ''}${value.toFixed(2)} %`;
 
+const formatAxisMoney = (value, currency) => {
+  try {
+    return new Intl.NumberFormat('sk-SK', {
+      style: 'currency',
+      currency,
+      notation: 'compact',
+      maximumFractionDigits: 1,
+    }).format(value);
+  } catch {
+    return `${Math.round(value)} ${currency}`;
+  }
+};
+
+const formatChartDate = (date) => new Intl.DateTimeFormat('sk-SK', {
+  day: 'numeric',
+  month: 'short',
+}).format(date);
+
+const formatTooltipDate = (date) => new Intl.DateTimeFormat('sk-SK', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+}).format(date);
+
+const pickEvenlySpaced = (items, count) => {
+  if (items.length <= count) return items.map((item, index) => ({ item, index }));
+  const lastIndex = items.length - 1;
+  return Array.from({ length: count }, (_, step) => {
+    const index = Math.round((step / (count - 1)) * lastIndex);
+    return { item: items[index], index };
+  });
+};
+
 const transactionKey = (transaction) => [
   transaction.figi || transaction.ticker,
   transaction.exchange,
@@ -94,53 +127,122 @@ const getHistoryQuantity = (transactions, positionId, date) => {
 };
 
 const PortfolioChart = ({ points, currency }) => {
+  const [activeIndex, setActiveIndex] = useState(null);
+
   if (points.length < 2) {
     return <div className="portfolio-chart-empty">Pre zvolené obdobie zatiaľ nie sú dostupné cenové údaje.</div>;
   }
 
   const width = 800;
-  const height = 260;
-  const padding = { top: 18, right: 12, bottom: 30, left: 12 };
+  const height = 280;
+  const padding = { top: 22, right: 18, bottom: 36, left: 72 };
   const values = points.map((point) => point.value);
   const min = Math.min(...values);
   const max = Math.max(...values);
   const spread = max - min || Math.max(Math.abs(max) * 0.05, 1);
+  const paddedMin = min - spread * 0.08;
+  const paddedMax = max + spread * 0.08;
+  const paddedSpread = paddedMax - paddedMin;
   const chartWidth = width - padding.left - padding.right;
   const chartHeight = height - padding.top - padding.bottom;
+  const yTicks = 5;
+  const dateTickCount = Math.min(6, points.length);
   const coordinates = points.map((point, index) => ({
     ...point,
     x: padding.left + (index / (points.length - 1)) * chartWidth,
-    y: padding.top + ((max - point.value) / spread) * chartHeight,
+    y: padding.top + ((paddedMax - point.value) / paddedSpread) * chartHeight,
   }));
   const linePath = coordinates.map((point, index) =>
     `${index === 0 ? 'M' : 'L'} ${point.x.toFixed(2)} ${point.y.toFixed(2)}`).join(' ');
   const areaPath = `${linePath} L ${coordinates.at(-1).x} ${height - padding.bottom} L ${coordinates[0].x} ${height - padding.bottom} Z`;
-  const firstDate = new Date(`${points[0].date}T00:00:00`);
-  const lastDate = new Date(`${points.at(-1).date}T00:00:00`);
+  const lastPoint = coordinates.at(-1);
+  const activePoint = activeIndex === null ? lastPoint : coordinates[activeIndex];
+  const firstValue = points[0].value;
+  const changeValue = lastPoint.value - firstValue;
+  const changePercent = firstValue > 0 ? (changeValue / firstValue) * 100 : 0;
+
+  const handlePointerMove = (event) => {
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const pointerX = ((event.clientX - bounds.left) / bounds.width) * width;
+    let nearestIndex = 0;
+    let nearestDistance = Number.POSITIVE_INFINITY;
+    coordinates.forEach((point, index) => {
+      const distance = Math.abs(point.x - pointerX);
+      if (distance < nearestDistance) {
+        nearestDistance = distance;
+        nearestIndex = index;
+      }
+    });
+    setActiveIndex(nearestIndex);
+  };
 
   return (
     <div className="portfolio-chart">
-      <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Vývoj hodnoty portfólia">
+      <div className="portfolio-chart-stats">
+        <span>
+          Min. {formatMoney(min, currency)}
+        </span>
+        <span>
+          Max. {formatMoney(max, currency)}
+        </span>
+        <span className={changeValue >= 0 ? 'is-positive' : 'is-negative'}>
+          {formatMoney(changeValue, currency)} ({formatPercent(changePercent)})
+        </span>
+      </div>
+      <div className="portfolio-chart-plot">
+      <svg
+        viewBox={`0 0 ${width} ${height}`}
+        role="img"
+        aria-label="Vývoj hodnoty portfólia"
+        onPointerMove={handlePointerMove}
+        onPointerLeave={() => setActiveIndex(null)}
+      >
         <defs>
           <linearGradient id="portfolio-chart-fill" x1="0" x2="0" y1="0" y2="1">
             <stop offset="0%" stopColor="var(--accent-purple)" stopOpacity="0.24" />
             <stop offset="100%" stopColor="var(--accent-purple)" stopOpacity="0" />
           </linearGradient>
         </defs>
-        {[0, 0.5, 1].map((fraction) => {
+        {Array.from({ length: yTicks }, (_, index) => {
+          const fraction = index / (yTicks - 1);
+          const value = paddedMax - fraction * paddedSpread;
           const y = padding.top + fraction * chartHeight;
-          return <line key={fraction} x1={padding.left} x2={width - padding.right} y1={y} y2={y} className="portfolio-chart-gridline" />;
+          return (
+            <g key={`y-${index}`}>
+              <line x1={padding.left} x2={width - padding.right} y1={y} y2={y} className="portfolio-chart-gridline" />
+              <text x={padding.left - 8} y={y + 4} textAnchor="end" className="portfolio-chart-axis">
+                {formatAxisMoney(value, currency)}
+              </text>
+            </g>
+          );
         })}
         <path d={areaPath} fill="url(#portfolio-chart-fill)" />
         <path d={linePath} className="portfolio-chart-line" />
-        <text x={padding.left} y={height - 5} className="portfolio-chart-date">
-          {new Intl.DateTimeFormat('sk-SK', { day: 'numeric', month: 'short' }).format(firstDate)}
-        </text>
-        <text x={width - padding.right} y={height - 5} textAnchor="end" className="portfolio-chart-date">
-          {new Intl.DateTimeFormat('sk-SK', { day: 'numeric', month: 'short' }).format(lastDate)}
-        </text>
+        {pickEvenlySpaced(coordinates, dateTickCount).map(({ item: point }) => (
+          <text key={point.date} x={point.x} y={height - 8} textAnchor="middle" className="portfolio-chart-date">
+            {formatChartDate(new Date(`${point.date}T00:00:00`))}
+          </text>
+        ))}
+        <line
+          x1={activePoint.x}
+          x2={activePoint.x}
+          y1={padding.top}
+          y2={height - padding.bottom}
+          className="portfolio-chart-crosshair"
+        />
+        <circle cx={activePoint.x} cy={activePoint.y} r="5" className="portfolio-chart-dot" />
       </svg>
-      <span className="portfolio-chart-currency">Hodnoty prepočítané aktuálnym kurzom · {currency}</span>
+      <div
+        className="portfolio-chart-tooltip"
+        style={{
+          left: `${(activePoint.x / width) * 100}%`,
+          top: `${(activePoint.y / height) * 100}%`,
+        }}
+      >
+        <strong>{formatMoney(activePoint.value, currency)}</strong>
+        <span>{formatTooltipDate(new Date(`${activePoint.date}T00:00:00`))}</span>
+      </div>
+      </div>
     </div>
   );
 };
@@ -425,11 +527,8 @@ export default function Investments({ currency = 'CZK', refreshKey = 0 }) {
           </section>
 
           <section className="finova-card portfolio-card">
-            <div className="portfolio-section-header">
-              <div>
-                <h2 className="portfolio-section-title">Vývoj portfólia</h2>
-                <p className="portfolio-section-subtitle">Denná hodnota pozícií prepočítaná do {currency}</p>
-              </div>
+            <div className="portfolio-section-header portfolio-chart-header">
+              <h2 className="portfolio-section-title">Vývoj portfólia</h2>
               <div className="portfolio-range-selector" aria-label="Obdobie grafu">
                 {CHART_RANGES.map((option) => (
                   <button
