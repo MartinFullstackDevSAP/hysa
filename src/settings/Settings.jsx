@@ -5,6 +5,33 @@ import CustomSelect from './CustomSelect';
 import { DEFAULT_GLOBAL_SETTINGS } from '../globalSettings';
 import '../css/settings.css';
 
+const EXCHANGE_NAMES = {
+  LN: 'Tradepoint Investment Exchange',
+  GR: 'Germany (composite market)',
+  GF: 'Frankfurt Stock Exchange',
+  GD: 'Dusseldorf Stock Exchange',
+  GS: 'Stuttgart Stock Exchange',
+  GM: 'Munich Stock Exchange',
+  GH: 'Hamburg Stock Exchange',
+  GT: 'Xetra ETF Exchange',
+  LA: 'LSXExchange',
+  LU: 'LSX LSSI',
+  NA: 'Euronext Amsterdam Stock Exchange',
+  IM: 'Milan NM',
+  SW: 'SIX Swiss Exchange',
+  SE: 'SIX Swiss Exchange',
+  QX: 'Aquis Exchange',
+  EU: 'European Composite',
+  EP: 'European Lit Primaries Composite',
+  EZ: 'European Lit Composite',
+  EO: 'OTC Composite',
+  X2: 'CBOE APA',
+  XH: 'Budapest Stock Exchange OTC',
+  BW: 'BX Worldcaps',
+  B3: 'Blockmatch',
+  TH: 'Tradegate',
+};
+
 // Zoznam hlavných bánk a inštitúcií v ČR s prázdnou predvolenou voľbou
 const CZECH_BANKS = [
   { value: '', label: '-- Vyberte banku --' },
@@ -734,9 +761,18 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
                         setSecuritySearchError('');
                       }}
                     >
-                      <span className="transaction-security-ticker">{security.ticker}</span>
-                      <span className="transaction-security-exchange">{security.exchange}</span>
-                      <span className="transaction-security-name">{security.name}</span>
+                      <span className="transaction-security-listing">
+                        <span className="transaction-security-ticker">{security.ticker}</span>
+                        <span className="transaction-security-exchange">
+                          {EXCHANGE_NAMES[security.exchange] || security.exchange}
+                        </span>
+                      </span>
+                      <span className="transaction-security-details">
+                        <span className="transaction-security-name">{security.name}</span>
+                        {security.securityType && (
+                          <span className="transaction-security-type">Typ: {security.securityType}</span>
+                        )}
+                      </span>
                     </button>
                   ))}
                 </div>

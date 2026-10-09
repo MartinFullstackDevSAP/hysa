@@ -106,7 +106,7 @@ Deno.serve(async (request) => {
         isin: searchByIsin ? query : null,
         compositeFigi: typeof candidate.compositeFIGI === 'string' ? candidate.compositeFIGI : null,
         currency: typeof candidate.currency === 'string' ? candidate.currency : '',
-        securityType: securityType2 || securityType,
+        securityType: securityType || securityType2,
       });
     }
   }
