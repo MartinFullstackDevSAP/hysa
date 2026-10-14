@@ -507,8 +507,8 @@ export default function Investments({ currency = 'CZK', refreshKey = 0 }) {
               </strong>
               <span className={`portfolio-summary-change ${totalDayChange >= 0 ? 'is-positive' : 'is-negative'}`}>
                 {totalDayChange >= 0 ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
-                {hasMarketPrices
-                  ? `${formatMoney(totalDayChange, currency)} (${formatPercent(totalDayChangePercent)}) dnes`
+                                {hasMarketPrices
+                  ? `${formatMoney(totalDayChange, currency)} (${formatPercent(totalDayChangePercent)})`
                   : 'Denná zmena nedostupná'}
               </span>
             </article>
