@@ -505,11 +505,11 @@ export default function Investments({ currency = 'CZK', refreshKey = 0 }) {
                   ? 'Načítavam…'
                   : hasMarketPrices ? formatMoney(totalValue, currency) : '—'}
               </strong>
-              <span className={`portfolio-summary-change ${totalDayChange >= 0 ? 'is-positive' : 'is-negative'}`}>
+                            <span className={`portfolio-summary-change ${totalDayChange >= 0 ? 'is-positive' : 'is-negative'}`}>
                 {totalDayChange >= 0 ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
-                                {hasMarketPrices
+                {hasMarketPrices
                   ? `${formatMoney(totalDayChange, currency)} (${formatPercent(totalDayChangePercent)})`
-                  : 'Denná zmena nedostupná'}
+                  : ''}
               </span>
             </article>
             <article className="stat-card portfolio-summary-card">
