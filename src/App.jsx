@@ -14,6 +14,7 @@ import './index.css';
 function App() {
   const [session, setSession] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
+  const [startupMinimumElapsed, setStartupMinimumElapsed] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [globalSettingsReady, setGlobalSettingsReady] = useState(false);
   const [tabLoading, setTabLoading] = useState(false);
@@ -24,6 +25,14 @@ function App() {
   const navigationId = useRef(0);
   const navigationStartedAt = useRef(0);
   const navigationTimeout = useRef(null);
+
+  useEffect(() => {
+    const startupTimeout = window.setTimeout(() => {
+      setStartupMinimumElapsed(true);
+    }, 2000);
+
+    return () => window.clearTimeout(startupTimeout);
+  }, []);
   
   useEffect(() => {
     let active = true;
@@ -95,7 +104,7 @@ function App() {
   useEffect(() => {
     const theme = globalSettings.dark_mode ? 'dark' : 'light';
     document.documentElement.dataset.theme = theme;
-    const isStartupLoading = authLoading || (session && !globalSettingsReady);
+    const isStartupLoading = authLoading || (session && !globalSettingsReady) || !startupMinimumElapsed;
     const statusBarStyle = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
     if (statusBarStyle) {
       statusBarStyle.content = !isStartupLoading && theme === 'dark' ? 'black-translucent' : 'default';
@@ -104,7 +113,7 @@ function App() {
     if (themeColor) {
       themeColor.content = !isStartupLoading && theme === 'dark' ? '#050507' : '#ffffff';
     }
-  }, [authLoading, globalSettings.dark_mode, globalSettingsReady, session]);
+  }, [authLoading, globalSettings.dark_mode, globalSettingsReady, session, startupMinimumElapsed]);
 
   const handleDashboardLoadingChange = useCallback((isLoading, key) => {
     if (navigationId.current !== key) return;
@@ -127,7 +136,7 @@ function App() {
     setInvestmentsLoading(isLoading);
   }, []);
 
-  if (authLoading || (session && !globalSettingsReady)) {
+  if (authLoading || (session && !globalSettingsReady) || !startupMinimumElapsed) {
     return (
       <div className="auth-loading" role="status" aria-label="Načítavam aplikáciu" aria-live="polite">
         <img className="auth-loading-logo" src="/apple-touch-icon.png" alt="" />
