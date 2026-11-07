@@ -610,23 +610,25 @@ export default function Investments({
                         </div>
                       </td>
                       <td data-label="Počet">
-                        {formatQuantity(row.quantity)}
+                        <span className="portfolio-cell-value">{formatQuantity(row.quantity)}</span>
                       </td>
                       <td data-label="Cena">
-                        {row.quote ? (
+                        <span className="portfolio-cell-value">{row.quote ? (
                           formatMoney(row.quote.price, row.quote.currency)
-                        ) : '—'}
+                        ) : '—'}</span>
                       </td>
                       <td data-label="Nákupná cena">
-                        {row.averagePurchasePrice !== null
+                        <span className="portfolio-cell-value">{row.averagePurchasePrice !== null
                           ? formatMoney(row.averagePurchasePrice, row.currency)
-                          : '—'}
+                          : '—'}</span>
                       </td>
                       <td data-label="Denná zmena" className={row.dayChangePercent >= 0 ? 'is-positive' : 'is-negative'}>
-                        {Number.isFinite(row.dayChangePercent) ? formatPercent(row.dayChangePercent) : '—'}
+                        <span className="portfolio-cell-value">
+                          {Number.isFinite(row.dayChangePercent) ? formatPercent(row.dayChangePercent) : '—'}
+                        </span>
                       </td>
                       <td data-label="Hodnota">
-                        {row.currentValue !== null ? (
+                        <span className="portfolio-cell-value">{row.currentValue !== null ? (
                           <>
                             {formatWholeMoney(row.currentValue, currency)}
                             {row.nativeValue !== null && row.quote?.currency !== currency && (
@@ -635,15 +637,15 @@ export default function Investments({
                               </span>
                             )}
                           </>
-                        ) : '—'}
+                        ) : '—'}</span>
                       </td>
                       <td data-label="Zisk / strata" className={row.profitLoss !== null && row.profitLoss >= 0 ? 'is-positive' : 'is-negative'}>
-                        {row.profitLoss !== null ? (
+                        <span className="portfolio-cell-value">{row.profitLoss !== null ? (
                           <>
                             {formatMoney(row.profitLoss, currency)}
                             <span className="portfolio-table-secondary">{formatPercent(row.profitLossPercent)}</span>
                           </>
-                        ) : '—'}
+                        ) : '—'}</span>
                       </td>
                     </tr>
                   ))}

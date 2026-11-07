@@ -421,8 +421,8 @@
   .portfolio-table td:first-child {
     display: flex;
     min-width: 0;
-    align-items: flex-start;
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: stretch;
     gap: 0.5rem;
     padding: 0.7rem;
     border-bottom: 1px solid var(--border-color);
@@ -438,14 +438,22 @@
 
   .portfolio-table td:not(:first-child)::before {
     content: attr(data-label);
-    flex: 0 0 auto;
     color: var(--text-secondary);
     font-size: 0.7rem;
     text-align: left;
   }
 
-  .portfolio-table td:nth-child(5) {
+  .portfolio-cell-value {
+    display: block;
+    width: 100%;
+    min-width: 0;
     text-align: right;
+    white-space: nowrap;
+    font-size: 0.78rem;
+  }
+
+  .portfolio-cell-value .portfolio-table-secondary {
+    white-space: nowrap;
   }
 
   .portfolio-table tr:last-child {
