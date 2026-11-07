@@ -581,7 +581,7 @@ export default function Investments({
                 <h2 className="portfolio-section-title">Moje pozície</h2>
               </div>
             </div>
-            <div className="portfolio-table-scroll">
+            <div className="portfolio-table-scroll portfolio-positions-desktop">
               <table className="portfolio-table">
                 <thead>
                   <tr>
@@ -651,6 +651,56 @@ export default function Investments({
                   ))}
                 </tbody>
               </table>
+            </div>
+            <div className="portfolio-positions-mobile">
+              {portfolioRows.map((row) => (
+                <article className="portfolio-position-card" key={row.id}>
+                  <div className="portfolio-position-header">
+                    <div className="portfolio-security">
+                      <SecurityLogo isin={row.isin} ticker={row.ticker} name={row.name} />
+                      <div className="portfolio-position-identity">
+                        <strong className="portfolio-security-symbol">{row.ticker}</strong>
+                        <span className="portfolio-security-name">{row.name}</span>
+                        <span className="portfolio-security-market">
+                          {getExchangeName(row)} · {row.assetType === 'etf' ? 'ETF' : 'Akcia'}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="portfolio-position-value">
+                      <strong>{row.currentValue !== null ? formatWholeMoney(row.currentValue, currency) : '—'}</strong>
+                      {row.nativeValue !== null && row.quote?.currency !== currency && (
+                        <span>{formatWholeMoney(row.nativeValue, row.quote?.currency || row.currency)}</span>
+                      )}
+                      <span className={row.dayChangePercent >= 0 ? 'is-positive' : 'is-negative'}>
+                        {Number.isFinite(row.dayChangePercent) ? formatPercent(row.dayChangePercent) : '—'}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="portfolio-position-metrics">
+                    <div className="portfolio-position-metric">
+                      <span>Počet</span>
+                      <strong>{formatQuantity(row.quantity)}</strong>
+                    </div>
+                    <div className="portfolio-position-metric">
+                      <span>Cena</span>
+                      <strong>{row.quote ? formatMoney(row.quote.price, row.quote.currency) : '—'}</strong>
+                    </div>
+                    <div className="portfolio-position-metric">
+                      <span>Nákupná cena</span>
+                      <strong>
+                        {row.averagePurchasePrice !== null
+                          ? formatMoney(row.averagePurchasePrice, row.currency)
+                          : '—'}
+                      </strong>
+                    </div>
+                    <div className={`portfolio-position-metric ${row.profitLoss !== null && row.profitLoss >= 0 ? 'is-positive' : 'is-negative'}`}>
+                      <span>Zisk / strata</span>
+                      <strong>{row.profitLoss !== null ? formatMoney(row.profitLoss, currency) : '—'}</strong>
+                      {row.profitLoss !== null && <span>{formatPercent(row.profitLossPercent)}</span>}
+                    </div>
+                  </div>
+                </article>
+              ))}
             </div>
           </section>
         </>

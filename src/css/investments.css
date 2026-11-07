@@ -218,6 +218,10 @@
   overflow-x: auto;
 }
 
+.portfolio-positions-mobile {
+  display: none;
+}
+
 .portfolio-table {
   width: 100%;
   border-collapse: collapse;
@@ -392,71 +396,137 @@
     padding: 1rem;
   }
 
-  .portfolio-table-scroll {
-    overflow: visible;
-  }
-
-  .portfolio-table,
-  .portfolio-table tbody {
-    display: block;
-    width: 100%;
-    white-space: normal;
-  }
-
-  .portfolio-table thead {
+  .portfolio-positions-desktop {
     display: none;
   }
 
-  .portfolio-table tr {
+  .portfolio-positions-mobile {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    margin-bottom: 0.75rem;
+    gap: 0.75rem;
+  }
+
+  .portfolio-position-card {
+    min-width: 0;
     overflow: hidden;
     border: 1px solid var(--border-color);
-    border-radius: 12px;
+    border-radius: 14px;
     background: var(--card-surface);
   }
 
-  .portfolio-table td,
-  .portfolio-table td:first-child {
+  .portfolio-position-header {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.65rem;
+    padding: 0.85rem;
+  }
+
+  .portfolio-position-header .portfolio-security {
+    min-width: 0;
+    gap: 0.6rem;
+  }
+
+  .portfolio-position-header .portfolio-security-logo {
+    width: 2.5rem;
+    height: 2.5rem;
+    flex-basis: 2.5rem;
+  }
+
+  .portfolio-position-identity {
+    min-width: 0;
+  }
+
+  .portfolio-position-identity .portfolio-security-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .portfolio-position-value {
+    display: flex;
+    min-width: 0;
+    flex: 0 0 auto;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.15rem;
+    text-align: right;
+  }
+
+  .portfolio-position-value strong {
+    color: var(--text-primary);
+    font-size: clamp(0.82rem, 3.8vw, 1rem);
+    white-space: nowrap;
+  }
+
+  .portfolio-position-value > span {
+    color: var(--text-secondary);
+    font-size: 0.7rem;
+    white-space: nowrap;
+  }
+
+  .portfolio-position-value .is-positive,
+  .portfolio-position-metric.is-positive strong,
+  .portfolio-position-metric.is-positive > span:last-child {
+    color: var(--accent-green);
+  }
+
+  .portfolio-position-value .is-negative,
+  .portfolio-position-metric.is-negative strong,
+  .portfolio-position-metric.is-negative > span:last-child {
+    color: var(--accent-red);
+  }
+
+  .portfolio-position-metrics {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-top: 1px solid var(--border-color);
+  }
+
+  .portfolio-position-metric {
     display: flex;
     min-width: 0;
     flex-direction: column;
-    align-items: stretch;
-    gap: 0.5rem;
-    padding: 0.7rem;
-    border-bottom: 1px solid var(--border-color);
-    text-align: right;
-    overflow-wrap: anywhere;
+    gap: 0.25rem;
+    padding: 0.7rem 0.85rem;
   }
 
-  .portfolio-table td:first-child {
-    grid-column: 1 / -1;
-    justify-content: flex-start;
-    text-align: left;
+  .portfolio-position-metric:nth-child(odd) {
+    border-right: 1px solid var(--border-color);
   }
 
-  .portfolio-table td:not(:first-child)::before {
-    content: attr(data-label);
+  .portfolio-position-metric:nth-child(n + 3) {
+    border-top: 1px solid var(--border-color);
+  }
+
+  .portfolio-position-metric > span:first-child {
     color: var(--text-secondary);
-    font-size: 0.7rem;
-    text-align: left;
+    font-size: 0.68rem;
   }
 
-  .portfolio-cell-value {
-    display: block;
-    width: 100%;
-    min-width: 0;
-    text-align: right;
-    white-space: nowrap;
-    font-size: 0.78rem;
-  }
-
-  .portfolio-cell-value .portfolio-table-secondary {
+  .portfolio-position-metric strong {
+    overflow: hidden;
+    color: var(--text-primary);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  .portfolio-table tr:last-child {
-    margin-bottom: 0;
+  .portfolio-position-metric > span:last-child:not(:first-child) {
+    color: var(--text-secondary);
+    font-size: 0.68rem;
+  }
+
+  .portfolio-position-metric.is-positive > span:last-child,
+  .portfolio-position-metric.is-negative > span:last-child {
+    color: inherit;
+  }
+
+  .portfolio-position-metric.is-positive strong {
+    color: var(--accent-green);
+  }
+
+  .portfolio-position-metric.is-negative strong {
+    color: var(--accent-red);
   }
 }
