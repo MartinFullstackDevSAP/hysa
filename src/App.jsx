@@ -5,7 +5,10 @@ import Investments from './investments/Investments';
 import Settings from './settings/Settings';
 import Login from './auth/Login';
 import { supabase } from './supabaseClient';
-import { DEFAULT_GLOBAL_SETTINGS } from './globalSettings';
+import {
+  DEFAULT_GLOBAL_SETTINGS,
+  INVESTMENTS_REFRESH_INTERVAL_OPTIONS,
+} from './globalSettings';
 import './index.css';
 
 function App() {
@@ -55,7 +58,7 @@ function App() {
       try {
         const { data, error } = await supabase
           .from('global_settings')
-          .select('dark_mode, dashboard_currency')
+          .select('dark_mode, dashboard_currency, investments_refresh_interval_minutes')
           .limit(1)
           .maybeSingle();
 
@@ -65,9 +68,13 @@ function App() {
         }
 
         if (data) {
+          const refreshInterval = Number(data.investments_refresh_interval_minutes);
           setGlobalSettings({
             dark_mode: Boolean(data.dark_mode),
             dashboard_currency: data.dashboard_currency || DEFAULT_GLOBAL_SETTINGS.dashboard_currency,
+            investments_refresh_interval_minutes: INVESTMENTS_REFRESH_INTERVAL_OPTIONS.includes(refreshInterval)
+              ? refreshInterval
+              : DEFAULT_GLOBAL_SETTINGS.investments_refresh_interval_minutes,
           });
         }
       } catch (error) {
@@ -199,6 +206,7 @@ function App() {
         <Investments
           currency={globalSettings.dashboard_currency}
           refreshKey={investmentRefreshKey}
+          refreshIntervalMinutes={globalSettings.investments_refresh_interval_minutes}
         />
       )}
       {activeTab === 'settings' && (

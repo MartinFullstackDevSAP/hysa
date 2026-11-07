@@ -2,7 +2,10 @@ import { useState, useEffect, useRef } from 'react';
 import { ArrowLeftRight, CalendarDays, SlidersHorizontal } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 import CustomSelect from './CustomSelect';
-import { DEFAULT_GLOBAL_SETTINGS } from '../globalSettings';
+import {
+  DEFAULT_GLOBAL_SETTINGS,
+  INVESTMENTS_REFRESH_INTERVAL_OPTIONS,
+} from '../globalSettings';
 import '../css/settings.css';
 
 const EXCHANGE_NAMES = {
@@ -153,6 +156,7 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
     const payload = {
       dark_mode: Boolean(globalSettingsForm.dark_mode),
       dashboard_currency: globalSettingsForm.dashboard_currency,
+      investments_refresh_interval_minutes: Number(globalSettingsForm.investments_refresh_interval_minutes),
     };
 
     const { data: existingSettings, error: fetchError } = await supabase
@@ -178,7 +182,8 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
       } else {
         updateQuery = updateQuery
           .eq('dark_mode', existingRow.dark_mode)
-          .eq('dashboard_currency', existingRow.dashboard_currency);
+          .eq('dashboard_currency', existingRow.dashboard_currency)
+          .eq('investments_refresh_interval_minutes', existingRow.investments_refresh_interval_minutes);
       }
 
       const result = await updateQuery.select().maybeSingle();
@@ -199,6 +204,8 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
       const savedSettings = {
         dark_mode: Boolean(data.dark_mode),
         dashboard_currency: data.dashboard_currency || DEFAULT_GLOBAL_SETTINGS.dashboard_currency,
+        investments_refresh_interval_minutes: Number(data.investments_refresh_interval_minutes)
+          || DEFAULT_GLOBAL_SETTINGS.investments_refresh_interval_minutes,
       };
       setGlobalSettingsForm(savedSettings);
       onGlobalSettingsChange?.(savedSettings);
@@ -506,6 +513,21 @@ export default function Settings({ globalSettings = DEFAULT_GLOBAL_SETTINGS, onG
               ]}
               value={globalSettingsForm.dashboard_currency}
               onChange={(value) => setGlobalSettingsForm((current) => ({ ...current, dashboard_currency: value }))}
+            />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Automatické obnovenie investícií</label>
+            <CustomSelect
+              options={INVESTMENTS_REFRESH_INTERVAL_OPTIONS.map((minutes) => ({
+                value: String(minutes),
+                label: `${minutes} ${minutes === 1 ? 'minúta' : minutes < 5 ? 'minúty' : 'minút'}`,
+              }))}
+              value={String(globalSettingsForm.investments_refresh_interval_minutes
+                || DEFAULT_GLOBAL_SETTINGS.investments_refresh_interval_minutes)}
+              onChange={(value) => setGlobalSettingsForm((current) => ({
+                ...current,
+                investments_refresh_interval_minutes: Number(value),
+              }))}
             />
           </div>
           <div className="form-group form-group-full">

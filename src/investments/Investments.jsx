@@ -12,8 +12,6 @@ const CHART_RANGES = [
   { value: 'all', label: 'Celé obdobie' },
 ];
 const EMPTY_OBJECT = {};
-const REFRESH_INTERVAL_MS = 2 * 60 * 1000;
-
 const formatMoney = (value, currency) => {
   if (!Number.isFinite(value)) return '—';
   try {
@@ -197,7 +195,11 @@ const PortfolioChart = ({ points, currency }) => {
   );
 };
 
-export default function Investments({ currency = 'CZK', refreshKey = 0 }) {
+export default function Investments({
+  currency = 'CZK',
+  refreshKey = 0,
+  refreshIntervalMinutes = 2,
+}) {
   const [transactions, setTransactions] = useState([]);
   const [transactionsLoading, setTransactionsLoading] = useState(true);
   const [transactionError, setTransactionError] = useState('');
@@ -209,18 +211,19 @@ export default function Investments({ currency = 'CZK', refreshKey = 0 }) {
 
   useEffect(() => {
     let lastRefreshAt = Date.now();
+    const refreshIntervalMs = refreshIntervalMinutes * 60 * 1000;
     const refreshIfDue = () => {
-      if (document.visibilityState !== 'visible' || Date.now() - lastRefreshAt < REFRESH_INTERVAL_MS) return;
+      if (document.visibilityState !== 'visible' || Date.now() - lastRefreshAt < refreshIntervalMs) return;
       lastRefreshAt = Date.now();
       setAutoRefreshKey((key) => key + 1);
     };
-    const intervalId = window.setInterval(refreshIfDue, REFRESH_INTERVAL_MS);
+    const intervalId = window.setInterval(refreshIfDue, refreshIntervalMs);
     document.addEventListener('visibilitychange', refreshIfDue);
     return () => {
       window.clearInterval(intervalId);
       document.removeEventListener('visibilitychange', refreshIfDue);
     };
-  }, []);
+  }, [refreshIntervalMinutes]);
 
   useEffect(() => {
     let active = true;
