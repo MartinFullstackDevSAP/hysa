@@ -27,6 +27,8 @@ const MIC_BY_FIGI_EXCHANGE: Record<string, string> = {
   SE: 'XSWX',
 };
 
+const US_MIC_CODES = ['XNYS', 'XNAS', 'XASE', 'ARCX'];
+
 const OUTPUTSIZE_BY_RANGE: Record<string, number> = {
   '1m': 30,
   '3m': 90,
@@ -45,6 +47,7 @@ const YAHOO_RANGE_BY_RANGE: Record<string, string> = {
 
 const YAHOO_SYMBOLS_BY_ISIN: Record<string, { symbol: string; currency: string }[]> = {
   'IE000VAHT5T0': [{ symbol: 'VGLA.DE', currency: 'EUR' }],
+  'KYG6683N1034': [{ symbol: 'NU', currency: 'USD' }],
 };
 
 const getTwelveDataJson = async (path: string, apiKey: string) => {
@@ -229,7 +232,8 @@ const getFrankfurterRate = async (sourceCurrency: string, targetCurrency: string
 
 const resolveProviderSymbol = async (position: Record<string, unknown>, apiKey: string) => {
   const micCode = MIC_BY_FIGI_EXCHANGE[String(position.exchange)];
-  if (!micCode) {
+  const isUsExchange = position.exchange === 'US';
+  if (!micCode && !isUsExchange) {
     throw new Error(`Pre burzu ${String(position.exchange)} nie je nakonfigurovaný MIC kód.`);
   }
 
@@ -239,13 +243,17 @@ const resolveProviderSymbol = async (position: Record<string, unknown>, apiKey: 
     apiKey,
   );
   const candidates = Array.isArray(search.data)
-    ? search.data.filter((candidate) => isRecord(candidate) && candidate.mic_code === micCode)
+    ? search.data.filter((candidate) =>
+      isRecord(candidate)
+      && (isUsExchange
+        ? US_MIC_CODES.includes(String(candidate.mic_code))
+        : candidate.mic_code === micCode))
     : [];
   if (!candidates.length) {
-    throw new Error(`Twelve Data nemá listing ${ticker} na trhu ${micCode}.`);
+    throw new Error(`Twelve Data nemá listing ${ticker} na trhu ${isUsExchange ? 'US' : micCode}.`);
   }
 
-  const bestMatch = candidates
+  const rankedCandidates = candidates
     .map((candidate) => ({
       candidate,
       score: getSymbolNameScore(
@@ -253,11 +261,13 @@ const resolveProviderSymbol = async (position: Record<string, unknown>, apiKey: 
         String(position.name),
       ),
     }))
-    .sort((first, second) => second.score - first.score)[0].candidate;
-  if (typeof bestMatch.symbol !== 'string') {
+    .filter(({ score }) => !isUsExchange || score > 0)
+    .sort((first, second) => second.score - first.score);
+  const bestMatch = rankedCandidates[0]?.candidate;
+  if (!bestMatch || typeof bestMatch.symbol !== 'string' || typeof bestMatch.mic_code !== 'string') {
     throw new Error(`Twelve Data nevrátilo symbol pre ${ticker}.`);
   }
-  return { symbol: bestMatch.symbol, micCode };
+  return { symbol: bestMatch.symbol, micCode: bestMatch.mic_code };
 };
 
 const runWithConcurrency = async <T>(

@@ -9,4 +9,4 @@ supabase secrets set TWELVE_DATA_API_KEY=your_api_key --project-ref fysdpicaetzk
 supabase functions deploy portfolio-market-data --project-ref fysdpicaetzkxapvixcy
 ```
 
-The function supports the OpenFIGI exchange codes configured in `index.ts`. Yahoo Finance fallback requires a valid ISIN on the transaction, and provider coverage, delays, and quotas determine which listings and history are available.
+The function supports the OpenFIGI exchange codes configured in `index.ts`; the generic `US` exchange code is resolved against supported US MICs using the security name. Yahoo Finance fallback requires a valid ISIN on the transaction and uses explicit ISIN-to-listing overrides where needed (including `KYG6683N1034` → `NU`). Provider coverage, delays, and quotas determine which listings and history are available.
