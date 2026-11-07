@@ -321,7 +321,7 @@
   place-items: center;
   overflow: hidden;
   border: 1px solid var(--border-color);
-  border-radius: 50%;
+  border-radius: 9px;
   background: var(--bg-muted);
   color: var(--text-secondary);
   font-size: 0.95rem;

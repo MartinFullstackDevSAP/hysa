@@ -389,6 +389,7 @@ export default function Investments({
       nativeValue,
       currentValue,
       costBasis,
+      averagePurchasePrice: holding.quantity > 0 ? holding.costBasis / holding.quantity : null,
       profitLoss,
       profitLossPercent: costBasis > 0 ? (profitLoss / costBasis) * 100 : null,
       dayChange,
@@ -599,6 +600,7 @@ export default function Investments({
                     <th scope="col">Cenný papier</th>
                     <th scope="col">Počet</th>
                     <th scope="col">Cena</th>
+                    <th scope="col">Nákupná cena</th>
                     <th scope="col">Denná zmena</th>
                     <th scope="col">Hodnota</th>
                     <th scope="col">Zisk / strata</th>
@@ -624,6 +626,11 @@ export default function Investments({
                         {row.quote ? (
                           formatMoney(row.quote.price, row.quote.currency)
                         ) : '—'}
+                      </td>
+                      <td>
+                        {row.averagePurchasePrice !== null
+                          ? formatMoney(row.averagePurchasePrice, row.currency)
+                          : '—'}
                       </td>
                       <td className={row.dayChangePercent >= 0 ? 'is-positive' : 'is-negative'}>
                         {Number.isFinite(row.dayChangePercent) ? formatPercent(row.dayChangePercent) : '—'}
