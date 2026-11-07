@@ -435,6 +435,11 @@
 
   .portfolio-position-identity {
     min-width: 0;
+    text-align: left;
+  }
+
+  .portfolio-position-identity > * {
+    text-align: left;
   }
 
   .portfolio-position-identity .portfolio-security-name {
