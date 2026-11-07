@@ -6,34 +6,8 @@ import {
   DEFAULT_GLOBAL_SETTINGS,
   INVESTMENTS_REFRESH_INTERVAL_OPTIONS,
 } from '../globalSettings';
+import { EXCHANGE_NAMES } from '../securityMetadata';
 import '../css/settings.css';
-
-const EXCHANGE_NAMES = {
-  LN: 'Tradepoint Investment Exchange',
-  GR: 'Germany (composite market)',
-  GF: 'Frankfurt Stock Exchange',
-  GD: 'Dusseldorf Stock Exchange',
-  GS: 'Stuttgart Stock Exchange',
-  GM: 'Munich Stock Exchange',
-  GH: 'Hamburg Stock Exchange',
-  GT: 'Xetra ETF Exchange',
-  LA: 'LSXExchange',
-  LU: 'LSX LSSI',
-  NA: 'Euronext Amsterdam Stock Exchange',
-  IM: 'Milan NM',
-  SW: 'SIX Swiss Exchange',
-  SE: 'SIX Swiss Exchange',
-  QX: 'Aquis Exchange',
-  EU: 'European Composite',
-  EP: 'European Lit Primaries Composite',
-  EZ: 'European Lit Composite',
-  EO: 'OTC Composite',
-  X2: 'CBOE APA',
-  XH: 'Budapest Stock Exchange OTC',
-  BW: 'BX Worldcaps',
-  B3: 'Blockmatch',
-  TH: 'Tradegate',
-};
 
 // Zoznam hlavných bánk a inštitúcií v ČR s prázdnou predvolenou voľbou
 const CZECH_BANKS = [

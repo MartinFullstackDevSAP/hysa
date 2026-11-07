@@ -307,6 +307,33 @@
   white-space: normal;
 }
 
+.portfolio-security {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.portfolio-security-logo {
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex: 0 0 2.25rem;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  background: var(--bg-muted);
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.portfolio-security-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
 .portfolio-security-symbol,
 .portfolio-security-name,
 .portfolio-security-market,

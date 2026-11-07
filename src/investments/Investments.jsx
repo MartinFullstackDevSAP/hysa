@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Activity, RefreshCw, TrendingDown, TrendingUp } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 import { calculateHoldings, transactionKey } from './portfolio';
+import { EXCHANGE_NAMES, getSecurityLogo } from '../securityMetadata';
 import '../css/investments.css';
 
 const CHART_RANGES = [
@@ -41,6 +42,21 @@ const formatWholeMoney = (value, currency) => {
 const formatQuantity = (value) => new Intl.NumberFormat('sk-SK', {
   maximumFractionDigits: 6,
 }).format(value);
+
+const SecurityLogo = ({ isin, ticker, name }) => {
+  const [failed, setFailed] = useState(false);
+  const logo = getSecurityLogo(isin);
+
+  return (
+    <span className="portfolio-security-logo">
+      {logo && !failed ? (
+        <img src={logo} alt="" onError={() => setFailed(true)} />
+      ) : (
+        <span aria-hidden="true">{ticker?.slice(0, 1) || name?.slice(0, 1) || '?'}</span>
+      )}
+    </span>
+  );
+};
 
 const formatPercent = (value) => `${value >= 0 ? '+' : ''}${value.toFixed(2)} %`;
 
@@ -357,7 +373,10 @@ export default function Investments({
     const costRate = Number(fxRates[holding.currency]) || 0;
     const price = Number(quote?.price);
     const previousClose = Number(quote?.previousClose);
-    const currentValue = Number.isFinite(price) && marketRate ? holding.quantity * price * marketRate : null;
+    const nativeValue = Number.isFinite(price) && price > 0
+      ? holding.quantity * price
+      : null;
+    const currentValue = nativeValue !== null && marketRate ? nativeValue * marketRate : null;
     const costBasis = costRate ? holding.costBasis * costRate : null;
     const profitLoss = currentValue !== null && costBasis !== null ? currentValue - costBasis : null;
     const dayChange = Number.isFinite(price) && Number.isFinite(previousClose) && marketRate
@@ -367,6 +386,7 @@ export default function Investments({
     return {
       ...holding,
       quote,
+      nativeValue,
       currentValue,
       costBasis,
       profitLoss,
@@ -570,7 +590,6 @@ export default function Investments({
             <div className="portfolio-section-header">
               <div>
                 <h2 className="portfolio-section-title">Moje pozície</h2>
-                <p className="portfolio-section-subtitle">{holdings.length} otvorených pozícií · Twelve Data a záložný Yahoo Finance</p>
               </div>
             </div>
             <div className="portfolio-table-scroll">
@@ -589,28 +608,38 @@ export default function Investments({
                   {portfolioRows.map((row) => (
                     <tr key={row.id}>
                       <td>
-                        <span className="portfolio-security-symbol">{row.ticker}</span>
-                        <span className="portfolio-security-name">{row.name}</span>
-                        <span className="portfolio-security-market">{row.exchange} · {row.assetType === 'etf' ? 'ETF' : 'Akcia'}</span>
+                        <div className="portfolio-security">
+                          <SecurityLogo isin={row.isin} ticker={row.ticker} name={row.name} />
+                          <div>
+                            <span className="portfolio-security-symbol">{row.ticker}</span>
+                            <span className="portfolio-security-name">{row.name}</span>
+                            <span className="portfolio-security-market">
+                              {EXCHANGE_NAMES[row.exchange] || row.exchange} · {row.assetType === 'etf' ? 'ETF' : 'Akcia'}
+                            </span>
+                          </div>
+                        </div>
                       </td>
                       <td>{formatQuantity(row.quantity)}</td>
                       <td>
                         {row.quote ? (
-                          <>
-                            {formatMoney(row.quote.price, row.quote.currency)}
-                            {row.quote.source && (
-                              <span className="portfolio-table-secondary">
-                                {row.quote.source}{row.quote.sourceSymbol ? ` · ${row.quote.sourceSymbol}` : ''}
-                                {row.quote.exchange ? ` (${row.quote.exchange})` : ''}
-                              </span>
-                            )}
-                          </>
+                          formatMoney(row.quote.price, row.quote.currency)
                         ) : '—'}
                       </td>
                       <td className={row.dayChangePercent >= 0 ? 'is-positive' : 'is-negative'}>
                         {Number.isFinite(row.dayChangePercent) ? formatPercent(row.dayChangePercent) : '—'}
                       </td>
-                      <td>{row.currentValue !== null ? formatMoney(row.currentValue, currency) : '—'}</td>
+                      <td>
+                        {row.currentValue !== null ? (
+                          <>
+                            {formatWholeMoney(row.currentValue, currency)}
+                            {row.nativeValue !== null && row.quote?.currency !== currency && (
+                              <span className="portfolio-table-secondary">
+                                {formatWholeMoney(row.nativeValue, row.quote?.currency || row.currency)}
+                              </span>
+                            )}
+                          </>
+                        ) : '—'}
+                      </td>
                       <td className={row.profitLoss !== null && row.profitLoss >= 0 ? 'is-positive' : 'is-negative'}>
                         {row.profitLoss !== null ? (
                           <>
