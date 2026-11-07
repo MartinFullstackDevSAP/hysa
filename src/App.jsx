@@ -95,11 +95,16 @@ function App() {
   useEffect(() => {
     const theme = globalSettings.dark_mode ? 'dark' : 'light';
     document.documentElement.dataset.theme = theme;
+    const isStartupLoading = authLoading || (session && !globalSettingsReady);
     const statusBarStyle = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
     if (statusBarStyle) {
-      statusBarStyle.content = theme === 'dark' ? 'black-translucent' : 'default';
+      statusBarStyle.content = !isStartupLoading && theme === 'dark' ? 'black-translucent' : 'default';
     }
-  }, [globalSettings.dark_mode]);
+    const themeColor = document.querySelector('meta[name="theme-color"]');
+    if (themeColor) {
+      themeColor.content = !isStartupLoading && theme === 'dark' ? '#050507' : '#ffffff';
+    }
+  }, [authLoading, globalSettings.dark_mode, globalSettingsReady, session]);
 
   const handleDashboardLoadingChange = useCallback((isLoading, key) => {
     if (navigationId.current !== key) return;
@@ -125,7 +130,8 @@ function App() {
   if (authLoading || (session && !globalSettingsReady)) {
     return (
       <div className="auth-loading" role="status" aria-label="Načítavam aplikáciu" aria-live="polite">
-        <span className="busy-spinner" aria-hidden="true" />
+        <img className="auth-loading-logo" src="/apple-touch-icon.png" alt="" />
+        <span className="auth-loading-title">Freedom Vault</span>
       </div>
     );
   }
