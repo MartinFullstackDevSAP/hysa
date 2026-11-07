@@ -1,10 +1,10 @@
 .auth-loading {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
   display: grid;
-  min-height: 100vh;
-  min-height: 100dvh;
   place-items: center;
-  gap: 1rem;
-  align-content: center;
+  box-sizing: border-box;
   background: #050507;
   color: #a3a5ad;
 }
@@ -13,12 +13,6 @@
   width: 46px;
   height: 46px;
   border-width: 4px;
-}
-
-.auth-loading-label {
-  font-size: 0.85rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
 }
 
 .auth-page {

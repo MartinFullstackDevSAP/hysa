@@ -97,7 +97,7 @@ function App() {
     document.documentElement.dataset.theme = theme;
     const statusBarStyle = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
     if (statusBarStyle) {
-      statusBarStyle.content = theme === 'dark' ? 'black' : 'default';
+      statusBarStyle.content = theme === 'dark' ? 'black-translucent' : 'default';
     }
   }, [globalSettings.dark_mode]);
 
@@ -124,9 +124,8 @@ function App() {
 
   if (authLoading || (session && !globalSettingsReady)) {
     return (
-      <div className="auth-loading" role="status" aria-live="polite">
+      <div className="auth-loading" role="status" aria-label="Načítavam aplikáciu" aria-live="polite">
         <span className="busy-spinner" aria-hidden="true" />
-        <span className="auth-loading-label">Načítavam</span>
       </div>
     );
   }
