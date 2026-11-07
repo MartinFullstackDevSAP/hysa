@@ -117,7 +117,7 @@ const PortfolioChart = ({ points, currency }) => {
     `${index === 0 ? 'M' : 'L'} ${point.x.toFixed(2)} ${point.y.toFixed(2)}`).join(' ');
   const areaPath = `${linePath} L ${coordinates.at(-1).x} ${height - padding.bottom} L ${coordinates[0].x} ${height - padding.bottom} Z`;
   const lastPoint = coordinates.at(-1);
-  const activePoint = activeIndex === null ? lastPoint : coordinates[activeIndex];
+  const activePoint = activeIndex === null ? null : coordinates[activeIndex];
   const firstValue = points[0].value;
   const changeValue = lastPoint.value - firstValue;
   const changePercent = firstValue > 0 ? (changeValue / firstValue) * 100 : 0;
@@ -184,25 +184,31 @@ const PortfolioChart = ({ points, currency }) => {
             {formatChartDate(new Date(`${point.date}T00:00:00`))}
           </text>
         ))}
-        <line
-          x1={activePoint.x}
-          x2={activePoint.x}
-          y1={padding.top}
-          y2={height - padding.bottom}
-          className="portfolio-chart-crosshair"
-        />
-        <circle cx={activePoint.x} cy={activePoint.y} r="5" className="portfolio-chart-dot" />
+        {activePoint && (
+          <>
+            <line
+              x1={activePoint.x}
+              x2={activePoint.x}
+              y1={padding.top}
+              y2={height - padding.bottom}
+              className="portfolio-chart-crosshair"
+            />
+            <circle cx={activePoint.x} cy={activePoint.y} r="5" className="portfolio-chart-dot" />
+          </>
+        )}
       </svg>
-      <div
-        className="portfolio-chart-tooltip"
-        style={{
-          left: `${(activePoint.x / width) * 100}%`,
-          top: `${(activePoint.y / height) * 100}%`,
-        }}
-      >
-        <strong>{formatWholeMoney(activePoint.value, currency)}</strong>
-        <span>{formatTooltipDate(new Date(`${activePoint.date}T00:00:00`))}</span>
-      </div>
+      {activePoint && (
+        <div
+          className="portfolio-chart-tooltip"
+          style={{
+            left: `${(activePoint.x / width) * 100}%`,
+            top: `${(activePoint.y / height) * 100}%`,
+          }}
+        >
+          <strong>{formatWholeMoney(activePoint.value, currency)}</strong>
+          <span>{formatTooltipDate(new Date(`${activePoint.date}T00:00:00`))}</span>
+        </div>
+      )}
       </div>
     </div>
   );
