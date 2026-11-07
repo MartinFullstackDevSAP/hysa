@@ -90,6 +90,11 @@ const formatAxisMoney = (value, currency) => {
   }
 };
 
+const formatMobileAxisValue = (value) => new Intl.NumberFormat('en-US', {
+  notation: 'compact',
+  maximumFractionDigits: 1,
+}).format(value).toLowerCase();
+
 const formatChartDate = (date) => new Intl.DateTimeFormat('sk-SK', {
   day: 'numeric',
   month: 'short',
@@ -231,8 +236,13 @@ const PortfolioChart = ({ points, currency, netContributions, loading }) => {
           return (
             <g key={`y-${index}`}>
               <line x1={padding.left} x2={width - padding.right} y1={y} y2={y} className="portfolio-chart-gridline" />
-              <text x={padding.left - 8} y={y + 4} textAnchor="end" className="portfolio-chart-axis">
-                {formatAxisMoney(value, currency)}
+              <text
+                x={padding.left - (isMobileChart ? 16 : 8)}
+                y={y + 4}
+                textAnchor="end"
+                className="portfolio-chart-axis"
+              >
+                {isMobileChart ? formatMobileAxisValue(value) : formatAxisMoney(value, currency)}
               </text>
             </g>
           );
