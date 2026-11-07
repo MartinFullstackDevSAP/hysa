@@ -93,9 +93,12 @@ const PortfolioChart = ({ points, currency, netContributions, loading }) => {
   if (points.length < 2) {
     if (loading) {
       return (
-        <div className="portfolio-chart-empty portfolio-chart-loading" role="status">
+        <div
+          className="portfolio-chart-empty portfolio-chart-loading"
+          role="status"
+          aria-label="Načítavam graf"
+        >
           <span className="busy-spinner" aria-hidden="true" />
-          <span>Načítavam graf</span>
         </div>
       );
     }
@@ -207,9 +210,8 @@ const PortfolioChart = ({ points, currency, netContributions, loading }) => {
         )}
       </svg>
       {loading && (
-        <div className="portfolio-chart-loading" role="status">
+        <div className="portfolio-chart-loading" role="status" aria-label="Načítavam graf">
           <span className="busy-spinner" aria-hidden="true" />
-          <span>Načítavam graf</span>
         </div>
       )}
       {activePoint && (
