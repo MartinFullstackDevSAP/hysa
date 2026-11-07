@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Activity, RefreshCw, TrendingDown, TrendingUp } from 'lucide-react';
+import { Activity, TrendingDown, TrendingUp } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 import { calculateHoldings, transactionKey } from './portfolio';
 import { EXCHANGE_NAMES, getSecurityLogo } from '../securityMetadata';
@@ -42,6 +42,17 @@ const formatWholeMoney = (value, currency) => {
 const formatQuantity = (value) => new Intl.NumberFormat('sk-SK', {
   maximumFractionDigits: 6,
 }).format(value);
+
+const getExchangeName = (row) => {
+  const providerExchange = row.quote?.exchange;
+  if (!providerExchange) return EXCHANGE_NAMES[row.exchange] || row.exchange;
+  const exchangeName = providerExchange.toLowerCase();
+  if (exchangeName.includes('nasdaq')) return 'Nasdaq';
+  if (exchangeName.includes('new york stock exchange') || exchangeName === 'nyse') return 'NYSE';
+  if (exchangeName.includes('arca')) return 'NYSE Arca';
+  if (exchangeName.includes('american')) return 'NYSE American';
+  return providerExchange;
+};
 
 const SecurityLogo = ({ isin, ticker, name }) => {
   const [failed, setFailed] = useState(false);
@@ -107,17 +118,6 @@ const PortfolioChart = ({ points, currency, netContributions, loading }) => {
   const [activeIndex, setActiveIndex] = useState(null);
 
   if (points.length < 2) {
-    if (loading) {
-      return (
-        <div
-          className="portfolio-chart-empty portfolio-chart-loading"
-          role="status"
-          aria-label="Načítavam graf"
-        >
-          <span className="busy-spinner" aria-hidden="true" />
-        </div>
-      );
-    }
     return <div className="portfolio-chart-empty">Pre zvolené obdobie zatiaľ nie sú dostupné cenové údaje.</div>;
   }
 
@@ -225,11 +225,6 @@ const PortfolioChart = ({ points, currency, netContributions, loading }) => {
           </>
         )}
       </svg>
-      {loading && (
-        <div className="portfolio-chart-loading" role="status" aria-label="Načítavam graf">
-          <span className="busy-spinner" aria-hidden="true" />
-        </div>
-      )}
       {activePoint && (
         <div
           className="portfolio-chart-tooltip"
@@ -251,6 +246,7 @@ export default function Investments({
   currency = 'CZK',
   refreshKey = 0,
   refreshIntervalMinutes = 2,
+  onLoadingChange,
 }) {
   const [transactions, setTransactions] = useState([]);
   const [transactionsLoading, setTransactionsLoading] = useState(true);
@@ -471,21 +467,13 @@ export default function Investments({
   const positionErrors = (marketData.errors || []).filter((error) => !error.id.startsWith('fx:'));
   const fxErrors = (marketData.errors || []).filter((error) => error.id.startsWith('fx:'));
 
+  useEffect(() => {
+    onLoadingChange?.(isLoading);
+    return () => onLoadingChange?.(false);
+  }, [isLoading, onLoadingChange]);
+
   return (
     <div className="finova-container investments-container">
-      <div className="investments-header">
-        <button
-          type="button"
-          className="portfolio-refresh-button"
-          onClick={() => setAutoRefreshKey((key) => key + 1)}
-          disabled={isLoading}
-          aria-label="Obnoviť portfólio"
-        >
-          <RefreshCw size={17} className={isLoading ? 'portfolio-refresh-spinning' : ''} aria-hidden="true" />
-          <span>Obnoviť</span>
-        </button>
-      </div>
-
       {transactionError && <div className="settings-error" role="alert">{transactionError}</div>}
       {marketDataError && hasTransactions && (
         <div className="settings-error" role="alert">
@@ -616,26 +604,28 @@ export default function Investments({
                             <span className="portfolio-security-symbol">{row.ticker}</span>
                             <span className="portfolio-security-name">{row.name}</span>
                             <span className="portfolio-security-market">
-                              {EXCHANGE_NAMES[row.exchange] || row.exchange} · {row.assetType === 'etf' ? 'ETF' : 'Akcia'}
+                              {getExchangeName(row)} · {row.assetType === 'etf' ? 'ETF' : 'Akcia'}
                             </span>
                           </div>
                         </div>
                       </td>
-                      <td>{formatQuantity(row.quantity)}</td>
-                      <td>
+                      <td data-label="Počet">
+                        {formatQuantity(row.quantity)}
+                      </td>
+                      <td data-label="Cena">
                         {row.quote ? (
                           formatMoney(row.quote.price, row.quote.currency)
                         ) : '—'}
                       </td>
-                      <td>
+                      <td data-label="Nákupná cena">
                         {row.averagePurchasePrice !== null
                           ? formatMoney(row.averagePurchasePrice, row.currency)
                           : '—'}
                       </td>
-                      <td className={row.dayChangePercent >= 0 ? 'is-positive' : 'is-negative'}>
+                      <td data-label="Denná zmena" className={row.dayChangePercent >= 0 ? 'is-positive' : 'is-negative'}>
                         {Number.isFinite(row.dayChangePercent) ? formatPercent(row.dayChangePercent) : '—'}
                       </td>
-                      <td>
+                      <td data-label="Hodnota">
                         {row.currentValue !== null ? (
                           <>
                             {formatWholeMoney(row.currentValue, currency)}
@@ -647,7 +637,7 @@ export default function Investments({
                           </>
                         ) : '—'}
                       </td>
-                      <td className={row.profitLoss !== null && row.profitLoss >= 0 ? 'is-positive' : 'is-negative'}>
+                      <td data-label="Zisk / strata" className={row.profitLoss !== null && row.profitLoss >= 0 ? 'is-positive' : 'is-negative'}>
                         {row.profitLoss !== null ? (
                           <>
                             {formatMoney(row.profitLoss, currency)}

@@ -2,47 +2,11 @@
   min-height: auto;
 }
 
-.investments-header,
 .portfolio-section-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-}
-
-.investments-header {
-  margin-bottom: 1.5rem;
-  justify-content: flex-end;
-}
-
-.portfolio-refresh-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.65rem 0.9rem;
-  border: 1px solid var(--control-border);
-  border-radius: 999px;
-  background: var(--control-surface);
-  color: var(--control-text);
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.portfolio-refresh-button:disabled {
-  cursor: wait;
-  opacity: 0.7;
-}
-
-.portfolio-refresh-spinning {
-  animation: portfolio-refresh-rotation 1s linear infinite;
-}
-
-@keyframes portfolio-refresh-rotation {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 .portfolio-summary-grid {
@@ -156,23 +120,6 @@
 
 .portfolio-chart-plot {
   position: relative;
-}
-
-.portfolio-chart-loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.65rem;
-  color: var(--text-secondary);
-  font-size: 0.85rem;
-}
-
-.portfolio-chart-plot .portfolio-chart-loading {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: color-mix(in srgb, var(--card-surface) 82%, transparent);
-  backdrop-filter: blur(2px);
 }
 
 .portfolio-chart svg {
@@ -297,8 +244,8 @@
   text-align: left;
 }
 
-.portfolio-table th:nth-child(4),
-.portfolio-table td:nth-child(4) {
+.portfolio-table th:nth-child(5),
+.portfolio-table td:nth-child(5) {
   text-align: center;
 }
 
@@ -444,10 +391,64 @@
   .portfolio-card {
     padding: 1rem;
   }
-}
 
-@media (min-width: 1024px) {
-  .investments-header {
+  .portfolio-table-scroll {
+    overflow: visible;
+  }
+
+  .portfolio-table,
+  .portfolio-table tbody {
+    display: block;
+    width: 100%;
+    white-space: normal;
+  }
+
+  .portfolio-table thead {
     display: none;
+  }
+
+  .portfolio-table tr {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-bottom: 0.75rem;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background: var(--card-surface);
+  }
+
+  .portfolio-table td,
+  .portfolio-table td:first-child {
+    display: flex;
+    min-width: 0;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.7rem;
+    border-bottom: 1px solid var(--border-color);
+    text-align: right;
+    overflow-wrap: anywhere;
+  }
+
+  .portfolio-table td:first-child {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .portfolio-table td:not(:first-child)::before {
+    content: attr(data-label);
+    flex: 0 0 auto;
+    color: var(--text-secondary);
+    font-size: 0.7rem;
+    text-align: left;
+  }
+
+  .portfolio-table td:nth-child(5) {
+    text-align: right;
+  }
+
+  .portfolio-table tr:last-child {
+    margin-bottom: 0;
   }
 }

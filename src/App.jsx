@@ -17,6 +17,7 @@ function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [globalSettingsReady, setGlobalSettingsReady] = useState(false);
   const [tabLoading, setTabLoading] = useState(false);
+  const [investmentsLoading, setInvestmentsLoading] = useState(false);
   const [navigationKey, setNavigationKey] = useState(0);
   const [investmentRefreshKey, setInvestmentRefreshKey] = useState(0);
   const [globalSettings, setGlobalSettings] = useState(DEFAULT_GLOBAL_SETTINGS);
@@ -117,6 +118,10 @@ function App() {
     }, remainingBusyTime);
   }, []);
 
+  const handleInvestmentsLoadingChange = useCallback((isLoading) => {
+    setInvestmentsLoading(isLoading);
+  }, []);
+
   if (authLoading || (session && !globalSettingsReady)) {
     return (
       <div className="auth-loading" role="status" aria-live="polite">
@@ -186,7 +191,7 @@ function App() {
       onTabSelect={handleTabSelect}
       onSignOut={handleSignOut}
       onRefresh={handleRefresh}
-      isLoading={tabLoading}
+      isLoading={tabLoading || (activeTab === 'investments' && investmentsLoading)}
     >
       {activeTab === 'dashboard' && (
         <Dashboard
@@ -207,6 +212,7 @@ function App() {
           currency={globalSettings.dashboard_currency}
           refreshKey={investmentRefreshKey}
           refreshIntervalMinutes={globalSettings.investments_refresh_interval_minutes}
+          onLoadingChange={handleInvestmentsLoadingChange}
         />
       )}
       {activeTab === 'settings' && (

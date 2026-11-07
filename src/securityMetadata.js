@@ -24,6 +24,10 @@ export const EXCHANGE_NAMES = {
   B3: 'Blockmatch',
   TH: 'Tradegate',
   US: 'United States',
+  XNYS: 'NYSE',
+  XNAS: 'Nasdaq',
+  XASE: 'NYSE American',
+  ARCX: 'NYSE Arca',
 };
 
 const SECURITY_LOGO_DOMAINS_BY_ISIN = {

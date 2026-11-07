@@ -28,6 +28,12 @@ const MIC_BY_FIGI_EXCHANGE: Record<string, string> = {
 };
 
 const US_MIC_CODES = ['XNYS', 'XNAS', 'XASE', 'ARCX'];
+const EXCHANGE_NAME_BY_MIC: Record<string, string> = {
+  XNYS: 'NYSE',
+  XNAS: 'Nasdaq',
+  XASE: 'NYSE American',
+  ARCX: 'NYSE Arca',
+};
 
 const OUTPUTSIZE_BY_RANGE: Record<string, number> = {
   '1m': 30,
@@ -350,6 +356,7 @@ Deno.serve(async (request) => {
 
         quotes[String(position.id)] = {
           symbol,
+          exchange: EXCHANGE_NAME_BY_MIC[micCode] || '',
           currency: typeof series.meta.currency === 'string' ? series.meta.currency : '',
           price,
           previousClose,

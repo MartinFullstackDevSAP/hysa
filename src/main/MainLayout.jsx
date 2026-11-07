@@ -19,7 +19,13 @@ const MainLayout = ({ activeTab, onTabSelect, onSignOut, onRefresh, isLoading, c
 
   const handleTouchStart = (event) => {
     const touch = event.touches[0];
-    if (event.touches.length !== 1 || event.currentTarget.scrollTop > 1 || isLoading) {
+    if (
+      event.touches.length !== 1
+      || event.currentTarget.scrollTop > 1
+      || window.scrollY > 1
+      || document.documentElement.scrollTop > 1
+      || isLoading
+    ) {
       pullStart.current = null;
       return;
     }
