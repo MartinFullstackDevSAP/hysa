@@ -297,6 +297,12 @@
   flex: 1;
 }
 
+.dashboard-portfolio-detail {
+  margin-top: 0.25rem;
+  color: var(--text-secondary, #655b7d);
+  font-size: 0.8rem;
+}
+
 .hero-yield-section {
   display: flex;
   flex-direction: column;

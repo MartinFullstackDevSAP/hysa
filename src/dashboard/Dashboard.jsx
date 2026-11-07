@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { CalendarClock, CreditCard, Minus, Plus } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 import { BANK_LOGOS, getBankLogo } from '../bankLogos';
+import { calculateHoldings } from '../investments/portfolio';
 import AccountList from './AccountList';
 import '../css/mainlayout.css';
 
@@ -29,6 +30,10 @@ const Dashboard = ({ currency = 'CZK', navigationKey = 0, onLoadingChange }) => 
     const [paymentLoading, setPaymentLoading] = useState(true);
     const [paymentError, setPaymentError] = useState('');
     const [accountError, setAccountError] = useState('');
+    const [portfolioValue, setPortfolioValue] = useState(null);
+    const [portfolioLoading, setPortfolioLoading] = useState(true);
+    const [portfolioError, setPortfolioError] = useState('');
+    const [portfolioIncomplete, setPortfolioIncomplete] = useState(false);
 
     const fetchAccounts = useCallback(async () => {
         setLoading(true);
@@ -77,6 +82,74 @@ const Dashboard = ({ currency = 'CZK', navigationKey = 0, onLoadingChange }) => 
         };
     }, [fetchAccounts]);
 
+    useEffect(() => {
+        let active = true;
+
+        const fetchPortfolioValue = async () => {
+            try {
+                const { data: transactions, error: transactionError } = await supabase
+                    .from('investment_transactions')
+                    .select('figi, isin, ticker, exchange, security_name, asset_type, trade_date, transaction_type, quantity, unit_price, currency, commission, created_at')
+                    .order('trade_date', { ascending: true });
+                if (transactionError) throw transactionError;
+
+                const holdings = calculateHoldings(transactions || []);
+                if (!holdings.length) {
+                    if (active) setPortfolioValue(0);
+                    return;
+                }
+
+                const { data, error } = await supabase.functions.invoke('portfolio-market-data', {
+                    body: {
+                        currency,
+                        range: '1m',
+                        positions: holdings.map(({ id, isin, ticker, exchange, name, currency: costCurrency }) => ({
+                            id,
+                            isin,
+                            ticker,
+                            exchange,
+                            name,
+                            currency: costCurrency,
+                        })),
+                    },
+                });
+                if (error) {
+                    const errorResponse = error.context instanceof Response
+                        ? await error.context.clone().json().catch(() => null)
+                        : null;
+                    throw new Error(errorResponse?.error || error.message || 'Ceny portfólia sa nepodarilo načítať.');
+                }
+                if (!data) throw new Error('Trhové údaje portfólia neobsahujú odpoveď.');
+
+                const quotes = data.quotes || {};
+                const fxRates = data.fxRates || {};
+                const value = holdings.reduce((total, holding) => {
+                    const quote = quotes[holding.id];
+                    const price = Number(quote?.price);
+                    const rate = Number(fxRates[quote?.currency || holding.currency]);
+                    return Number.isFinite(price) && price > 0 && Number.isFinite(rate) && rate > 0
+                        ? total + holding.quantity * price * rate
+                        : total;
+                }, 0);
+
+                if (active) {
+                    setPortfolioValue(value);
+                    setPortfolioIncomplete(Array.isArray(data.errors) && data.errors.length > 0);
+                }
+            } catch (error) {
+                console.error('Chyba pri načítaní hodnoty portfólia na prehľade:', error);
+                if (active) setPortfolioError(error.message || 'Hodnotu portfólia sa nepodarilo načítať.');
+            } finally {
+                if (active) setPortfolioLoading(false);
+            }
+        };
+
+        fetchPortfolioValue();
+        return () => {
+            active = false;
+        };
+    }, [currency]);
+
     const savePaymentProgress = async (accountId, requiredPayments, change) => {
         setPaymentError('');
         const currentPayments = Number(paymentProgress[accountId] || 0);
@@ -103,7 +176,8 @@ const Dashboard = ({ currency = 'CZK', navigationKey = 0, onLoadingChange }) => 
         }));
     };
 
-    const totalBalance = accounts.reduce((acc, curr) => acc + (Number(curr.balance) || 0), 0);
+    const accountBalance = accounts.reduce((acc, curr) => acc + (Number(curr.balance) || 0), 0);
+    const totalBalance = accountBalance + (portfolioValue || 0);
 
     const netYieldSum = accounts.reduce((acc, curr) => {
         const bal = Number(curr.balance) || 0;
@@ -141,7 +215,16 @@ const Dashboard = ({ currency = 'CZK', navigationKey = 0, onLoadingChange }) => 
                     <div className="hero-balance-section">
                         <div className="stat-label">Celkový zostatok</div>
                         <div className="stat-value">
-                            {loading ? '...' : formatCurrencyInteger(totalBalance, currency)}
+                            {loading || portfolioLoading ? '...' : formatCurrencyInteger(totalBalance, currency)}
+                        </div>
+                        <div className="dashboard-portfolio-detail" role={portfolioError || portfolioIncomplete ? 'status' : undefined}>
+                            {portfolioLoading
+                                ? 'Načítavam hodnotu portfólia...'
+                                : portfolioError
+                                    ? `Hodnotu portfólia sa nepodarilo načítať: ${portfolioError}`
+                                    : portfolioIncomplete
+                                        ? `Portfólio: ${formatCurrencyInteger(portfolioValue, currency)} (niektoré ceny alebo kurzy nie sú dostupné)`
+                                        : `Portfólio: ${formatCurrencyInteger(portfolioValue || 0, currency)}`}
                         </div>
                     </div>
                     <div className="hero-divider"></div>
