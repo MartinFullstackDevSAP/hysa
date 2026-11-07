@@ -1,5 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Activity, TrendingDown, TrendingUp } from 'lucide-react';
+import {
+  Activity,
+  BriefcaseBusiness,
+  ChartNoAxesCombined,
+  TrendingDown,
+  TrendingUp,
+} from 'lucide-react';
 import { supabase } from '../supabaseClient';
 import { calculateHoldings, transactionKey } from './portfolio';
 import { EXCHANGE_NAMES, getSecurityLogo } from '../securityMetadata';
@@ -552,7 +558,10 @@ export default function Investments({
 
           <section className="finova-card portfolio-card">
             <div className="portfolio-section-header portfolio-chart-header">
-              <h2 className="portfolio-section-title">Vývoj portfólia</h2>
+              <h2 className="portfolio-section-title portfolio-section-title-icon">
+                <ChartNoAxesCombined size={20} aria-hidden="true" />
+                Vývoj portfólia
+              </h2>
               <div className="portfolio-range-selector" aria-label="Obdobie grafu">
                 {CHART_RANGES.map((option) => (
                   <button
@@ -578,7 +587,10 @@ export default function Investments({
           <section className="finova-card portfolio-card">
             <div className="portfolio-section-header">
               <div>
-                <h2 className="portfolio-section-title">Moje pozície</h2>
+                <h2 className="portfolio-section-title portfolio-section-title-icon">
+                  <BriefcaseBusiness size={20} aria-hidden="true" />
+                  Moje pozície
+                </h2>
               </div>
             </div>
             <div className="portfolio-table-scroll portfolio-positions-desktop">

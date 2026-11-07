@@ -79,6 +79,17 @@
   font-weight: 700;
 }
 
+.portfolio-section-title-icon {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.portfolio-section-title-icon svg {
+  flex: 0 0 auto;
+  color: var(--accent-purple);
+}
+
 .portfolio-section-subtitle {
   margin: 0.25rem 0 0;
   color: var(--text-secondary);
@@ -394,6 +405,14 @@
 
   .portfolio-card {
     padding: 1rem;
+  }
+
+  .portfolio-chart-date {
+    font-size: 18px;
+  }
+
+  .portfolio-chart-axis {
+    font-size: 17px;
   }
 
   .portfolio-positions-desktop {
