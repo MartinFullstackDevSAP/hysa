@@ -87,7 +87,7 @@ const getHistoryQuantity = (transactions, positionId, date) => {
   return Math.max(0, quantity);
 };
 
-const PortfolioChart = ({ points, currency }) => {
+const PortfolioChart = ({ points, currency, netContributions }) => {
   const [activeIndex, setActiveIndex] = useState(null);
 
   if (points.length < 2) {
@@ -119,8 +119,9 @@ const PortfolioChart = ({ points, currency }) => {
   const lastPoint = coordinates.at(-1);
   const activePoint = activeIndex === null ? null : coordinates[activeIndex];
   const firstValue = points[0].value;
-  const changeValue = lastPoint.value - firstValue;
-  const changePercent = firstValue > 0 ? (changeValue / firstValue) * 100 : 0;
+  const changeValue = lastPoint.value - firstValue - netContributions.total;
+  const investedValue = firstValue + netContributions.buys;
+  const changePercent = investedValue > 0 ? (changeValue / investedValue) * 100 : 0;
 
   const handlePointerMove = (event) => {
     const bounds = event.currentTarget.getBoundingClientRect();
@@ -147,7 +148,7 @@ const PortfolioChart = ({ points, currency }) => {
           Max. {formatWholeMoney(max, currency)}
         </span>
         <span className={changeValue >= 0 ? 'is-positive' : 'is-negative'}>
-          {formatWholeMoney(changeValue, currency)} ({formatPercent(changePercent)})
+          Výnos {formatWholeMoney(changeValue, currency)} ({formatPercent(changePercent)})
         </span>
       </div>
       <div className="portfolio-chart-plot">
@@ -401,6 +402,32 @@ export default function Investments({
     }).filter((point) => point.value > 0);
   }, [fxRates, holdings, quotes, transactions]);
 
+  const chartNetContributions = useMemo(() => {
+    if (chartPoints.length < 2) return { total: 0, buys: 0 };
+
+    const firstDate = chartPoints[0].date;
+    const lastDate = chartPoints.at(-1).date;
+    return transactions.reduce((contributions, transaction) => {
+      if (transaction.trade_date <= firstDate || transaction.trade_date > lastDate) return contributions;
+
+      const quantity = Number(transaction.quantity);
+      const unitPrice = Number(transaction.unit_price);
+      const commission = Number(transaction.commission) || 0;
+      const rate = Number(fxRates[transaction.currency || 'CZK']);
+      if (!Number.isFinite(quantity) || !Number.isFinite(unitPrice) || !rate) return contributions;
+
+      if (transaction.transaction_type === 'buy') {
+        const contribution = (quantity * unitPrice + commission) * rate;
+        contributions.total += contribution;
+        contributions.buys += contribution;
+      } else if (transaction.transaction_type === 'sell') {
+        contributions.total -= (quantity * unitPrice - commission) * rate;
+      }
+
+      return contributions;
+    }, { total: 0, buys: 0 });
+  }, [chartPoints, fxRates, transactions]);
+
   const isLoading = transactionsLoading || marketDataLoading;
   const hasTransactions = transactions.length > 0;
   const hasMarketPrices = pricedRows.length > 0;
@@ -515,7 +542,11 @@ export default function Investments({
                 ))}
               </div>
             </div>
-            <PortfolioChart points={chartPoints} currency={currency} />
+            <PortfolioChart
+              points={chartPoints}
+              currency={currency}
+              netContributions={chartNetContributions}
+            />
           </section>
 
           <section className="finova-card portfolio-card">
