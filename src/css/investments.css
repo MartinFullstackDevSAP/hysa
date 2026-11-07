@@ -87,7 +87,7 @@
 
 .portfolio-section-title-icon svg {
   flex: 0 0 auto;
-  color: #fff;
+  color: var(--accent-pink, #b38b49);
 }
 
 .portfolio-section-subtitle {
