@@ -25,6 +25,19 @@ const formatMoney = (value, currency) => {
   }
 };
 
+const formatWholeMoney = (value, currency) => {
+  if (!Number.isFinite(value)) return '—';
+  try {
+    return new Intl.NumberFormat('sk-SK', {
+      style: 'currency',
+      currency,
+      maximumFractionDigits: 0,
+    }).format(value);
+  } catch {
+    return `${Math.round(value)} ${currency}`;
+  }
+};
+
 const formatQuantity = (value) => new Intl.NumberFormat('sk-SK', {
   maximumFractionDigits: 6,
 }).format(value);
@@ -37,7 +50,7 @@ const formatAxisMoney = (value, currency) => {
       style: 'currency',
       currency,
       notation: 'compact',
-      maximumFractionDigits: 1,
+      maximumFractionDigits: 0,
     }).format(value);
   } catch {
     return `${Math.round(value)} ${currency}`;
@@ -128,13 +141,13 @@ const PortfolioChart = ({ points, currency }) => {
     <div className="portfolio-chart">
       <div className="portfolio-chart-stats">
         <span>
-          Min. {formatMoney(min, currency)}
+          Min. {formatWholeMoney(min, currency)}
         </span>
         <span>
-          Max. {formatMoney(max, currency)}
+          Max. {formatWholeMoney(max, currency)}
         </span>
         <span className={changeValue >= 0 ? 'is-positive' : 'is-negative'}>
-          {formatMoney(changeValue, currency)} ({formatPercent(changePercent)})
+          {formatWholeMoney(changeValue, currency)} ({formatPercent(changePercent)})
         </span>
       </div>
       <div className="portfolio-chart-plot">
@@ -187,7 +200,7 @@ const PortfolioChart = ({ points, currency }) => {
           top: `${(activePoint.y / height) * 100}%`,
         }}
       >
-        <strong>{formatMoney(activePoint.value, currency)}</strong>
+        <strong>{formatWholeMoney(activePoint.value, currency)}</strong>
         <span>{formatTooltipDate(new Date(`${activePoint.date}T00:00:00`))}</span>
       </div>
       </div>
@@ -456,25 +469,25 @@ export default function Investments({
               <strong className="portfolio-summary-value">
                 {marketDataLoading && !pricedRows.length
                   ? 'Načítavam…'
-                  : hasMarketPrices ? formatMoney(totalValue, currency) : '—'}
+                  : hasMarketPrices ? formatWholeMoney(totalValue, currency) : '—'}
               </strong>
                             <span className={`portfolio-summary-change ${totalDayChange >= 0 ? 'is-positive' : 'is-negative'}`}>
                 {totalDayChange >= 0 ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
                 {hasMarketPrices
-                  ? `${formatMoney(totalDayChange, currency)} (${formatPercent(totalDayChangePercent)})`
+                  ? `${formatWholeMoney(totalDayChange, currency)} (${formatPercent(totalDayChangePercent)})`
                   : ''}
               </span>
             </article>
             <article className="stat-card portfolio-summary-card">
               <span className="stat-label">Nerealizovaný zisk / strata</span>
               <strong className={`portfolio-summary-value ${totalProfitLoss >= 0 ? 'is-positive' : 'is-negative'}`}>
-                {formatMoney(totalProfitLoss, currency)}
+                {formatWholeMoney(totalProfitLoss, currency)}
               </strong>
             </article>
             <article className="stat-card portfolio-summary-card">
               <span className="stat-label">Realizovaný zisk / strata</span>
               <strong className={`portfolio-summary-value ${totalRealizedProfit >= 0 ? 'is-positive' : 'is-negative'}`}>
-                {formatMoney(totalRealizedProfit, currency)}
+                {formatWholeMoney(totalRealizedProfit, currency)}
               </strong>
             </article>
           </section>
