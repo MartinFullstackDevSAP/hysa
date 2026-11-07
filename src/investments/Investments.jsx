@@ -87,10 +87,18 @@ const getHistoryQuantity = (transactions, positionId, date) => {
   return Math.max(0, quantity);
 };
 
-const PortfolioChart = ({ points, currency, netContributions }) => {
+const PortfolioChart = ({ points, currency, netContributions, loading }) => {
   const [activeIndex, setActiveIndex] = useState(null);
 
   if (points.length < 2) {
+    if (loading) {
+      return (
+        <div className="portfolio-chart-empty portfolio-chart-loading" role="status">
+          <span className="busy-spinner" aria-hidden="true" />
+          <span>Načítavam graf</span>
+        </div>
+      );
+    }
     return <div className="portfolio-chart-empty">Pre zvolené obdobie zatiaľ nie sú dostupné cenové údaje.</div>;
   }
 
@@ -151,7 +159,7 @@ const PortfolioChart = ({ points, currency, netContributions }) => {
           Výnos {formatWholeMoney(changeValue, currency)} ({formatPercent(changePercent)})
         </span>
       </div>
-      <div className="portfolio-chart-plot">
+      <div className="portfolio-chart-plot" aria-busy={loading}>
       <svg
         viewBox={`0 0 ${width} ${height}`}
         role="img"
@@ -198,6 +206,12 @@ const PortfolioChart = ({ points, currency, netContributions }) => {
           </>
         )}
       </svg>
+      {loading && (
+        <div className="portfolio-chart-loading" role="status">
+          <span className="busy-spinner" aria-hidden="true" />
+          <span>Načítavam graf</span>
+        </div>
+      )}
       {activePoint && (
         <div
           className="portfolio-chart-tooltip"
@@ -546,6 +560,7 @@ export default function Investments({
               points={chartPoints}
               currency={currency}
               netContributions={chartNetContributions}
+              loading={marketDataLoading}
             />
           </section>
 

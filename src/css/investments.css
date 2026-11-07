@@ -158,6 +158,23 @@
   position: relative;
 }
 
+.portfolio-chart-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.portfolio-chart-plot .portfolio-chart-loading {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: color-mix(in srgb, var(--card-surface) 82%, transparent);
+  backdrop-filter: blur(2px);
+}
+
 .portfolio-chart svg {
   display: block;
   width: 100%;
