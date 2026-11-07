@@ -159,7 +159,7 @@ const PortfolioChart = ({ points, currency, netContributions, loading }) => {
   const width = isMobileChart ? plotWidth : 800;
   const height = isMobileChart ? 300 : 280;
   const padding = isMobileChart
-    ? { top: 28, right: 30, bottom: 48, left: 104 }
+    ? { top: 28, right: 30, bottom: 48, left: 80 }
     : { top: 22, right: 18, bottom: 36, left: 72 };
   const values = points.map((point) => point.value);
   const min = Math.min(...values);
