@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Activity,
   BriefcaseBusiness,
@@ -122,14 +122,40 @@ const getHistoryQuantity = (transactions, positionId, date) => {
 
 const PortfolioChart = ({ points, currency, netContributions, loading }) => {
   const [activeIndex, setActiveIndex] = useState(null);
+  const [plotWidth, setPlotWidth] = useState(800);
+  const plotRef = useRef(null);
+  const shouldMeasurePlot = points.length >= 2;
+
+  useEffect(() => {
+    const plotElement = plotRef.current;
+    if (!plotElement) return undefined;
+
+    const updatePlotWidth = () => {
+      const nextWidth = plotElement.getBoundingClientRect().width;
+      if (nextWidth > 0) setPlotWidth(nextWidth);
+    };
+
+    updatePlotWidth();
+    if (typeof ResizeObserver === 'undefined') {
+      window.addEventListener('resize', updatePlotWidth);
+      return () => window.removeEventListener('resize', updatePlotWidth);
+    }
+
+    const observer = new ResizeObserver(updatePlotWidth);
+    observer.observe(plotElement);
+    return () => observer.disconnect();
+  }, [shouldMeasurePlot]);
 
   if (points.length < 2) {
     return <div className="portfolio-chart-empty">Pre zvolené obdobie zatiaľ nie sú dostupné cenové údaje.</div>;
   }
 
-  const width = 800;
-  const height = 280;
-  const padding = { top: 22, right: 18, bottom: 36, left: 72 };
+  const isMobileChart = plotWidth <= 760;
+  const width = isMobileChart ? plotWidth : 800;
+  const height = isMobileChart ? 300 : 280;
+  const padding = isMobileChart
+    ? { top: 28, right: 30, bottom: 48, left: 104 }
+    : { top: 22, right: 18, bottom: 36, left: 72 };
   const values = points.map((point) => point.value);
   const min = Math.min(...values);
   const max = Math.max(...values);
@@ -140,7 +166,7 @@ const PortfolioChart = ({ points, currency, netContributions, loading }) => {
   const chartWidth = width - padding.left - padding.right;
   const chartHeight = height - padding.top - padding.bottom;
   const yTicks = 5;
-  const dateTickCount = Math.min(6, points.length);
+  const dateTickCount = Math.min(isMobileChart ? 3 : 6, points.length);
   const coordinates = points.map((point, index) => ({
     ...point,
     x: padding.left + (index / (points.length - 1)) * chartWidth,
@@ -184,7 +210,7 @@ const PortfolioChart = ({ points, currency, netContributions, loading }) => {
           Výnos {formatWholeMoney(changeValue, currency)} ({formatPercent(changePercent)})
         </span>
       </div>
-      <div className="portfolio-chart-plot" aria-busy={loading}>
+      <div className="portfolio-chart-plot" ref={plotRef} aria-busy={loading}>
       <svg
         viewBox={`0 0 ${width} ${height}`}
         role="img"

@@ -87,7 +87,7 @@
 
 .portfolio-section-title-icon svg {
   flex: 0 0 auto;
-  color: var(--accent-purple);
+  color: #fff;
 }
 
 .portfolio-section-subtitle {
@@ -407,12 +407,9 @@
     padding: 1rem;
   }
 
-  .portfolio-chart-date {
-    font-size: 18px;
-  }
-
+  .portfolio-chart-date,
   .portfolio-chart-axis {
-    font-size: 17px;
+    font-size: 13px;
   }
 
   .portfolio-positions-desktop {
