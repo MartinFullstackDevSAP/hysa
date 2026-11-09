@@ -23,6 +23,34 @@ const formatExpirationDate = (expiration) => {
     return `${day}.${month}.${year}`;
 };
 
+const calculateFixedTermMaturityValue = (account) => {
+    const expirationMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(account.expiration || '');
+    if (!expirationMatch) return null;
+
+    const [, yearText, monthText, dayText] = expirationMatch;
+    const year = Number(yearText);
+    const month = Number(monthText);
+    const day = Number(dayText);
+    const expirationDate = new Date(Date.UTC(year, month - 1, day));
+    if (
+        expirationDate.getUTCFullYear() !== year
+        || expirationDate.getUTCMonth() !== month - 1
+        || expirationDate.getUTCDate() !== day
+    ) {
+        return null;
+    }
+
+    const today = new Date();
+    const todayDate = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+    const daysUntilMaturity = Math.max(0, (expirationDate.getTime() - todayDate) / 86400000);
+    const balance = Number(account.balance) || 0;
+    const rate = Number(account.rate) || 0;
+    const tax = Number(account.tax) || 0;
+    const netInterest = balance * (rate / 100) * (daysUntilMaturity / 365) * (1 - tax / 100);
+
+    return balance + netInterest;
+};
+
 const Dashboard = ({ currency = 'CZK', navigationKey = 0, onLoadingChange }) => {
     const [accounts, setAccounts] = useState([]);
     const [paymentProgress, setPaymentProgress] = useState({});
@@ -345,39 +373,54 @@ const Dashboard = ({ currency = 'CZK', navigationKey = 0, onLoadingChange }) => 
                         <div className="bank-distribution-empty">Zatiaľ nemáš žiadne termínované vklady.</div>
                     ) : (
                         <div className="fixed-term-list">
-                            {fixedTermAccounts.map((account) => (
-                                <div className="fixed-term-row" key={account.id}>
-                                    <div className="fixed-term-account">
-                                        <span className="card-payment-bank-logo">
-                                            <img
-                                                src={BANK_LOGOS[account.bank] || getBankLogo(account.bank)}
-                                                alt=""
-                                                onError={(event) => {
-                                                    event.currentTarget.style.display = 'none';
-                                                }}
-                                            />
-                                        </span>
-                                        <div className="fixed-term-account-info">
-                                            <span className="card-payment-account-bank">
-                                                {account.bank || 'Neznáma banka'}
+                            {fixedTermAccounts.map((account) => {
+                                const maturityValue = calculateFixedTermMaturityValue(account);
+                                const accountCurrency = account.currency || currency;
+
+                                return (
+                                    <div className="fixed-term-row" key={account.id}>
+                                        <div className="fixed-term-account">
+                                            <span className="card-payment-bank-logo">
+                                                <img
+                                                    src={BANK_LOGOS[account.bank] || getBankLogo(account.bank)}
+                                                    alt=""
+                                                    onError={(event) => {
+                                                        event.currentTarget.style.display = 'none';
+                                                    }}
+                                                />
                                             </span>
-                                            <div className="fixed-term-account-meta">
-                                                <span className="dashboard-badge dashboard-badge-success fixed-term-rate">
-                                                    {Number(account.rate).toFixed(2)} % p.a.
+                                            <div className="fixed-term-account-info">
+                                                <span className="card-payment-account-bank">
+                                                    {account.bank || 'Neznáma banka'}
                                                 </span>
-                                                <span className="dashboard-badge dashboard-badge-danger fixed-term-expiration">
-                                                    {account.expiration
-                                                        ? `Expirácia: ${formatExpirationDate(account.expiration)}`
-                                                        : formatExpirationDate(account.expiration)}
-                                                </span>
+                                                <div className="fixed-term-account-meta">
+                                                    <span className="dashboard-badge dashboard-badge-success fixed-term-rate">
+                                                        {Number(account.rate).toFixed(2)} % p.a.
+                                                    </span>
+                                                    <span className="dashboard-badge dashboard-badge-danger fixed-term-expiration">
+                                                        {account.expiration
+                                                            ? `Expirácia: ${formatExpirationDate(account.expiration)}`
+                                                            : formatExpirationDate(account.expiration)}
+                                                    </span>
+                                                </div>
                                             </div>
                                         </div>
+                                        <div className="fixed-term-balance-info">
+                                            <span className="fixed-term-balance">
+                                                {formatCurrencyInteger(account.balance, accountCurrency)}
+                                            </span>
+                                            {maturityValue !== null && (
+                                                <span className="fixed-term-maturity-value">
+                                                    Odhad pri splatnosti netto: {formatCurrencyInteger(
+                                                        maturityValue,
+                                                        accountCurrency,
+                                                    )}
+                                                </span>
+                                            )}
+                                        </div>
                                     </div>
-                                    <span className="fixed-term-balance">
-                                        {formatCurrencyInteger(account.balance, account.currency || currency)}
-                                    </span>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     )}
                 </section>
