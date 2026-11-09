@@ -68,7 +68,6 @@ const Dashboard = ({ currency = 'CZK', navigationKey = 0, onLoadingChange }) => 
         }
         setLoading(false);
         setPaymentLoading(false);
-        onLoadingChange?.(false, navigationKey);
     }, [navigationKey, onLoadingChange]);
 
     useEffect(() => {
@@ -149,6 +148,12 @@ const Dashboard = ({ currency = 'CZK', navigationKey = 0, onLoadingChange }) => 
             active = false;
         };
     }, [currency]);
+
+    useEffect(() => {
+        if (!loading && !portfolioLoading) {
+            onLoadingChange?.(false, navigationKey);
+        }
+    }, [loading, navigationKey, onLoadingChange, portfolioLoading]);
 
     const savePaymentProgress = async (accountId, requiredPayments, change) => {
         setPaymentError('');
