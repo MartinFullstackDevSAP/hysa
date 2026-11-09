@@ -250,15 +250,13 @@ const Dashboard = ({ currency = 'CZK', navigationKey = 0, onLoadingChange }) => 
                         <div className="stat-value">
                             {loading || portfolioLoading ? '...' : formatCurrencyInteger(totalBalance, currency)}
                         </div>
-                        <div className="dashboard-portfolio-detail" role={portfolioError || portfolioIncomplete ? 'status' : undefined}>
-                            {portfolioLoading
-                                ? 'Načítavam hodnotu portfólia...'
-                                : portfolioError
+                        {(portfolioError || portfolioIncomplete) && (
+                            <div className="dashboard-portfolio-detail" role="status">
+                                {portfolioError
                                     ? `Hodnotu portfólia sa nepodarilo načítať: ${portfolioError}`
-                                    : portfolioIncomplete
-                                        ? `Portfólio: ${formatCurrencyInteger(portfolioValue, currency)} (niektoré ceny alebo kurzy nie sú dostupné)`
-                                        : `Portfólio: ${formatCurrencyInteger(portfolioValue || 0, currency)}`}
-                        </div>
+                                    : 'Niektoré ceny alebo kurzy portfólia nie sú dostupné.'}
+                            </div>
+                        )}
                     </div>
                     <div className="hero-divider"></div>
                     <div className="hero-yield-section">
