@@ -591,7 +591,8 @@
 
 .fixed-term-maturity-value {
   color: var(--text-secondary, #655b7d);
-  font-size: 0.75rem;
+  font-family: inherit;
+  font-size: 0.7rem;
   font-style: italic;
   text-align: right;
 }
