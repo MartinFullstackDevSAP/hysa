@@ -1096,6 +1096,11 @@
     flex-shrink: 0;
   }
 
+  .account-list-actions .btn-edit-icon {
+    width: 40px;
+    flex-basis: 40px;
+  }
+
   .card-payment-progress-track {
     grid-column: 1 / -1;
     grid-row: 2;
