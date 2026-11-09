@@ -332,7 +332,6 @@ export default function Investments({
         const { data, error } = await supabase
           .from('investment_transactions')
           .select('figi, isin, ticker, exchange, security_name, asset_type, trade_date, transaction_type, quantity, unit_price, currency, commission, created_at')
-          .eq('user_id', authData.user.id)
           .order('trade_date', { ascending: true });
         if (error) throw error;
         if (active) setTransactions(data || []);
