@@ -23,7 +23,7 @@ const formatExpirationDate = (expiration) => {
     return `${day}.${month}.${year}`;
 };
 
-const calculateFixedTermMaturityValue = (account) => {
+const calculateFixedTermNetInterest = (account) => {
     const expirationMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(account.expiration || '');
     if (!expirationMatch) return null;
 
@@ -48,7 +48,7 @@ const calculateFixedTermMaturityValue = (account) => {
     const tax = Number(account.tax) || 0;
     const netInterest = balance * (rate / 100) * (daysUntilMaturity / 365) * (1 - tax / 100);
 
-    return balance + netInterest;
+    return netInterest;
 };
 
 const Dashboard = ({ currency = 'CZK', navigationKey = 0, onLoadingChange }) => {
@@ -374,7 +374,7 @@ const Dashboard = ({ currency = 'CZK', navigationKey = 0, onLoadingChange }) => 
                     ) : (
                         <div className="fixed-term-list">
                             {fixedTermAccounts.map((account) => {
-                                const maturityValue = calculateFixedTermMaturityValue(account);
+                                const netInterest = calculateFixedTermNetInterest(account);
                                 const accountCurrency = account.currency || currency;
 
                                 return (
@@ -409,10 +409,10 @@ const Dashboard = ({ currency = 'CZK', navigationKey = 0, onLoadingChange }) => 
                                             <span className="fixed-term-balance">
                                                 {formatCurrencyInteger(account.balance, accountCurrency)}
                                             </span>
-                                            {maturityValue !== null && (
+                                            {netInterest !== null && (
                                                 <span className="fixed-term-maturity-value">
-                                                    Odhad pri splatnosti netto: {formatCurrencyInteger(
-                                                        maturityValue,
+                                                    Úrok: {formatCurrencyInteger(
+                                                        netInterest,
                                                         accountCurrency,
                                                     )}
                                                 </span>
