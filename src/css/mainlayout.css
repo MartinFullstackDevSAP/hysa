@@ -470,6 +470,7 @@
 
 .fixed-term-card {
   grid-column: 1 / -1;
+  padding-bottom: 0;
 }
 
 .fixed-term-card .card-payment-title svg {
