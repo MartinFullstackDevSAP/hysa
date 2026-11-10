@@ -821,6 +821,7 @@
     height: 100vh;
     height: 100dvh;
     overflow-y: auto;
+    box-shadow: var(--shadow-card);
   }
 
   :root[data-theme='dark'] .finova-desktop-sidebar {
@@ -836,6 +837,14 @@
   }
 
   .finova-desktop-sidebar .sidebar-nav-item:not(.active) {
+    background-color: var(--bg-card, #ffffff);
+    border-color: var(--card-border-color, rgba(182, 141, 72, 0.46));
+    color: var(--text-primary, #202228);
+  }
+
+  :root[data-theme='dark'] .finova-desktop-sidebar .sidebar-nav-item:not(.active) {
+    background-color: var(--control-surface, rgba(7, 8, 11, 0.88));
+    border-color: transparent;
     color: var(--text-secondary, #6d7079);
   }
 
