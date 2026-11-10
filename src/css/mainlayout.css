@@ -55,7 +55,7 @@
 .finova-desktop-sidebar {
   display: none;
   width: 260px;
-  background: linear-gradient(155deg, #0E0F14 0%, #1A1C2A 100%);
+  background: var(--bg-main, #f5f6f8);
   border-right: 1px solid var(--card-border-color, rgba(182, 141, 72, 0.46));
   padding: 2rem 1.25rem;
   box-sizing: border-box;
@@ -821,6 +821,36 @@
     height: 100vh;
     height: 100dvh;
     overflow-y: auto;
+  }
+
+  :root[data-theme='dark'] .finova-desktop-sidebar {
+    background: linear-gradient(155deg, #0E0F14 0%, #1A1C2A 100%);
+  }
+
+  .finova-desktop-sidebar .sidebar-brand-title {
+    color: var(--text-primary, #202228);
+  }
+
+  .finova-desktop-sidebar .sidebar-brand-quote {
+    color: var(--text-secondary, #6d7079);
+  }
+
+  .finova-desktop-sidebar .sidebar-nav-item:not(.active) {
+    color: var(--text-secondary, #6d7079);
+  }
+
+  .finova-desktop-sidebar .sidebar-nav-item:hover:not(.active) {
+    color: var(--text-primary, #202228);
+  }
+
+  :root[data-theme='dark'] .finova-desktop-sidebar .sidebar-brand-title,
+  :root[data-theme='dark'] .finova-desktop-sidebar .sidebar-nav-item:hover:not(.active) {
+    color: #f5f6f8;
+  }
+
+  :root[data-theme='dark'] .finova-desktop-sidebar .sidebar-brand-quote,
+  :root[data-theme='dark'] .finova-desktop-sidebar .sidebar-nav-item:not(.active) {
+    color: rgba(245, 246, 248, 0.82);
   }
 
   .finova-mobile-bottom-bar {
