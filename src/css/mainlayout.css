@@ -1154,8 +1154,8 @@
   }
 
   .account-list-actions .btn-edit-icon {
-    width: 46px;
-    flex-basis: 46px;
+    width: 56px;
+    flex-basis: 56px;
   }
 
   .card-payment-progress-track {
@@ -1172,7 +1172,7 @@
     grid-column: 1 / -1;
     grid-row: 3;
     justify-content: flex-end;
-    transform: translateY(2px);
+    transform: translateY(calc(2px + 0.5rem));
   }
 
   .yield-section {
